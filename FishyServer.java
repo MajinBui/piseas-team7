@@ -117,18 +117,12 @@ public class FishyServer {
 			                for (String key : keyList) {
 			                	writer.println("<div class=\"row\">");
 			                	writer.println("<div class=\"three columns\">");
-			                	writer.println("<p><b>");
-//				                writer.println("<dt>");
-				                writer.println(key);
-				                writer.println("</b></p>");
+			                	writer.println("<p><b>" + key + "</b></p>");
 				                writer.println("</div>");
 				                writer.println("<div class=\"nine columns\">");
-				                writer.println("<p>");
-				                writer.println(inList.get(key));
-				                writer.println("</p>");
+				                writer.println("<p>" + inList.get(key) + "</p>");
 				                writer.println("</div>");
 				                writer.println("</div>");
-//				              	writer.println("</dl>");
 			                }
 			                writer.println("</div>");
 			                writer.println("</div>");
