@@ -142,6 +142,7 @@ public class FishyServer {
 			                } catch (IOException x) {
 			                    System.err.println(x);
 			                }
+			                outToClient.writeObject("data received and saved");
 			            } catch (Exception e) {
 					        System.err.println("File Write Error: " + e.getMessage());
 					        System.err.println("Localized: " + e.getLocalizedMessage());
