@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:background="@color/solidBackgroundLight">
+
+    <ImageView
+        android:id="@+id/image"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_margin="5dp"
+        android:background="@drawable/bowl"
+        />
+
+    <TextView
+        android:id="@+id/name"
+        style="@style/Title"
+        android:layout_width="0dp"
+        android:text="Tank Name"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_weight="3"
+        android:layout_margin="5dp"/>
+
+    <ImageView
+        android:id="@+id/deleteButton"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_weight="1"
+        android:layout_margin="5dp"
+        android:background="@drawable/delete"/>
+
+</LinearLayout>

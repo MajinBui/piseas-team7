@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:orientation="vertical"
+android:layout_width="match_parent"
+android:layout_height="wrap_content"
+android:paddingLeft="20dp"
+android:paddingRight="20dp"
+android:paddingTop="10dp" android:layout_margin="20dp"
+android:background="@color/scheduleBlue">
+
+<TextView
+    android:id="@+id/txtTime"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textSize="38sp"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp"
+    android:paddingTop="15dp"
+    android:paddingBottom="15dp"
+    android:layout_alignParentStart="true"
+    android:gravity="center_vertical"
+    android:textColor="@color/lightBlue"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingStart="0dp"
+        android:paddingEnd="15dp"
+        android:paddingBottom="10dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true">
+        <TextView
+            android:id="@+id/dataSun"
+            android:textSize="20sp"
+            android:textColor="@color/lightBlue"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="S"
+            />
+        <TextView
+            android:id="@+id/dataMon"
+            android:textSize="20sp"
+            android:textColor="@color/lightBlue"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="M"/>
+        <TextView
+            android:id="@+id/dataTue"
+            android:textSize="20sp"
+            android:textColor="@color/lightBlue"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="T"/>
+        <TextView
+            android:id="@+id/dataWed"
+            android:textSize="20sp"
+            android:textColor="@color/lightBlue"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="W"/>
+        <TextView
+            android:id="@+id/dataThur"
+            android:textSize="20sp"
+            android:textColor="@color/lightBlue"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="T"/>
+        <TextView
+            android:id="@+id/dataFri"
+            android:textSize="20sp"
+            android:textColor="@color/lightBlue"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="F"/>
+        <TextView
+            android:id="@+id/dataSat"
+            android:textSize="20sp"
+            android:textColor="@color/lightBlue"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="S"/>
+    </LinearLayout>
+
+</RelativeLayout>

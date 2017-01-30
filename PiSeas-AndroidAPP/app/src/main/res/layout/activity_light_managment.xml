@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_light_managment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="group7.piseas.LightManagementActivity">
+
+    <TextView
+        style="@style/Title"
+        android:layout_gravity="center_horizontal"
+        android:text="@string/lightingSetting" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp">
+        <Switch
+            android:id="@+id/autoLight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="20dp"
+            android:paddingEnd="10dp"
+            android:layout_alignParentEnd="true"
+            android:theme="@style/SwitchColor"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/enableAutoLight"
+            android:textColor="@color/text"
+            android:textSize="16sp"
+            android:layout_toStartOf="@id/autoLight"
+            android:paddingStart="0dp"
+            android:paddingEnd="35dp"
+            />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp">
+        <Switch
+            android:id="@+id/manLight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="20dp"
+            android:paddingEnd="10dp"
+            android:layout_alignParentEnd="true"
+            android:theme="@style/SwitchColor"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/manLight"
+            android:textColor="@color/text"
+            android:textSize="16sp"
+            android:layout_toStartOf="@id/manLight"
+            android:paddingStart="0dp"
+            android:paddingEnd="35dp"
+            />
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/btnUpdateSchedule"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:text="@string/updateLight"
+        android:textSize="15sp"
+        android:textColor="@color/text"
+        android:background="@color/darkBlue"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent">
+        <ListView
+            android:id="@+id/list_schedule"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"/>
+
+        <ImageView
+            android:id="@+id/imgAdd"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/plus"
+            android:onClick="addSchedule"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
+            />
+    </RelativeLayout>
+
+</LinearLayout>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_add_tank"
+    style="@style/MainLayout"
+    tools:context="group7.piseas.AddTankActivity">
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/Title"
+        android:text="Add New Tank"
+        android:layout_marginBottom="30dp"/>
+
+    <TextView
+        android:id="@+id/code"
+        android:text="Tank Code"
+        android:layout_below="@+id/title"
+        android:layout_margin="10dp"
+        style="@style/SubTitle"/>
+
+    <EditText
+        android:id="@+id/codeEditer"
+        android:hint="Enter tank code"
+        android:layout_below="@+id/code"
+        android:layout_marginBottom="30dp"
+        style="@style/SubTitle" />
+
+    <TextView
+        android:id="@+id/password"
+        android:text="Tank Password"
+        android:layout_below="@+id/codeEditer"
+        android:layout_margin="10dp"
+        style="@style/SubTitle"
+        />
+
+    <EditText
+        android:id="@+id/passwordEditer"
+        android:hint="Enter password"
+        android:layout_below="@+id/password"
+        style="@style/SubTitle"
+        />
+
+    <Button
+        android:id="@+id/addButton"
+        android:text="Add Tank"
+        android:layout_below="@+id/passwordEditer"
+        android:layout_margin="10dp"
+        style="@style/SubTitle"
+        android:textColor="#005"/>
+</RelativeLayout>
