@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_tank_management"
+    style="@style/MainLayout"
+    tools:context="group7.piseas.TankManagementActivity">
+    <TextView
+        android:id="@+id/title"
+        style="@style/Title"
+        android:text="Tank Information"
+        android:layout_marginBottom="5dp"/>
+    <TextView
+        android:id="@+id/nameTitle"
+        style="@style/SideTitles"
+        android:text="Tank Name *"
+        android:layout_marginBottom="5dp"
+        android:layout_below="@+id/title"/>
+
+    <EditText
+        android:id="@+id/nameEditer"
+        android:hint="Enter name"
+        android:layout_below="@+id/nameTitle"
+        style="@style/SideTitles"
+        android:layout_marginBottom="10dp"
+        android:layout_width="match_parent"
+        android:textColor="@color/colorPrimaryDark"
+        />
+
+    <TextView
+        android:id="@+id/fishTitle"
+        style="@style/SideTitles"
+        android:text="Type of Fish"
+        android:layout_below="@+id/nameEditer"
+        android:layout_marginRight="10dp"/>
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/fishTitle"
+        android:layout_alignTop="@+id/fishTitle"
+        android:id="@+id/fishEditer"
+        android:layout_marginBottom="10dp"/>
+
+    <TextView
+        android:id="@+id/sizeTitle"
+        style="@style/SideTitles"
+        android:text="Tank Size   "
+        android:layout_below="@+id/fishEditer"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"/>
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/sizeTitle"
+        android:layout_alignTop="@+id/sizeTitle"
+        android:id="@+id/sizeEditer"
+        android:layout_marginBottom="10dp"/>
+
+    <TextView
+        android:id="@+id/descTitle"
+        style="@style/SideTitles"
+        android:text="Tank Description"
+        android:layout_below="@+id/sizeEditer"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"/>
+
+    <EditText
+        android:id="@+id/descEditor"
+        android:hint="Enter description"
+        android:layout_below="@+id/descTitle"
+        style="@style/SideTitles"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="35dp"
+        android:inputType="textMultiLine"
+        android:textColor="@color/colorPrimaryDark"
+        android:maxLines="3"
+        />
+
+    <Button
+        android:id="@+id/addButton"
+        android:text="Save Information"
+        android:layout_below="@+id/descEditor"
+        android:layout_margin="10dp"
+        style="@style/SubTitle"
+        android:textColor="#005"/>
+
+</RelativeLayout>

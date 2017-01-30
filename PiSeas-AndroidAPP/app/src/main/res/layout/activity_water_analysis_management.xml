@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_tank_page"
+    style="@style/MainLayout"
+    tools:context="group7.piseas.TankMainPageActivity">
+
+<TextView
+    android:id="@+id/tankName"
+    style="@style/Title"
+    android:text="Tank Name"/>
+
+    <TextView
+        android:id="@+id/pHName"
+        style="@style/SideTitles"
+        android:text="Automatic pH Check"
+        android:layout_marginBottom="5dp"
+        android:layout_below="@+id/tankName"/>
+
+    <Switch
+        android:id="@+id/enablePH"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tankName"
+        android:layout_marginLeft="95dp"
+        android:layout_toRightOf="@+id/pHName"
+        android:theme="@style/SwitchColor" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_below="@id/enablePH"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:id="@+id/row1">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="pH Max"
+            android:textColor="@color/text"
+            android:textSize="16sp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:gravity="center_vertical"
+
+            android:id="@+id/pHMax"
+          />
+
+        <NumberPicker
+            android:id="@+id/pHMaxInput"
+            android:layout_width="40dp"
+            android:layout_height="125dp"
+            android:layout_toRightOf="@+id/pHMax"
+            android:textSize="16sp"
+            android:layout_marginLeft="10dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="pH Min"
+            android:textColor="@color/text"
+            android:textSize="16sp"
+            android:gravity="center_vertical"
+            android:layout_toRightOf="@+id/pHMaxInput"
+            android:layout_marginLeft="90dp"
+            android:id="@+id/pHMin"
+            />
+
+        <NumberPicker
+            android:id="@+id/pHMinInput"
+            android:layout_width="40dp"
+            android:layout_height="125dp"
+            android:layout_toRightOf="@+id/pHMin"
+            android:textSize="16sp"
+            android:layout_marginLeft="10dp"
+            />
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@color/darkBlue"
+        android:layout_below="@id/row1"
+        android:id="@+id/bar"/>
+
+    <TextView
+        android:id="@+id/cName"
+        style="@style/SideTitles"
+        android:text="Automatic Conductivity Check"
+        android:layout_marginBottom="5dp"
+        android:layout_below="@+id/bar"
+        />
+
+    <Switch
+        android:id="@+id/enableCCheck"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bar"
+        android:layout_marginLeft="20dp"
+        android:layout_toRightOf="@+id/cName"
+        android:theme="@style/SwitchColor" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_below="@id/enableCCheck"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:id="@+id/row2">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="WC Max"
+            android:textColor="@color/text"
+            android:textSize="16sp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:gravity="center_vertical"
+
+            android:id="@+id/CMax"
+            />
+
+        <NumberPicker
+            android:id="@+id/CMaxInput"
+            android:layout_width="40dp"
+            android:layout_height="125dp"
+            android:layout_toRightOf="@+id/CMax"
+            android:textSize="16sp"
+            android:layout_marginLeft="10dp"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="WC Min"
+            android:textColor="@color/text"
+            android:textSize="16sp"
+            android:gravity="center_vertical"
+            android:layout_toRightOf="@+id/CMaxInput"
+            android:layout_marginLeft="83dp"
+            android:id="@+id/CMin"
+            />
+
+        <NumberPicker
+            android:id="@+id/CMinInput"
+            android:layout_width="40dp"
+            android:layout_height="125dp"
+            android:layout_toRightOf="@+id/CMin"
+            android:textSize="16sp"
+            android:layout_marginLeft="10dp"
+            />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@color/darkBlue"
+        android:layout_below="@id/row2"
+        android:id="@+id/bar2"/>
+
+    <LinearLayout android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/bar2">
+
+
+        <TextView
+            style="@style/SideTitles"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:background="@color/darkBlue"
+            android:textColor="@color/text"
+            android:text="pH Level : "
+            android:layout_weight="1"
+            android:textAlignment="center"
+            />
+
+        <TextView
+            style="@style/SideTitles"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:background="@color/darkBlue"
+            android:textColor="@color/text"
+            android:text="WC Level : "
+            android:layout_weight="1"
+            android:textAlignment="center"
+            />
+        </LinearLayout>
+
+</RelativeLayout>

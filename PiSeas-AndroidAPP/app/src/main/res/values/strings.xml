@@ -1,0 +1,52 @@
+<resources>
+    //Sallie
+    <string name="app_name">PiSeas</string>
+    <string name="title_activity_light_management_acitivity">LightManagementActivity</string>
+    <string name="title_activity_feeding_management_acivity">FeedingManagementActivity</string>
+
+    <string-array name="fish_size">
+        <item>Cold Water</item>
+        <item>Tropical</item>
+    </string-array>
+
+    <string-array name="tank_size">
+        <item>9.5 Liters</item>
+        <item>20.8 Liters</item>
+        <item>37.9 Liters</item>
+    </string-array>
+
+    //Michael
+    <string name="curTemp">Current Temperature</string>
+    <string name="enableTempReg">Automatic\nTemperature Regulation</string>
+    <string name="manualFan">Manual Fan Control</string>
+    <string name="manualHeater">Manual Heater Control</string>
+    <string name="maxTemp">Maximum Temperature °C</string>
+    <string name="minTemp">Minimum Temperature °C</string>
+    <string name="titleTempActivity">Temperature Settings</string>
+
+    <string name="saveTempRange">Save Temperature Range</string>
+    <string name="setTempBtn">Set Temperature Range</string>
+    <string name="removeTempBtn">Remove Temperature Range</string>
+    //Van
+    <string name="titleWAActivityPH">pH Water Analysis Settings</string>
+    <string name="phCheckToggleTitle">Automatic pH Check</string>
+    <string name="phMaxText">pH Max</string>
+    <string name="pHMinText">pH Min</string>
+    <string name="pHMinValue">0</string>
+
+    ////Matt
+    <string name="lightingSetting">Lighting Setting</string>
+    <string name="lightingSchedule">Lighting Schedule</string>
+    <string name="enableAutoLight">Enable Automatic Lighting</string>
+    <string name="manLight">Manual Light Control</string>
+    <string name="updateLight">Update Light Schedule</string>
+    <string name="save">Save</string>
+    <string name="timeon">Time on</string>
+    <string name="timeoff">Time off</string>
+    <string name="state">State</string>
+    <string name="feedSetting">Feeding Settings</string>
+    <string name="manualFeed">Manual Feed</string>
+    <string name="enableAutoFeed">Enable Automatic Feeding</string>
+    <string name="feedSchedule">Feeding Schedule</string>
+    <string name="feedTimeMsg">Feeding time is at</string>
+</resources>

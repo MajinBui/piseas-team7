@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_tank_page"
+    style="@style/MainLayout"
+    tools:context="group7.piseas.TankMainPageActivity">
+
+    <TextView
+        android:id="@+id/tankName"
+        style="@style/Title"
+        android:text="Tank Name"/>
+
+    <TextView
+        android:id="@+id/drain"
+        style="@style/SideTitles"
+        android:text="Drain tank"
+        android:layout_marginBottom="5dp"
+        android:layout_below="@+id/tankName"/>
+
+    <Switch
+        android:id="@+id/enableDrain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tankName"
+        android:layout_marginLeft="170dp"
+        android:layout_toRightOf="@+id/drain"
+        android:theme="@style/SwitchColor" />
+
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@color/darkBlue"
+        android:layout_below="@id/drain"
+        android:id="@+id/bar1"/>
+
+    <TextView
+        android:id="@+id/fill"
+        style="@style/SideTitles"
+        android:text="Fill tank"
+        android:layout_marginBottom="5dp"
+        android:layout_below="@+id/bar"/>
+
+    <Switch
+        android:id="@+id/enableFill"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bar"
+        android:layout_marginLeft="170dp"
+        android:layout_toRightOf="@+id/drain"
+        android:theme="@style/SwitchColor" />
+
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@color/darkBlue"
+        android:layout_below="@id/fill"
+        android:id="@+id/bar2"/>
+
+
+    <TextView
+        android:id="@+id/auto"
+        style="@style/SideTitles"
+        android:text="Automatic water change"
+        android:layout_marginBottom="5dp"
+        android:layout_below="@+id/bar2"/>
+
+    <Switch
+        android:id="@+id/enablePH"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/bar2"
+        android:layout_marginLeft="55dp"
+        android:layout_toRightOf="@+id/auto"
+        android:theme="@style/SwitchColor" />
+
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@color/darkBlue"
+        android:layout_below="@id/drain"
+        android:id="@+id/bar"/>
+
+
+
+</RelativeLayout>

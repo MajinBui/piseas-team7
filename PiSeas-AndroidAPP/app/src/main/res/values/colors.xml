@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="text">#FFD</color>
+    <color name="solidBackgroundLight">#8BF</color>
+
+    <color name="SwitchColor">#00FF00</color>
+
+    <color name="lightBlue">#DFF</color>
+    <color name="darkBlue">#44739b</color>
+    <color name="scheduleBlue">#273489</color>
+</resources>
