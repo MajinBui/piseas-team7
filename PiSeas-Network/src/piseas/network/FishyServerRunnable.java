@@ -132,7 +132,7 @@ public class FishyServerRunnable implements Runnable {
 			        }
 				}
 			}		
-		} catch (IOException | ClassNotFoundException e2) {
+		} catch (ClassNotFoundException e2) {
 	        System.err.println("Server Error: " + e2.getMessage());
 	        System.err.println("Localized: " + e2.getLocalizedMessage());
 	        System.err.println("Stack Trace: " + e2.getStackTrace());
@@ -153,6 +153,11 @@ public class FishyServerRunnable implements Runnable {
 	        System.err.println("Stack Trace: " + e.getStackTrace());
 	        System.err.println("To String: " + e.toString());
 		} catch (TransformerException e) {
+			System.err.println("Server Error: " + e.getMessage());
+	        System.err.println("Localized: " + e.getLocalizedMessage());
+	        System.err.println("Stack Trace: " + e.getStackTrace());
+	        System.err.println("To String: " + e.toString());
+		} catch (IOException e) {
 			System.err.println("Server Error: " + e.getMessage());
 	        System.err.println("Localized: " + e.getLocalizedMessage());
 	        System.err.println("Stack Trace: " + e.getStackTrace());

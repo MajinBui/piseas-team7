@@ -29,11 +29,10 @@ public class FishyClient {
     	String tankID = "QWERT"; // To access the saved data, its is at vanchaubui.com/fish_tanks/<tankID>.html
 
     	//	how to receive data
-    	for (int i = 0; i < 10; i++) {
-	    	FishyClient.writeToPiData(tankID, "C:\\Users\\Van\\Documents\\fish_test\\input\\QWERT_pi.xml");
-	    	FishyClient.writeToMobileData(tankID, "C:\\Users\\Van\\Documents\\fish_test\\input\\QWERT_mobile.xml");
-	        FishyClient.retrieveServerData(tankID, "C:\\Users\\Van\\Documents\\fish_test\\output\\", "C:\\Users\\Van\\Documents\\fish_test\\output\\");
-    	}
+    	FishyClient.writeToPiData(tankID, "C:\\Users\\Van\\Documents\\fish_test\\input\\QWERT_pi.xml");
+    	FishyClient.writeToMobileData(tankID, "C:\\Users\\Van\\Documents\\fish_test\\input\\QWERT_mobile.xml");
+        FishyClient.retrieveServerData(tankID, "C:\\Users\\Van\\Documents\\fish_test\\output\\", "C:\\Users\\Van\\Documents\\fish_test\\output\\");
+
 	}
 	/**
 	 * Connects to the server
@@ -49,9 +48,10 @@ public class FishyClient {
         return clientSocket;
 	}
 	/**
-	 * Returns the current saved data of the given TankID as a HashMap<String, String>
-	 * @param tankId the id of the tank to retrieve data from
-	 * @return a HashMap<String, String> of the server data stored
+	 * Retrieves the server data of the given tankId saving to the directories given 
+	 * @param tankId the TankID of the tank that needs updating
+	 * @param mobileXMLSavePath path the the directory to save mobile xml data
+	 * @param piXMLSavePath path the the directory to save pi xml data
 	 */
 	private static void retrieveServerData(String tankId, String mobileXMLSavePath, String piXMLSavePath) {
 		try {
@@ -79,7 +79,7 @@ public class FishyClient {
 		    System.out.println("Retrieved Pi Data...");
 		    System.out.println("Retrieving mobile Data...");
 		    PrintWriter writer2 = new PrintWriter(xml_filename_mobile, "UTF-8");
-        	StreamResult result2 = new StreamResult(writer);
+        	StreamResult result2 = new StreamResult(writer2);
 
 		    source = new DOMSource(document_mobile);
 		    transformer.transform(source, result2);
@@ -111,9 +111,10 @@ public class FishyClient {
 		System.err.println("no data found, maybe xml not initialized yet");
 	}
 	/**
-	 * Updates the tank with the given TankId with the HashMap<String, String> given
+	 * Updates the server data with the xml given according to id 
 	 * @param tankId the TankID of the tank that needs updating
-	 * @param dataHashMap the HashMap<String, String> that the tank's save data will be updated to
+	 * @param command directive the server will perform
+	 * @param mobileXMLSavePath path to the xml file to send
 	 */
 	private static void writeToServerData(String tankId, String command, String mobileXMLSavePath) {
 		try {
@@ -156,12 +157,22 @@ public class FishyClient {
 		return;
 	}
 	
+	/**
+	 * Updates the mobile device server data with the xml given according to id 
+	 * @param tankId the TankID of the tank that needs updating
+	 * @param mobileXMLSavePath path to the xml file to send
+	 */
 	public static void writeToMobileData(String tankId, String mobileXMLSavePath) {
 		System.out.println("Sending mobile data...");
 		FishyClient.writeToServerData(tankId, "recieving_mobile", mobileXMLSavePath);
 	}
-	public static void writeToPiData(String tankId, String mobileXMLSavePath) {
+	/**
+	 * Updates the pi device server data with the xml given according to id 
+	 * @param tankId the TankID of the tank that needs updating
+	 * @param mobileXMLSavePath path to the xml file to send
+	 */
+	public static void writeToPiData(String tankId, String piXMLSavePath) {
 		System.out.println("Sending pi data...");
-		FishyClient.writeToServerData(tankId, "recieving_pi", mobileXMLSavePath);
+		FishyClient.writeToServerData(tankId, "recieving_pi", piXMLSavePath);
 	}
 }
