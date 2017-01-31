@@ -65,34 +65,36 @@ public class FishyServerRunnable implements Runnable {
 		        	String xml_filename_mobile = String.format("/var/www/vanchaubui.com/public_html/fish_tanks/%s_mobile.xml", tankID);
 			        if (readOrWrite.equals("recieving_pi")) {
 			        	serverState = SERVER_STATE.CONNECTED_WRITING;
-			        	
-			        	System.out.println("receiving pi data...");
-			        	Document document = (Document) inFromClient.readObject();
-			        	PrintWriter writer = new PrintWriter(xml_filename_pi, "UTF-8");
-			        	StreamResult result = new StreamResult(writer);
-			        	TransformerFactory tFactory = TransformerFactory.newInstance();
-	        		    Transformer transformer = tFactory.newTransformer();
-
-	        		    DOMSource source = new DOMSource(document);
-	        		    transformer.transform(source, result);
-	        		    writer.close();
+			        	synchronized(this) {
+				        	System.out.println("receiving pi data...");
+				        	Document document = (Document) inFromClient.readObject();
+				        	PrintWriter writer = new PrintWriter(xml_filename_pi, "UTF-8");
+				        	StreamResult result = new StreamResult(writer);
+				        	TransformerFactory tFactory = TransformerFactory.newInstance();
+		        		    Transformer transformer = tFactory.newTransformer();
+	
+		        		    DOMSource source = new DOMSource(document);
+		        		    transformer.transform(source, result);
+		        		    writer.close();
+			        	}
 	        		    serverState = SERVER_STATE.ENDED;
 	        		    outToClient.writeObject("");
 	        		    System.out.println("Done recieving_pi");
 	        		    
 			        } else if (readOrWrite.equals("recieving_mobile")) {
 			        	serverState = SERVER_STATE.CONNECTED_WRITING;
-
-			        	System.out.println("receiving mobile data...");
-			        	Document document = (Document) inFromClient.readObject();
-			        	PrintWriter writer = new PrintWriter(xml_filename_mobile, "UTF-8");
-			        	StreamResult result = new StreamResult(writer);
-			        	TransformerFactory tFactory = TransformerFactory.newInstance();
-	        		    Transformer transformer = tFactory.newTransformer();
-
-	        		    DOMSource source = new DOMSource(document);
-	        		    transformer.transform(source, result);
-	        		    writer.close();
+			        	synchronized(this) {
+				        	System.out.println("receiving mobile data...");
+				        	Document document = (Document) inFromClient.readObject();
+				        	PrintWriter writer = new PrintWriter(xml_filename_mobile, "UTF-8");
+				        	StreamResult result = new StreamResult(writer);
+				        	TransformerFactory tFactory = TransformerFactory.newInstance();
+		        		    Transformer transformer = tFactory.newTransformer();
+	
+		        		    DOMSource source = new DOMSource(document);
+		        		    transformer.transform(source, result);
+		        		    writer.close();
+			        	}
 	        		    serverState = SERVER_STATE.ENDED;
 	        		    outToClient.writeObject("");
 	        		    System.out.println("Done recieving_mobile");
