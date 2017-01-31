@@ -4,10 +4,10 @@
 	
 ## Windows
 ### Prerequisites:
-		- JRE set to path; i.e. <JRE-PATH>/bin/server
-		- JDK set to path; i.e. <JDK-DIR-PATH>/bin
-		- Must include <JDK-DIR>/include and <JDK-DIR>/include/win32 when compiling
-		- Must add <JDK-DIR>/lib/jvm.lib to the linker
+	- JRE set to path; i.e. <JRE-PATH>/bin/server
+	- JDK set to path; i.e. <JDK-DIR-PATH>/bin
+	- Must include <JDK-DIR>/include and <JDK-DIR>/include/win32 when compiling
+	- Must add <JDK-DIR>/lib/jvm.lib to the linker
 Detailed guide: https://www.codeproject.com/Articles/993067/Calling-Java-from-Cplusplus-with-JNI
 	
 ## Linux set up
