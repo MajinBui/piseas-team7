@@ -18,7 +18,13 @@
         <activity android:name=".WaterLevelManagementActivity" />
         <activity android:name=".WaterAnalysisManagementActivity" />
 
-        <activity android:name=".TemperatureManagementActivity" />
+        <activity
+            android:name=".TemperatureManagementActivity"
+            android:parentActivityName=".TankMainPageActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".TankMainPageActivity"/>
+        </activity>
         <activity android:name=".TemperatureUpdateActivity" />
 
         <activity android:name=".FeedingManagementActivity" />
