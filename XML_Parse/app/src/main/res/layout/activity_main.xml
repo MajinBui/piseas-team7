@@ -129,6 +129,23 @@
             android:layout_height="wrap_content"
             android:textStyle="bold"/>
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="mobile code - "/>
+        <TextView
+            android:id="@+id/tv_mobilecode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -179,19 +196,19 @@
             android:layout_height="80dp"
             android:id="@+id/et_size"/>
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="description - "/>
-        <EditText
-            android:layout_width="400dp"
-            android:layout_height="80dp"
-            android:id="@+id/et_description"/>
-    </LinearLayout>
+    <!--<LinearLayout-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="horizontal">-->
+        <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="description - "/>-->
+        <!--<EditText-->
+            <!--android:layout_width="400dp"-->
+            <!--android:layout_height="80dp"-->
+            <!--android:id="@+id/et_description"/>-->
+    <!--</LinearLayout>-->
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

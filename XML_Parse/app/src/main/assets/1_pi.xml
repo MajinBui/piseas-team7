@@ -12,7 +12,7 @@
     </details>
   </Settings>
   <Feed>
-    <details feed="false" autoFeed="true"/>
+    <details feed="false" autFeed="true"/>
   </Feed>
   <FeedSchedule>
     <details time="1350" Mon="true" Tue="false" Wed="true" Thu="false" Fri="true" Sat="false" Sun="false"/>

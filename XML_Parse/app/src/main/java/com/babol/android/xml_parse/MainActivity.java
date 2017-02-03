@@ -1,26 +1,34 @@
 package com.babol.android.xml_parse;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.util.Xml;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
+import org.xmlpull.v1.XmlSerializer;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 public class MainActivity extends Activity {
+
+    private int tank_id = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +50,7 @@ public class MainActivity extends Activity {
 
         try{
             XmlPullParserHandler parser = new XmlPullParserHandler(this);
-            InputStream is = getAssets().open("Data.xml");
+            InputStream is = getAssets().open(tank_id + "_mobile.xml");
 
             tv_code.setText(parser.getCode(is));
             tv_password.setText(parser.getPassword(is));
@@ -55,6 +63,12 @@ public class MainActivity extends Activity {
             tv_conductivity.setText(parser.getConductivity(is));
 
 
+
+            InputStream isis = getAssets().open(tank_id + "_pi.xml");
+
+            TextView tv_codeMobile = (TextView) findViewById(R.id.tv_mobilecode);
+            tv_codeMobile.setText(parser.getMobileCode(isis));
+
             is.close();
         } catch (IOException e) {e.printStackTrace();}
 
@@ -65,11 +79,13 @@ public class MainActivity extends Activity {
         TextView et_code = (TextView) findViewById(R.id.et_code);
         TextView et_password = (TextView) findViewById(R.id.et_password);
         TextView et_size = (TextView) findViewById(R.id.et_size);
-        TextView et_description = (TextView) findViewById(R.id.et_description);
+        //TextView et_description = (TextView) findViewById(R.id.et_description);
 
         XmlPullParserHandler parser = new XmlPullParserHandler(this);
 
-        parser.setCode("TEST");
+        parser.setpassword("TEST", tank_id);
+
+        //createXML();
 
     }
 
@@ -80,6 +96,41 @@ public class MainActivity extends Activity {
         return true;
     }
 
+    public void createXML() throws IOException {
+
+        File newXml = new File(getFilesDir() +"/file.txt");
+
+        String filename = "file.txt";
+
+        FileOutputStream fos;
+
+        fos = openFileOutput(filename, this.MODE_PRIVATE);
+
+
+        XmlSerializer serializer = Xml.newSerializer();
+        serializer.setOutput(fos, "UTF-8");
+        serializer.startDocument(null, Boolean.valueOf(true));
+        serializer.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
+
+        serializer.startTag(null, "root");
+
+        for(int j = 0 ; j < 3 ; j++)
+        {
+
+            serializer.startTag(null, "record");
+
+            serializer.text("Value" + j);
+
+            serializer.endTag(null, "record");
+        }
+        serializer.endDocument();
+
+        serializer.flush();
+
+        fos.close();
+
+        Toast.makeText(this, "I am done!", Toast.LENGTH_LONG).show();
+    }
 
 
 
