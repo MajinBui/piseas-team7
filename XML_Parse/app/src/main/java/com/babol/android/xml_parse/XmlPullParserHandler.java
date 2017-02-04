@@ -204,9 +204,9 @@ public class XmlPullParserHandler {
         return parsePi(is, "Feed", 1);
     }
 
-    // FeedSchedule
+    // FeedSchedule     - needs to be done
 
-    // LightSchedule
+    // LightSchedule    - needs to be done aswell
 
     public String getPiLight(InputStream is){
         // Parse from tag "Light", attribute 0
