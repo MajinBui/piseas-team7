@@ -3,7 +3,10 @@ package com.babol.android.xml_parse;
 import android.content.Context;
 import android.util.Xml;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -12,12 +15,18 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import java.io.BufferedReader;
+import java.io.DataInput;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import org.xmlpull.v1.XmlSerializer;
 
+import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -33,6 +42,12 @@ import org.xmlpull.v1.XmlPullParserFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 
 public class XmlPullParserHandler {
@@ -45,7 +60,7 @@ public class XmlPullParserHandler {
 
     // Retrieve
 
-    private String parse(InputStream is, String TAG_NAME, int attribute){
+    private String parseMobile(InputStream is, String TAG_NAME, int attribute){
         String code = "-";
         try{
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
@@ -73,16 +88,55 @@ public class XmlPullParserHandler {
         return code;
     }
 
+    public String getCode(InputStream is){
+        // Parse from tag "Tank", attribute 0
+        return parseMobile(is, "Tank", 0);
+    }
 
-    // TEST RETRIEVING FROM 1_MOBILE.XML FILE, RETRIEVING WORKKS ---------------------------------------
-    private String parseMobile(InputStream is, String TAG_NAME, int attribute){
+    public String getPassword(InputStream is){
+        // Parse from tag "Tank", attribute 1
+        return parseMobile(is, "Tank", 1);
+    }
+
+    public String getDateSent(InputStream is){
+        // Parse from tag "Date", attribute 0
+        return parseMobile(is, "Date", 0);
+    }
+
+    public String getTotalFeeds(InputStream is){
+        // Parse from tag "Feed", attribute 0
+        return parseMobile(is, "Feed", 0);
+    }
+
+    public String getFeedTime(InputStream is){
+        // Parse from tag "Feed", attribute 1
+        return parseMobile(is, "Feed", 1);
+    }
+
+    public String getCurrentTemp(InputStream is){
+        // Parse from tag "Temperature", attribute 0
+        return parseMobile(is, "Temperature", 0);
+    }
+
+    public String getPH(InputStream is){
+        // Parse from tag "Sensor", attribute 0
+        return parseMobile(is, "Sensor", 0);
+    }
+
+    public String getConductivity(InputStream is){
+        // Parse from tag "Sensor", attribute 1
+        return parseMobile(is, "Sensor", 1);
+    }
+
+    // Testing purposes only
+    private String parsePi(InputStream is, String TAG_NAME, int attribute){
         String code = "-";
         try{
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
             XmlPullParser parser = factory.newPullParser();
 
-            is.reset();
+            //is.reset();
 
             parser.setInput(is, null);
 
@@ -92,10 +146,8 @@ public class XmlPullParserHandler {
                 if (event == XmlPullParser.START_TAG) {
                     String tag = parser.getName();
                     if (TAG_NAME.equals(tag)) {
-                        event = parser.nextTag();
                         parser.nextTag();
                         tag = parser.getName();
-                        //code = parser.getAttributeName(0);
                         if(tag.equals("details"))
                             code = parser.getAttributeValue(attribute);
                     }
@@ -107,228 +159,172 @@ public class XmlPullParserHandler {
         return code;
     }
 
-    public String getMobileCode(InputStream is){
+    public String getPiCode(InputStream is){
         // Parse from tag "Tank", attribute 0
-        return parseMobile(is, "Tank", 0);
+        return parsePi(is, "Tank", 0);
     }
 
-    public String getCode(InputStream is){
-        // Parse from tag "Tank", attribute 0
-        return parse(is, "Tank", 0);
-    }
-
-    public String getPassword(InputStream is){
+    public String getPiPassword(InputStream is){
         // Parse from tag "Tank", attribute 1
-        return parse(is, "Tank", 1);
+        return parsePi(is, "Tank", 1);
     }
 
-    public String getDateSent(InputStream is){
+    public String getPiSize(InputStream is){
+        // Parse from tag "Tank", attribute 2
+        return parsePi(is, "Tank", 2);
+    }
+
+    public String getPiDescription(InputStream is){
+        // Parse from tag "Tank", attribute 3
+        return parsePi(is, "Tank", 3);
+    }
+
+    public String getPiDateSent(InputStream is){
         // Parse from tag "Date", attribute 0
-        return parse(is, "Date", 0);
+        return parsePi(is, "Date", 0);
     }
 
-    public String getTotalFeeds(InputStream is){
+    public String getPiPush(InputStream is){
+        // Parse from tag "Settings", attribute 0
+        return parsePi(is, "Settings", 0);
+    }
+
+    public String getPiMain(InputStream is){
+        // Parse from tag "Settings", attribute 1
+        return parsePi(is, "Settings", 1);
+    }
+
+    public String getPiFeed(InputStream is){
         // Parse from tag "Feed", attribute 0
-        return parse(is, "Feed", 0);
+        return parsePi(is, "Feed", 0);
     }
 
-    public String getFeedTime(InputStream is){
+    public String getPiAutoFeed(InputStream is){
         // Parse from tag "Feed", attribute 1
-        return parse(is, "Feed", 1);
+        return parsePi(is, "Feed", 1);
     }
 
-    public String getCurrentTemp(InputStream is){
+    // FeedSchedule
+
+    // LightSchedule
+
+    public String getPiLight(InputStream is){
+        // Parse from tag "Light", attribute 0
+        return parsePi(is, "Light", 0);
+    }
+
+    public String getPiAutoLight(InputStream is){
+        // Parse from tag "Light", attribute 1
+        return parsePi(is, "Light", 1);
+    }
+
+    public String getPiMin(InputStream is){
         // Parse from tag "Temperature", attribute 0
-        return parse(is, "Temperature", 0);
+        return parsePi(is, "Temperature", 0);
     }
 
-    public String getPH(InputStream is){
+    public String getPiMax(InputStream is){
+        // Parse from tag "Temperature", attribute 1
+        return parsePi(is, "Temperature", 1);
+    }
+
+    public String getPiAutoTemp(InputStream is){
+        // Parse from tag "Temperature", attribute 2
+        return parsePi(is, "Temperature", 2);
+    }
+
+    public String getPiManualFan(InputStream is){
+        // Parse from tag "Temperature", attribute 3
+        return parsePi(is, "Temperature", 3);
+    }
+
+    public String getPiManualHeater(InputStream is){
+        // Parse from tag "Temperature", attribute 4
+        return parsePi(is, "Temperature", 4);
+    }
+
+    public String getPiDrain(InputStream is){
+        // Parse from tag "Pump", attribute 0
+        return parsePi(is, "Pump", 0);
+    }
+
+    public String getPiFill(InputStream is){
+        // Parse from tag "Pump", attribute 1
+        return parsePi(is, "Pump", 1);
+    }
+
+    public String getPiAutoWaterChange(InputStream is){
+        // Parse from tag "Pump", attribute 2
+        return parsePi(is, "Pump", 2);
+    }
+
+    public String getPiPHMin(InputStream is){
         // Parse from tag "Sensor", attribute 0
-        return parse(is, "Sensor", 0);
+        return parsePi(is, "Sensor", 0);
     }
 
-    public String getConductivity(InputStream is){
+    public String getPiPHMax(InputStream is){
         // Parse from tag "Sensor", attribute 1
-        return parse(is, "Sensor", 1);
+        return parsePi(is, "Sensor", 1);
     }
 
     // Update
-
     public void write(String tag, String attribute, String value, int id) {
 
-        String filepath = id + "_mobile.xml";
-
+        String filepath = id + "_pi.xml";
         File newXml = new File(context.getFilesDir() + "/" + filepath);
-
 
         // Check to see if file exists, if file does not exist, create new
         if(!newXml.isFile())
-            createXml(filepath);
+            createXml(context.getFilesDir() + filepath);
 
         try {
-
+            // Modify XML using DOM
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            Document doc = docBuilder.parse(context.openFileInput(filepath));
 
+            // Search for tag and insert into a node object
+            NodeList nodes = doc.getElementsByTagName(tag);
+            Node detail = nodes.item(0);
 
-            // CRASHES AFTER HERE - SAXException error, unexpected end of document
-            //Document doc = docBuilder.parse(new InputSource(new StringReader("1_mobile.xml")));
-            Document doc = docBuilder.parse(context.openFileInput("1_mobile.xml"));
+            // Get all child tags of our parent
+            NodeList details = detail.getChildNodes();
+            for(int i = 0; i < details.getLength(); i++){
+                Node item = details.item(i);
 
+                // Get all the attributes of the details tag
+                NamedNodeMap detailNodes = item.getAttributes();
+                for(int z = 0; z < detailNodes.getLength(); z++){
+                    Attr attr = (Attr) detailNodes.item(z);
+                    String attrV = attr.getValue(); // ------------testing
+                    if(attr.getNodeName().equals(attribute))
+                        attr.setNodeValue(value);
+                    String attrV2 = attr.getValue(); // ------------testing
 
-            Node PiSeas = doc.getFirstChild();
-
-            Node xmlTag = doc.getElementsByTagName(tag).item(0);
-
-            NodeList list = xmlTag.getChildNodes();
-            for (int i = 0; i < list.getLength(); i++) {
-
-                Node detail = list.item(i);
-
-                // get the salary element, and update the value
-                if (attribute.equals(detail.getNodeName())) {
-                    detail.setTextContent(value);
+                    int zzz = 4;    // -----------------------------testing
+                    zzz++;          // -----------------------------testing
                 }
             }
 
+            // Save all changes
+            TransformerFactory tranceFactory = TransformerFactory.newInstance();
+            Transformer trance = tranceFactory.newTransformer();
+            DOMSource source = new DOMSource(doc);
+            StreamResult result = new StreamResult(context.openFileOutput(filepath, context.MODE_PRIVATE));
+            trance.transform(source, result);
+
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
-
         } catch (SAXException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-
-    }
-
-    // Create new xml file with default values
-    private void createXml(String filename){
-        try {
-            FileOutputStream myFile = context.openFileOutput(filename, context.MODE_PRIVATE);
-
-            XmlSerializer xmlSerializer = Xml.newSerializer();
-            StringWriter writer = new StringWriter();
-
-            // Initial data to fill into new XML file - temporary
-            String code = "abc123";
-            String password = "helloworld";
-            int size = 20;
-            String description = "my fishy home";
-            String dateSent = "0045-02-03-2017";
-            boolean push = true;
-            int main = 1;
-            String log = "This is the log.";
-            boolean feed = false;
-            boolean autoFeed = false;
-            boolean light = false;
-            boolean autoLight = false;
-            int minTemp = 16;
-            int maxTemp = 22;
-            boolean autoTemp = false;
-            boolean manualFan = false;
-            boolean manualHeater = false;
-            boolean drain = false;
-            boolean fill = false;
-            boolean autoWaterChange = true;
-            float pHMin = 1;
-            float pHMax = 9;
-
-            xmlSerializer.setOutput(writer);
-            // start document
-            xmlSerializer.startDocument("UTF-8", true);
-            // open tags and insert attributes into each individual
-            xmlSerializer.startTag("", "Piseas");
-
-            // Tank
-            xmlSerializer.startTag("", "Tank");
-            xmlSerializer.startTag("", "details");
-                xmlSerializer.attribute("", "code", code);
-                xmlSerializer.attribute("", "password", password);
-                xmlSerializer.attribute("", "size", String.valueOf(size));
-                xmlSerializer.attribute("", "description", description);
-            xmlSerializer.endTag("", "details");
-            xmlSerializer.endTag("", "Tank");
-
-            // Date
-            xmlSerializer.startTag("", "Date");
-            xmlSerializer.startTag("", "details");
-                xmlSerializer.attribute("", "dateSent", dateSent);
-            xmlSerializer.endTag("", "details");
-            xmlSerializer.endTag("", "Date");
-
-            // Settings
-            xmlSerializer.startTag("", "Settings");
-            xmlSerializer.startTag("", "details");
-                xmlSerializer.attribute("", "push", String.valueOf(push));
-                xmlSerializer.attribute("", "main", String.valueOf(main));
-            xmlSerializer.endTag("", "details");
-            xmlSerializer.endTag("", "Settings");
-
-            // Feed
-            xmlSerializer.startTag("", "Feed");
-            xmlSerializer.startTag("", "details");
-                xmlSerializer.attribute("", "feed", String.valueOf(feed));
-                xmlSerializer.attribute("", "autoFeed", String.valueOf(autoFeed));
-            xmlSerializer.endTag("", "details");
-            xmlSerializer.endTag("", "Feed");
-
-            // FeedSchedule
-            xmlSerializer.startTag("", "FeedSchedule");
-            xmlSerializer.endTag("", "FeedSchedule");
-
-            // Light
-            xmlSerializer.startTag("", "Light");
-            xmlSerializer.startTag("", "details");
-                xmlSerializer.attribute("", "light", String.valueOf(light));
-                xmlSerializer.attribute("", "autoLight", String.valueOf(autoLight));
-            xmlSerializer.endTag("", "details");
-            xmlSerializer.endTag("", "Light");
-
-            // LightSchedule
-            xmlSerializer.startTag("", "LightSchedule");
-            xmlSerializer.endTag("", "LightSchedule");
-
-            // Temperature
-            xmlSerializer.startTag("", "Temperature");
-            xmlSerializer.startTag("", "details");
-                xmlSerializer.attribute("", "min", String.valueOf(minTemp));
-                xmlSerializer.attribute("", "max", String.valueOf(maxTemp));
-                xmlSerializer.attribute("", "autoTemp", String.valueOf(autoTemp));
-                xmlSerializer.attribute("", "manualFan", String.valueOf(manualFan));
-                xmlSerializer.attribute("", "manualHeater", String.valueOf(manualHeater));
-            xmlSerializer.endTag("", "details");
-            xmlSerializer.endTag("", "Temperature");
-
-            // Pump
-            xmlSerializer.startTag("", "Pump");
-            xmlSerializer.startTag("", "details");
-                xmlSerializer.attribute("", "drain", String.valueOf(drain));
-                xmlSerializer.attribute("", "fill", String.valueOf(fill));
-                xmlSerializer.attribute("", "autoWaterChange", String.valueOf(autoWaterChange));
-            xmlSerializer.endTag("", "details");
-            xmlSerializer.endTag("", "Pump");
-
-            // Sensor
-            xmlSerializer.startTag("", "Sensor");
-            xmlSerializer.startTag("", "details");
-                xmlSerializer.attribute("", "pHmin", String.valueOf(pHMin));
-                xmlSerializer.attribute("", "pHmax", String.valueOf(pHMax));
-            xmlSerializer.endTag("", "details");
-            xmlSerializer.endTag("", "Sensor");
-
-            xmlSerializer.endTag("", "Piseas");
-
-            xmlSerializer.endDocument();
-
-            writer.toString();
-
-
-        } catch (IOException e) {
+        } catch (TransformerConfigurationException e) {
+            e.printStackTrace();
+        } catch (TransformerException e) {
             e.printStackTrace();
         }
-
-        int z = 2;
     }
 
     public void setCode(String value, int id){
@@ -418,6 +414,134 @@ public class XmlPullParserHandler {
         write("Sensor", "pHmax", value, id);
     }
 
+    // Create new xml file with default values
+    private void createXml(String filename){
+        try {
+            FileOutputStream myFile = context.openFileOutput(filename, context.MODE_PRIVATE);
 
+            XmlSerializer xmlSerializer = Xml.newSerializer();
+            StringWriter writer = new StringWriter();
+
+            // Initial data to fill into new XML file - temporary
+            String code = "abc123";
+            String password = "helloworld";
+            String size = "20";
+            String description = "my fishy home";
+            String dateSent = "0045-02-03-2017";
+            String push = "true";
+            String main = "1";
+            String log = "This is the log.";
+            String feed = "false";
+            String autoFeed = "false";
+            String light = "false";
+            String autoLight = "false";
+            String minTemp = "16";
+            String maxTemp = "22";
+            String autoTemp = "false";
+            String manualFan = "false";
+            String manualHeater = "false";
+            String drain = "false";
+            String fill = "false";
+            String autoWaterChange = "true";
+            String pHMin = "1";
+            String pHMax = "9";
+
+            xmlSerializer.setOutput(writer);
+            // start document
+            xmlSerializer.startDocument("UTF-8", true);
+            // open tags and insert attributes into each individual
+            xmlSerializer.startTag("", "Piseas");
+
+            // Tank
+            xmlSerializer.startTag("", "Tank");
+            xmlSerializer.startTag("", "details");
+            xmlSerializer.attribute("", "code", code);
+            xmlSerializer.attribute("", "password", password);
+            xmlSerializer.attribute("", "size", size);
+            xmlSerializer.attribute("", "description", description);
+            xmlSerializer.endTag("", "details");
+            xmlSerializer.endTag("", "Tank");
+
+            // Date
+            xmlSerializer.startTag("", "Date");
+            xmlSerializer.startTag("", "details");
+            xmlSerializer.attribute("", "dateSent", dateSent);
+            xmlSerializer.endTag("", "details");
+            xmlSerializer.endTag("", "Date");
+
+            // Settings
+            xmlSerializer.startTag("", "Settings");
+            xmlSerializer.startTag("", "details");
+            xmlSerializer.attribute("", "push", push);
+            xmlSerializer.attribute("", "main", main);
+            xmlSerializer.endTag("", "details");
+            xmlSerializer.endTag("", "Settings");
+
+            // Feed
+            xmlSerializer.startTag("", "Feed");
+            xmlSerializer.startTag("", "details");
+            xmlSerializer.attribute("", "feed", feed);
+            xmlSerializer.attribute("", "autoFeed", autoFeed);
+            xmlSerializer.endTag("", "details");
+            xmlSerializer.endTag("", "Feed");
+
+            // FeedSchedule
+            xmlSerializer.startTag("", "FeedSchedule");
+            xmlSerializer.endTag("", "FeedSchedule");
+
+            // Light
+            xmlSerializer.startTag("", "Light");
+            xmlSerializer.startTag("", "details");
+            xmlSerializer.attribute("", "light", light);
+            xmlSerializer.attribute("", "autoLight", autoLight);
+            xmlSerializer.endTag("", "details");
+            xmlSerializer.endTag("", "Light");
+
+            // LightSchedule
+            xmlSerializer.startTag("", "LightSchedule");
+            xmlSerializer.endTag("", "LightSchedule");
+
+            // Temperature
+            xmlSerializer.startTag("", "Temperature");
+            xmlSerializer.startTag("", "details");
+            xmlSerializer.attribute("", "min", minTemp);
+            xmlSerializer.attribute("", "max", maxTemp);
+            xmlSerializer.attribute("", "autoTemp", autoTemp);
+            xmlSerializer.attribute("", "manualFan", manualFan);
+            xmlSerializer.attribute("", "manualHeater", manualHeater);
+            xmlSerializer.endTag("", "details");
+            xmlSerializer.endTag("", "Temperature");
+
+            // Pump
+            xmlSerializer.startTag("", "Pump");
+            xmlSerializer.startTag("", "details");
+            xmlSerializer.attribute("", "drain", drain);
+            xmlSerializer.attribute("", "fill", fill);
+            xmlSerializer.attribute("", "autoWaterChange", autoWaterChange);
+            xmlSerializer.endTag("", "details");
+            xmlSerializer.endTag("", "Pump");
+
+            // Sensor
+            xmlSerializer.startTag("", "Sensor");
+            xmlSerializer.startTag("", "details");
+            xmlSerializer.attribute("", "pHmin", pHMin);
+            xmlSerializer.attribute("", "pHmax", pHMax);
+            xmlSerializer.endTag("", "details");
+            xmlSerializer.endTag("", "Sensor");
+
+            xmlSerializer.endTag("", "Piseas");
+
+            xmlSerializer.endDocument();
+
+            writer.toString();
+            myFile.write(writer.toString().getBytes());
+
+            // always remember to close -_-
+            writer.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

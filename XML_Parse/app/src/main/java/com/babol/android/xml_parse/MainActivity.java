@@ -1,10 +1,15 @@
 package com.babol.android.xml_parse;
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.List;
 
 import android.os.Bundle;
@@ -50,7 +55,7 @@ public class MainActivity extends Activity {
 
         try{
             XmlPullParserHandler parser = new XmlPullParserHandler(this);
-            InputStream is = getAssets().open(tank_id + "_mobile.xml");
+            InputStream is = getAssets().open("1_mobile.xml");
 
             tv_code.setText(parser.getCode(is));
             tv_password.setText(parser.getPassword(is));
@@ -63,29 +68,24 @@ public class MainActivity extends Activity {
             tv_conductivity.setText(parser.getConductivity(is));
 
 
+            File newXml = new File(getFilesDir() + "/" + tank_id + "_pi.xml");
 
-            InputStream isis = getAssets().open(tank_id + "_pi.xml");
-
+            FileInputStream isis = new FileInputStream(newXml);
             TextView tv_codeMobile = (TextView) findViewById(R.id.tv_mobilecode);
-            tv_codeMobile.setText(parser.getMobileCode(isis));
+            tv_codeMobile.setText(parser.getPiCode(isis));
 
+            isis.close();
             is.close();
         } catch (IOException e) {e.printStackTrace();}
-
-
     }
 
     public void onPiseas(View view) throws IOException{
         TextView et_code = (TextView) findViewById(R.id.et_code);
         TextView et_password = (TextView) findViewById(R.id.et_password);
         TextView et_size = (TextView) findViewById(R.id.et_size);
-        //TextView et_description = (TextView) findViewById(R.id.et_description);
-
         XmlPullParserHandler parser = new XmlPullParserHandler(this);
 
-        parser.setpassword("TEST", tank_id);
-
-        //createXML();
+        parser.setCode(et_code.getText().toString(), tank_id);
 
     }
 
@@ -95,43 +95,5 @@ public class MainActivity extends Activity {
         //getMenuInflater().inflate(R.menu.activity_main, menu);
         return true;
     }
-
-    public void createXML() throws IOException {
-
-        File newXml = new File(getFilesDir() +"/file.txt");
-
-        String filename = "file.txt";
-
-        FileOutputStream fos;
-
-        fos = openFileOutput(filename, this.MODE_PRIVATE);
-
-
-        XmlSerializer serializer = Xml.newSerializer();
-        serializer.setOutput(fos, "UTF-8");
-        serializer.startDocument(null, Boolean.valueOf(true));
-        serializer.setFeature("http://xmlpull.org/v1/doc/features.html#indent-output", true);
-
-        serializer.startTag(null, "root");
-
-        for(int j = 0 ; j < 3 ; j++)
-        {
-
-            serializer.startTag(null, "record");
-
-            serializer.text("Value" + j);
-
-            serializer.endTag(null, "record");
-        }
-        serializer.endDocument();
-
-        serializer.flush();
-
-        fos.close();
-
-        Toast.makeText(this, "I am done!", Toast.LENGTH_LONG).show();
-    }
-
-
 
 }

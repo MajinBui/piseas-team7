@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Piseas>
   <Tank>
-    <details code="abc123" password="helloworld" size="20" description="my fishy home"/>
+    <details code="xyz789" password="helloworld" size="20" description="my fishy home"/>
   </Tank>
   <Date>
     <details dateSent="1755-01-27-2017"/>
@@ -12,7 +12,7 @@
     </details>
   </Settings>
   <Feed>
-    <details feed="false" autFeed="true"/>
+    <details feed="false" autoFeed="true"/>
   </Feed>
   <FeedSchedule>
     <details time="1350" Mon="true" Tue="false" Wed="true" Thu="false" Fri="true" Sat="false" Sun="false"/>
