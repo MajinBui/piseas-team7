@@ -1,21 +1,21 @@
 # eclipse specific git ignore
-PiSeasNetwork/*.pydevproject
-PiSeasNetwork/.project
-PiSeasNetwork/.metadata
-PiSeasNetwork/bin/**
-PiSeasNetwork/tmp/**
-PiSeasNetwork/tmp/**/*
-PiSeasNetwork/*.tmp
-PiSeasNetwork/*.bak
-PiSeasNetwork/*.swp
-PiSeasNetwork/*~.nib
-PiSeasNetwork/local.properties
-PiSeasNetwork/.classpath
-PiSeasNetwork/.settings/
-PiSeasNetwork/.loadpath
+PiSeas-Network/*.pydevproject
+PiSeas-Network/.project
+PiSeas-Network/.metadata
+PiSeas-Network/bin/**
+PiSeas-Network/tmp/**
+PiSeas-Network/tmp/**/*
+PiSeas-Network/*.tmp
+PiSeas-Network/*.bak
+PiSeas-Network/*.swp
+PiSeas-Network/*~.nib
+PiSeas-Network/local.properties
+PiSeas-Network/.classpath
+PiSeas-Network/.settings/
+PiSeas-Network/.loadpath
 
 # External tool builders
-PiSeasNetwork/.externalToolBuilders/
+PiSeas-Network/.externalToolBuilders/
 
 # Locally stored "Eclipse launch configurations"
-PiSeasNetwork/*.launch
+PiSeas-Network/*.launch

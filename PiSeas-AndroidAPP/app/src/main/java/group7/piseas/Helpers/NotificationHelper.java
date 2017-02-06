@@ -5,6 +5,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
@@ -18,9 +21,15 @@ public class NotificationHelper {
     public NotificationHelper(Context context, Class cls, String title, String message) {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
-                        .setSmallIcon(R.drawable.icon)
                         .setContentTitle(title)
-                        .setContentText(message);
+                        .setContentText(message)
+                        .setAutoCancel(true);
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mBuilder.setSmallIcon(R.drawable.ic_stat_onesignal_default);
+            mBuilder.setColor(0xff123456);
+        } else {
+            mBuilder.setSmallIcon(R.drawable.icon);
+        }
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(context, cls);
 

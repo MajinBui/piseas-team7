@@ -30,7 +30,11 @@ public class TankMainPageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tank_main_page);
         index = getIntent().getIntExtra("id", -1);
         TextView tv = (TextView) findViewById(R.id.tankName);
-        tv.setText("Tank: " + TankListActivity.tankList.get(index).getName());
+        try {
+            tv.setText("Tank: " + TankListActivity.tankList.get(index).getName());
+        } catch (IndexOutOfBoundsException e) {
+            tv.setText("Tank: " + "error");
+        }
         //Creation of notifications
         temperatureTextView = (TextView) findViewById(R.id.temperatureValueTextView);
         pHTextView = (TextView) findViewById(R.id.pHValueTextView);

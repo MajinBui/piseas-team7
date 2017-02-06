@@ -1,0 +1,64 @@
+Temperature Sensor :
+
+    initDS18B20();
+    - Desc   : initializes the temperature sensor. Using the predefined pin number.
+    - Param  : Void.
+    - Return : Void.
+    
+    readtemperature();
+    - Desc   : returns the current temperature reading.
+    - Param  : Void.
+    - Return : float; current temperature.
+    
+Water Level Sensor :
+
+    readwaterlevel(int);
+    - Desc   : read water level from sensor and return the value.
+    - Param  : int; which water level sensor you want to check (1 or 2).
+    - Return : int; 1 or 0 based on the status of the sensor (in water or not).
+    
+Feeder :
+
+    feedfish();
+    - Desc   : rotate the feeder once and set feeding flag to fed.
+    - Param  : Void.
+    - Return : Void.
+    
+    readyforfeding();
+    - Desc   : Resets the feeding flag.
+    - Param  : Void.
+    - Return : Void.
+    
+pH Sensor :
+    calibratepH(int, int, int);
+    - Desc   : sets the measured pH values in mV (millivolts). (control points for the sensor.)
+    - Param  : int, int, int; low, mid, high pH values in mV (pH values are 4, 7, 10 for these arguments).
+    - Return : Void;
+    
+    readpH();
+    - Desc   : get the current pH reading in mV;
+    - Param  : Void.
+    - Return : int; pH in mV;
+    
+    pHConversion(int);
+    - Desc   : convert pH (mV) to pH scale (0-14).
+    - Param  : int; pH in mV.
+    - Return : float; pH in pH scale.
+
+Conductivity Sensor :
+    
+    calibrateEC(float, float, float, float);
+    - Desc   : sets the measured resistance and the calibration value (uS/cm) microsiemens/centimetre.
+    - Param  : float, float, float, float; calibration value 1, measured resistance 1, calibration value 2, measured resistance 2.
+    - Return : Void.
+    
+    readResistanceEC();
+    - Desc   : get the conductivity reading in uS/cm.
+    - Param  : Void.
+    - Return : float; resistance in uS/cm.
+
+    ECConversion(unsigned long);
+    - Desc   : convert the resistance from uS/cm to omhs.
+    - Param  : unsigned long; resistance in uS/cm.
+    - Return : float; resistance in omhs.
+    
