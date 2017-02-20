@@ -8,6 +8,10 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -29,12 +33,16 @@ public class FishyServerRunnable implements Runnable {
 	private ObjectInputStream inFromClient;
 	private ObjectOutputStream outToClient;
 	private Socket clientSocket;
+	private static HashMap<String, Boolean> tankIds;
+	private static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+	private static final Calendar calendar = Calendar.getInstance();
 	
 	public SERVER_STATE serverState;
 	private final static String PASSCODE = "xBE3GnsotxlFSwb9sg7t";
 	public FishyServerRunnable( Socket clientSocket ) {
 		this.clientSocket = clientSocket;
 		serverState = SERVER_STATE.PROCESS_LOGIN;
+		tankIds = new HashMap<String, Boolean>();
 	}
 	public enum SERVER_STATE {
 		PROCESS_LOGIN, CONNECTED, CONNECTED_READING, CONNECTED_WRITING, ENDED
@@ -60,9 +68,16 @@ public class FishyServerRunnable implements Runnable {
 				} else if (serverState == SERVER_STATE.CONNECTED) {
 			        //	Read the read or write option and then the tankId to modify
 			        String readOrWrite = (String)inFromClient.readObject();
-			        String tankID = (String)inFromClient.readObject();
-			        String xml_filename_pi = String.format("/var/www/vanchaubui.com/public_html/fish_tanks/%s_pi.xml", tankID);
-		        	String xml_filename_mobile = String.format("/var/www/vanchaubui.com/public_html/fish_tanks/%s_mobile.xml", tankID);
+			        String tankId = (String)inFromClient.readObject();
+			        while (!startClientServerTransaction(tankId)) {
+			        	try {
+							Thread.sleep(5000);
+						} catch (InterruptedException e) {
+							System.err.printf("%s: unable to sleep thread", tankId);
+						}
+			        }
+			        String xml_filename_pi = String.format("/var/www/vanchaubui.com/public_html/fish_tanks/%s_pi.xml", tankId);
+		        	String xml_filename_mobile = String.format("/var/www/vanchaubui.com/public_html/fish_tanks/%s_mobile.xml", tankId);
 			        if (readOrWrite.equals("recieving_pi")) {
 			        	serverState = SERVER_STATE.CONNECTED_WRITING;
 			        	synchronized(this) {
@@ -165,6 +180,34 @@ public class FishyServerRunnable implements Runnable {
 	        System.err.println("Stack Trace: " + e.getStackTrace());
 	        System.err.println("To String: " + e.toString());
 		}
+	}
+	/**
+	 * Checks if the server is ready to perform a client/server transaction with the given tankId.  Returns
+	 * true when the server is ready to start a new transaction with the given tankId, otherwise returns false.
+	 * 
+	 * @param tankId the id of the server/client transaction
+	 * @return returns true if the server is ready to start a transaction, false otherwise
+	 */
+	public static synchronized boolean startClientServerTransaction(String tankId) {
+		// if the key doesn't exist
+		boolean rc = false;
+		if (tankIds.get(tankId) == null || tankIds.get(tankId) == false) {
+			rc = true;
+			tankIds.put(tankId, true);
+		} else {
+			rc = false;
+		}
+		// otherwise it exists
+		return rc;
+	}
+	/**
+	 * Removes the tankId from the tank transaction list
+	 * @param tankId the tankid to end the tank transaction
+	 * @return true if id has been removed
+	 */
+	public static synchronized boolean endClientServerTransaction(String tankId) {
+		tankIds.put(tankId, false);
+		return true;
 	}
 	
 	public static void main(String args[]) {
