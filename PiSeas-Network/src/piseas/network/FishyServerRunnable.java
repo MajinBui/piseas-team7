@@ -12,6 +12,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -33,10 +35,10 @@ public class FishyServerRunnable implements Runnable {
 	private static final long THREAD_WAIT_TIME = 5000;
 	private static final DateFormat DATEFORMAT = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
 	private static final Calendar CALENDAR = Calendar.getInstance();
-	private static final String LOG_FORMAT = "%s %s: %s\n";  // date tankId: log message
+	private static final String LOG_FORMAT = "%s %s: %s\n";  // displays as the following:  <date> <tankId>: <log message>
 	private static final String PASSCODE = "xBE3GnsotxlFSwb9sg7t";
 	
-	private static HashMap<String, Boolean> TANK_IDS = new HashMap<String, Boolean>();
+	private static HashMap<String, Queue<FishyServerRunnable>> TANK_IDS = new HashMap<String, Queue<FishyServerRunnable>>();
 	
 	private ObjectInputStream inFromClient;
 	private ObjectOutputStream outToClient;
@@ -49,9 +51,13 @@ public class FishyServerRunnable implements Runnable {
 		this.clientSocket = clientSocket;
 		serverState = SERVER_STATE.PROCESS_LOGIN;
 	}
+	
+	
 	public enum SERVER_STATE {
 		PROCESS_LOGIN, CONNECTED, CONNECTED_READING, CONNECTED_WRITING, ENDED
 	}
+	
+	
 	@Override
 	public void run() {
 		String tankId= "";
@@ -65,10 +71,10 @@ public class FishyServerRunnable implements Runnable {
 			        String passcode = (String)inFromClient.readObject();
 
 			        if (passcode.equals(PASSCODE)) {
-			        	printLogMessage(null, "Passcode correct, establishing connection", 'o');
+			        	printLogMessage('o', null, "Passcode correct, establishing connection");
 			        	serverState = SERVER_STATE.CONNECTED;
 			        } else {
-			        	printLogMessage(null, "Passcode incorrect, ending connection", 'o');
+			        	printLogMessage('o', null, "Passcode incorrect, ending connection");
 			        	serverState = SERVER_STATE.ENDED;
 			        }
 				} else if (serverState == SERVER_STATE.CONNECTED) {
@@ -76,17 +82,19 @@ public class FishyServerRunnable implements Runnable {
 			        String readOrWrite = (String)inFromClient.readObject();
 			        tankId = (String)inFromClient.readObject();
 			        while (!startClientServerTransaction(tankId)) {
+			        	printLogMessage('o', tankId, "transaction for given tankId already started;  Waiting in queue.");
 			        	try {
 							Thread.sleep(THREAD_WAIT_TIME);
 						} catch (InterruptedException e) {
-							printLogMessage(tankId, "unable to sleep thread", 'e');
+							printLogMessage('e', tankId, "unable to sleep thread");
 						}
 			        }
 			        String xml_filename_pi = String.format("/var/www/vanchaubui.com/public_html/fish_tanks/%s_pi.xml", tankId);
 		        	String xml_filename_mobile = String.format("/var/www/vanchaubui.com/public_html/fish_tanks/%s_mobile.xml", tankId);
 			        if (readOrWrite.equals("recieving_pi")) {
 			        	serverState = SERVER_STATE.CONNECTED_WRITING;
-			        	System.out.println("receiving pi data...");
+			        	printLogMessage('o', tankId, "recieving tank data");
+			        	
 			        	Document document = (Document) inFromClient.readObject();
 			        	PrintWriter writer = new PrintWriter(xml_filename_pi, "UTF-8");
 			        	StreamResult result = new StreamResult(writer);
@@ -102,7 +110,7 @@ public class FishyServerRunnable implements Runnable {
 	        		    
 			        } else if (readOrWrite.equals("recieving_mobile")) {
 			        	serverState = SERVER_STATE.CONNECTED_WRITING;
-			        	System.out.println("receiving mobile data...");
+			        	printLogMessage('o', tankId, "receiving mobile data...");
 			        	Document document = (Document) inFromClient.readObject();
 			        	PrintWriter writer = new PrintWriter(xml_filename_mobile, "UTF-8");
 			        	StreamResult result = new StreamResult(writer);
@@ -191,34 +199,48 @@ public class FishyServerRunnable implements Runnable {
 	 * @param tankId the id of the server/client transaction
 	 * @return returns true if the server is ready to start a transaction, false otherwise
 	 */
-	private static synchronized boolean startClientServerTransaction(String tankId) {
-		// if the key doesn't exist
+	private synchronized boolean startClientServerTransaction(String tankId) {
 		boolean rc = false;
-		if (TANK_IDS.get(tankId) == null || TANK_IDS.get(tankId) == false) {
+		
+		if (TANK_IDS.get(tankId) == null) { // no queue, add transaction and continue
+			Queue<FishyServerRunnable> queue = new LinkedList<FishyServerRunnable>();
+			queue.add(this);
+			TANK_IDS.put(tankId, queue);
 			rc = true;
-			TANK_IDS.put(tankId, true);
-		} else {
+		} else if (TANK_IDS.get(tankId).peek() == null) { // queue is empty, add transaction and continue
+			TANK_IDS.get(tankId).add(this);
+			rc = true;
+		} else if (TANK_IDS.get(tankId).peek() == this) { // queue next in line is the current transaction, continue
+			rc = true;
+		} else if (!TANK_IDS.get(tankId).contains(this)) { // queue does not contain the current transaction, add to queue
+			TANK_IDS.get(tankId).add(this);
+			rc = false;
+		}
+		else { // play dead
 			rc = false;
 		}
 		// otherwise it exists
 		return rc;
 	}
+	
+	
 	/**
 	 * Removes the tankId from the tank transaction list
 	 * @param tankId the tankid to end the tank transaction
 	 * @return true if id has been removed
 	 */
-	private static synchronized boolean endClientServerTransaction(String tankId) {
-		TANK_IDS.put(tankId, false);
+	private synchronized boolean endClientServerTransaction(String tankId) {
+		TANK_IDS.get(tankId).remove();
 		return true;
 	}
+	
 	/**
 	 * Helper function to print server log messages
 	 * @param tankId the tankId associated to the error
 	 * @param message the message to display
 	 * @param output set to o for standard output, e to error
 	 */
-	public static void printLogMessage(String tankId, String message, char output) {
+	public static void printLogMessage(char output, String tankId, String message) {
 		if (tankId == null || tankId.equals(""))
 			tankId = "<noId>";
 
