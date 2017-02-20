@@ -30,27 +30,32 @@ import org.xml.sax.SAXException;
 // TODO: add time stamp to xmls
 
 public class FishyServerRunnable implements Runnable {
+	private static final long THREAD_WAIT_TIME = 5000;
+	private static final DateFormat DATEFORMAT = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+	private static final Calendar CALENDAR = Calendar.getInstance();
+	private static final String LOG_FORMAT = "%s %s: %s\n";  // date tankId: log message
+	private static final String PASSCODE = "xBE3GnsotxlFSwb9sg7t";
+	
+	private static HashMap<String, Boolean> TANK_IDS = new HashMap<String, Boolean>();
+	
 	private ObjectInputStream inFromClient;
 	private ObjectOutputStream outToClient;
 	private Socket clientSocket;
-	private static HashMap<String, Boolean> tankIds;
-	private static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
-	private static final Calendar calendar = Calendar.getInstance();
 	
 	public SERVER_STATE serverState;
-	private final static String PASSCODE = "xBE3GnsotxlFSwb9sg7t";
+	
+	
 	public FishyServerRunnable( Socket clientSocket ) {
 		this.clientSocket = clientSocket;
 		serverState = SERVER_STATE.PROCESS_LOGIN;
-		tankIds = new HashMap<String, Boolean>();
 	}
 	public enum SERVER_STATE {
 		PROCESS_LOGIN, CONNECTED, CONNECTED_READING, CONNECTED_WRITING, ENDED
 	}
 	@Override
 	public void run() {
+		String tankId= "";
 		try {
-			
 			while (serverState != SERVER_STATE.ENDED){
 				if (serverState == SERVER_STATE.PROCESS_LOGIN) {
 					System.out.println("Waiting for client to connect...");
@@ -58,58 +63,55 @@ public class FishyServerRunnable implements Runnable {
 				    inFromClient = new ObjectInputStream(clientSocket.getInputStream());
 			        outToClient = new ObjectOutputStream(clientSocket.getOutputStream());
 			        String passcode = (String)inFromClient.readObject();
+
 			        if (passcode.equals(PASSCODE)) {
-			        	System.out.println("Passcode correct, closing connection");
+			        	printLogMessage(null, "Passcode correct, establishing connection", 'o');
 			        	serverState = SERVER_STATE.CONNECTED;
 			        } else {
-			        	System.out.println("Passcode incorrect, establishing connection");
+			        	printLogMessage(null, "Passcode incorrect, ending connection", 'o');
 			        	serverState = SERVER_STATE.ENDED;
 			        }
 				} else if (serverState == SERVER_STATE.CONNECTED) {
 			        //	Read the read or write option and then the tankId to modify
 			        String readOrWrite = (String)inFromClient.readObject();
-			        String tankId = (String)inFromClient.readObject();
+			        tankId = (String)inFromClient.readObject();
 			        while (!startClientServerTransaction(tankId)) {
 			        	try {
-							Thread.sleep(5000);
+							Thread.sleep(THREAD_WAIT_TIME);
 						} catch (InterruptedException e) {
-							System.err.printf("%s: unable to sleep thread", tankId);
+							printLogMessage(tankId, "unable to sleep thread", 'e');
 						}
 			        }
 			        String xml_filename_pi = String.format("/var/www/vanchaubui.com/public_html/fish_tanks/%s_pi.xml", tankId);
 		        	String xml_filename_mobile = String.format("/var/www/vanchaubui.com/public_html/fish_tanks/%s_mobile.xml", tankId);
 			        if (readOrWrite.equals("recieving_pi")) {
 			        	serverState = SERVER_STATE.CONNECTED_WRITING;
-			        	synchronized(this) {
-				        	System.out.println("receiving pi data...");
-				        	Document document = (Document) inFromClient.readObject();
-				        	PrintWriter writer = new PrintWriter(xml_filename_pi, "UTF-8");
-				        	StreamResult result = new StreamResult(writer);
-				        	TransformerFactory tFactory = TransformerFactory.newInstance();
-		        		    Transformer transformer = tFactory.newTransformer();
-	
-		        		    DOMSource source = new DOMSource(document);
-		        		    transformer.transform(source, result);
-		        		    writer.close();
-			        	}
+			        	System.out.println("receiving pi data...");
+			        	Document document = (Document) inFromClient.readObject();
+			        	PrintWriter writer = new PrintWriter(xml_filename_pi, "UTF-8");
+			        	StreamResult result = new StreamResult(writer);
+			        	TransformerFactory tFactory = TransformerFactory.newInstance();
+	        		    Transformer transformer = tFactory.newTransformer();
+
+	        		    DOMSource source = new DOMSource(document);
+	        		    transformer.transform(source, result);
+	        		    writer.close();
 	        		    serverState = SERVER_STATE.ENDED;
 	        		    outToClient.writeObject("");
 	        		    System.out.println("Done recieving_pi");
 	        		    
 			        } else if (readOrWrite.equals("recieving_mobile")) {
 			        	serverState = SERVER_STATE.CONNECTED_WRITING;
-			        	synchronized(this) {
-				        	System.out.println("receiving mobile data...");
-				        	Document document = (Document) inFromClient.readObject();
-				        	PrintWriter writer = new PrintWriter(xml_filename_mobile, "UTF-8");
-				        	StreamResult result = new StreamResult(writer);
-				        	TransformerFactory tFactory = TransformerFactory.newInstance();
-		        		    Transformer transformer = tFactory.newTransformer();
-	
-		        		    DOMSource source = new DOMSource(document);
-		        		    transformer.transform(source, result);
-		        		    writer.close();
-			        	}
+			        	System.out.println("receiving mobile data...");
+			        	Document document = (Document) inFromClient.readObject();
+			        	PrintWriter writer = new PrintWriter(xml_filename_mobile, "UTF-8");
+			        	StreamResult result = new StreamResult(writer);
+			        	TransformerFactory tFactory = TransformerFactory.newInstance();
+	        		    Transformer transformer = tFactory.newTransformer();
+
+	        		    DOMSource source = new DOMSource(document);
+	        		    transformer.transform(source, result);
+	        		    writer.close();
 	        		    serverState = SERVER_STATE.ENDED;
 	        		    outToClient.writeObject("");
 	        		    System.out.println("Done recieving_mobile");
@@ -180,6 +182,7 @@ public class FishyServerRunnable implements Runnable {
 	        System.err.println("Stack Trace: " + e.getStackTrace());
 	        System.err.println("To String: " + e.toString());
 		}
+		endClientServerTransaction(tankId);
 	}
 	/**
 	 * Checks if the server is ready to perform a client/server transaction with the given tankId.  Returns
@@ -188,12 +191,12 @@ public class FishyServerRunnable implements Runnable {
 	 * @param tankId the id of the server/client transaction
 	 * @return returns true if the server is ready to start a transaction, false otherwise
 	 */
-	public static synchronized boolean startClientServerTransaction(String tankId) {
+	private static synchronized boolean startClientServerTransaction(String tankId) {
 		// if the key doesn't exist
 		boolean rc = false;
-		if (tankIds.get(tankId) == null || tankIds.get(tankId) == false) {
+		if (TANK_IDS.get(tankId) == null || TANK_IDS.get(tankId) == false) {
 			rc = true;
-			tankIds.put(tankId, true);
+			TANK_IDS.put(tankId, true);
 		} else {
 			rc = false;
 		}
@@ -205,9 +208,26 @@ public class FishyServerRunnable implements Runnable {
 	 * @param tankId the tankid to end the tank transaction
 	 * @return true if id has been removed
 	 */
-	public static synchronized boolean endClientServerTransaction(String tankId) {
-		tankIds.put(tankId, false);
+	private static synchronized boolean endClientServerTransaction(String tankId) {
+		TANK_IDS.put(tankId, false);
 		return true;
+	}
+	/**
+	 * Helper function to print server log messages
+	 * @param tankId the tankId associated to the error
+	 * @param message the message to display
+	 * @param output set to o for standard output, e to error
+	 */
+	public static void printLogMessage(String tankId, String message, char output) {
+		if (tankId == null || tankId.equals(""))
+			tankId = "<noId>";
+
+		String timeNow = DATEFORMAT.format(CALENDAR.getTime());
+		if (output == 'e') {
+			System.err.printf(LOG_FORMAT, timeNow, tankId, message);
+		} else {
+			System.out.printf(LOG_FORMAT, timeNow, tankId, message);
+		}
 	}
 	
 	public static void main(String args[]) {
