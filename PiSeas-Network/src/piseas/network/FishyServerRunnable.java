@@ -101,13 +101,13 @@ public class FishyServerRunnable implements Runnable {
 						}
 					}
 
-					if (transactionToPerform.equals(NetworkTransactionSwitch.DEVICE_RETRIEVE_MOBILE_SETTINGS.name())) {
+					if (transactionToPerform.equals(NetworkTransactionSwitch.SERVER_RETRIEVE_MOBILE_SETTINGS.name())) {
 						
 						printLogMessage('o', tankId, "preparing to receive sensor data");
 						recieveXMLDataFromClient(NetworkConstants.FILE_SUFFIX_MOBILE);
 						printLogMessage('o', tankId, "sensor data recieved");
 
-					} else if (transactionToPerform.equals(NetworkTransactionSwitch.DEVICE_RETRIEVE_SENSOR_DATA.name())) {
+					} else if (transactionToPerform.equals(NetworkTransactionSwitch.SERVER_RETRIEVE_SENSOR_DATA.name())) {
 						printLogMessage('o', tankId, "preparing to receive mobile data");
 						recieveXMLDataFromClient(NetworkConstants.FILE_SUFFIX_SENSOR);
 						printLogMessage('o', tankId, "mobile data recieved");
@@ -118,7 +118,7 @@ public class FishyServerRunnable implements Runnable {
 						recieveXMLDataFromClient(NetworkConstants.FILE_SUFFIX_LOG);
 						printLogMessage('o', tankId, "sensor data sent");
 
-					} else if (transactionToPerform.equals(NetworkTransactionSwitch.DEVICE_RETRIEVE_MANUAL_COMMANDS.name())) {
+					} else if (transactionToPerform.equals(NetworkTransactionSwitch.SERVER_RETRIEVE_MANUAL_COMMANDS.name())) {
 						
 						printLogMessage('o', tankId, "preparing to send sensor data");
 						recieveXMLDataFromClient(NetworkConstants.FILE_SUFFIX_COMMANDS);
