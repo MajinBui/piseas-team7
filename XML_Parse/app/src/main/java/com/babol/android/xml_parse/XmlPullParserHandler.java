@@ -29,6 +29,7 @@ import org.xmlpull.v1.XmlSerializer;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.IOException;
@@ -49,20 +50,28 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import Objects.FeedSchedule;
+import Objects.LightSchedule;
+
 
 public class XmlPullParserHandler {
 
     private Context context;
+    private InputStream is;
+    private String id;              // tank code, used for identifying incoming xml files and properly saving
 
-    public XmlPullParserHandler(Context context){
+    public XmlPullParserHandler(Context context, String id){
         this.context=context;
+        this.id = id;
     }
 
-    // Retrieve
+    // Retrieve data
 
-    private String parseMobile(InputStream is, String TAG_NAME, int attribute){
+    // Parsing of the tank_<id>_mobile.xml file, file is save in Assets
+    private String parseMobile(String TAG_NAME, int attribute){
         String code = "-";
         try{
+            is = context.getAssets().open("tank_" + id + "_mobile.xml");
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
             XmlPullParser parser = factory.newPullParser();
@@ -79,216 +88,301 @@ public class XmlPullParserHandler {
                     if (TAG_NAME.equals(tag)) {
                         //code = parser.getAttributeName(0);
                         code = parser.getAttributeValue(attribute);
+                        is.close();
+                        return code;
                     }
                 }
             }
+            is.close();
         } catch (XmlPullParserException e) {e.printStackTrace();}
         catch (IOException e) {e.printStackTrace();}
 
         return code;
     }
 
-    public String getCode(InputStream is){
+    public String getCode(){
         // Parse from tag "Tank", attribute 0
-        return parseMobile(is, "Tank", 0);
+        return parseMobile("Tank", 0);
     }
 
-    public String getPassword(InputStream is){
+    public String getPassword(){
         // Parse from tag "Tank", attribute 1
-        return parseMobile(is, "Tank", 1);
+        return parseMobile("Tank", 1);
     }
 
-    public String getDateSent(InputStream is){
-        // Parse from tag "Date", attribute 0
-        return parseMobile(is, "Date", 0);
+    public CurrDate getDateSent(){
+        int ds[] = new int[6];
+        for(int i = 0; i<6 ;i++)
+            ds[i] = Integer.parseInt(parseMobile("Date", i));
+
+        return new CurrDate(ds[0], ds[1], ds[2], ds[3], ds[4], ds[5]);
     }
 
-    public String getTotalFeeds(InputStream is){
+    public int getTotalFeeds(){
         // Parse from tag "Feed", attribute 0
-        return parseMobile(is, "Feed", 0);
+        return Integer.parseInt(parseMobile("Feed", 0));
     }
 
-    public String getFeedTime(InputStream is){
+    public int getFeedTime(){
         // Parse from tag "Feed", attribute 1
-        return parseMobile(is, "Feed", 1);
+        return Integer.parseInt(parseMobile("Feed", 1));
     }
 
-    public String getCurrentTemp(InputStream is){
+    public int getCurrentTemp(){
         // Parse from tag "Temperature", attribute 0
-        return parseMobile(is, "Temperature", 0);
+        return Integer.parseInt(parseMobile("Temperature", 0));
     }
 
-    public String getPH(InputStream is){
+    public float getPH(){
         // Parse from tag "Sensor", attribute 0
-        return parseMobile(is, "Sensor", 0);
+        return Float.parseFloat(parseMobile("Sensor", 0));
     }
 
-    public String getConductivity(InputStream is){
+    public float getConductivity(){
         // Parse from tag "Sensor", attribute 1
-        return parseMobile(is, "Sensor", 1);
+        return Float.parseFloat(parseMobile("Sensor", 1));
     }
 
-    // Testing purposes only
-    private String parsePi(InputStream is, String TAG_NAME, int attribute){
+    // Parsing of the tank_<id>_pi.xml file, file saved in internal storage
+    private String parsePi(String TAG_NAME, int attribute){
         String code = "-";
         try{
+            File file = new File(context.getFilesDir() + "/tank_" + id + "_pi.xml");
+            FileInputStream fis = new FileInputStream(file);
+
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
             XmlPullParser parser = factory.newPullParser();
 
-            //is.reset();
-
-            parser.setInput(is, null);
+            parser.setInput(fis, null);
 
             int event;
 
             while ((event = parser.next()) != XmlPullParser.END_DOCUMENT) {
                 if (event == XmlPullParser.START_TAG) {
                     String tag = parser.getName();
+
                     if (TAG_NAME.equals(tag)) {
                         parser.nextTag();
                         tag = parser.getName();
-                        if(tag.equals("details"))
+                        if(tag.equals("details")){
                             code = parser.getAttributeValue(attribute);
+                            fis.close();
+                            return code;
+                        }
                     }
                 }
             }
+            fis.close();
         } catch (XmlPullParserException e) {e.printStackTrace();}
         catch (IOException e) {e.printStackTrace();}
 
         return code;
     }
 
-    public String getPiCode(InputStream is){
+    public String getPiCode(){
         // Parse from tag "Tank", attribute 0
-        return parsePi(is, "Tank", 0);
+        return parsePi("Tank", 0);
     }
 
-    public String getPiPassword(InputStream is){
+    public String getPiPassword(){
         // Parse from tag "Tank", attribute 1
-        return parsePi(is, "Tank", 1);
+        return parsePi("Tank", 1);
     }
 
-    public String getPiSize(InputStream is){
+    public float getPiSize(){
         // Parse from tag "Tank", attribute 2
-        return parsePi(is, "Tank", 2);
+        return Float.parseFloat(parsePi("Tank", 2));
     }
 
-    public String getPiDescription(InputStream is){
+    public String getPiDescription(){
         // Parse from tag "Tank", attribute 3
-        return parsePi(is, "Tank", 3);
+        return parsePi("Tank", 3);
     }
 
-    public String getPiDateSent(InputStream is){
-        // Parse from tag "Date", attribute 0
-        return parsePi(is, "Date", 0);
+    public CurrDate getPiDateSent(){
+        int ds[] = new int[6];
+        for(int i = 0; i<6 ;i++)
+            ds[i] = Integer.parseInt(parseMobile("Date", i));
+
+        return new CurrDate(ds[0], ds[1], ds[2], ds[3], ds[4], ds[5]);
     }
 
-    public String getPiPush(InputStream is){
-        // Parse from tag "Settings", attribute 0
-        return parsePi(is, "Settings", 0);
-    }
-
-    public String getPiMain(InputStream is){
-        // Parse from tag "Settings", attribute 1
-        return parsePi(is, "Settings", 1);
-    }
-
-    public String getPiFeed(InputStream is){
+    public boolean getPiFeed(){
         // Parse from tag "Feed", attribute 0
-        return parsePi(is, "Feed", 0);
+        return Boolean.parseBoolean(parsePi("Feed", 0));
     }
 
-    public String getPiAutoFeed(InputStream is){
+    public boolean getPiAutoFeed(){
         // Parse from tag "Feed", attribute 1
-        return parsePi(is, "Feed", 1);
+        return Boolean.parseBoolean(parsePi("Feed", 1));
     }
 
-    // FeedSchedule     - needs to be done
-
-    // LightSchedule    - needs to be done aswell
-
-    public String getPiLight(InputStream is){
+    public boolean getPiLight(){
         // Parse from tag "Light", attribute 0
-        return parsePi(is, "Light", 0);
+        return Boolean.parseBoolean(parsePi("Light", 0));
     }
 
-    public String getPiAutoLight(InputStream is){
+    public boolean getPiAutoLight(){
         // Parse from tag "Light", attribute 1
-        return parsePi(is, "Light", 1);
+        return Boolean.parseBoolean(parsePi("Light", 1));
     }
 
-    public String getPiMin(InputStream is){
+    public float getPiMin(){
         // Parse from tag "Temperature", attribute 0
-        return parsePi(is, "Temperature", 0);
+        return Float.parseFloat(parsePi("Temperature", 0));
     }
 
-    public String getPiMax(InputStream is){
+    public float getPiMax(){
         // Parse from tag "Temperature", attribute 1
-        return parsePi(is, "Temperature", 1);
+        return Float.parseFloat(parsePi("Temperature", 1));
     }
 
-    public String getPiAutoTemp(InputStream is){
+    public boolean getPiAutoTemp(){
         // Parse from tag "Temperature", attribute 2
-        return parsePi(is, "Temperature", 2);
+        return Boolean.parseBoolean(parsePi("Temperature", 2));
     }
 
-    public String getPiManualFan(InputStream is){
+    public boolean getPiManualFan(){
         // Parse from tag "Temperature", attribute 3
-        return parsePi(is, "Temperature", 3);
+        return Boolean.parseBoolean(parsePi("Temperature", 3));
     }
 
-    public String getPiManualHeater(InputStream is){
+    public boolean getPiManualHeater(){
         // Parse from tag "Temperature", attribute 4
-        return parsePi(is, "Temperature", 4);
+        return Boolean.parseBoolean(parsePi("Temperature", 4));
     }
 
-    public String getPiDrain(InputStream is){
+    public boolean getPiDrain(){
         // Parse from tag "Pump", attribute 0
-        return parsePi(is, "Pump", 0);
+        return Boolean.parseBoolean(parsePi("Pump", 0));
     }
 
-    public String getPiFill(InputStream is){
+    public boolean getPiFill(){
         // Parse from tag "Pump", attribute 1
-        return parsePi(is, "Pump", 1);
+        return Boolean.parseBoolean(parsePi("Pump", 1));
     }
 
-    public String getPiAutoWaterChange(InputStream is){
+    public boolean getPiAutoWaterChange(){
         // Parse from tag "Pump", attribute 2
-        return parsePi(is, "Pump", 2);
+        return Boolean.parseBoolean(parsePi("Pump", 2));
     }
 
-    public String getPiPHMin(InputStream is){
+    public float getPiPHMin(){
         // Parse from tag "Sensor", attribute 0
-        return parsePi(is, "Sensor", 0);
+        return Float.parseFloat(parsePi("Sensor", 0));
     }
 
-    public String getPiPHMax(InputStream is){
+    public float getPiPHMax(){
         // Parse from tag "Sensor", attribute 1
-        return parsePi(is, "Sensor", 1);
+        return Float.parseFloat(parsePi("Sensor", 1));
+}
+
+    public ArrayList<FeedSchedule> getFeedSchedules(){
+        ArrayList<FeedSchedule> feeds = new ArrayList<>();
+        try{
+            File file = new File(context.getFilesDir() + "/tank_" + id + "_pi.xml");
+            FileInputStream fis = new FileInputStream(file);
+
+            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+            factory.setNamespaceAware(true);
+            XmlPullParser parser = factory.newPullParser();
+
+            parser.setInput(fis, null);
+
+            while ((parser.next()) != XmlPullParser.END_DOCUMENT) {
+                String tag = parser.getName();
+                if (tag.equals("FeedSchedule")) {
+                    parser.next();
+                    while(parser.getName().equals("details")) {
+                        // grab the first 2 attributes, hour/min, create the FeedSchedule object. All days are automatically
+                        // set to false, parse through the rest of the attributes to see which is set to true. For the bool
+                        // to go true, the string needs to be 'true', cannot be 1.
+                        FeedSchedule feed = new FeedSchedule(Integer.parseInt(parser.getAttributeValue(0)),
+                                Integer.parseInt(parser.getAttributeValue(1)));
+                        for (int i = 2; i < 9; i++) {
+                            boolean day = Boolean.parseBoolean(parser.getAttributeValue(i));
+                            if (day)
+                                feed.setWeek(i);
+                        }
+                        feeds.add(feed);
+                        // next will take the same detail tag twice, I think because it needs a closing
+                        // tag to go with the opening one. next() twice to get to the actual next tag
+                        parser.next();
+                        parser.next();
+                    }
+                    fis.close();
+                    return feeds;
+                }
+            }
+            fis.close();
+        } catch (XmlPullParserException e) {e.printStackTrace();}
+        catch (IOException e) {e.printStackTrace();}
+
+        return feeds;
     }
 
-    // Update
-    public void write(String tag, String attribute, String value, int id) {
+    public ArrayList<LightSchedule> getLightSchedules(){
+        ArrayList<LightSchedule> lights = new ArrayList<>();
+        try{
+            File file = new File(context.getFilesDir() + "/tank_" + id + "_pi.xml");
+            FileInputStream fis = new FileInputStream(file);
+            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+            factory.setNamespaceAware(true);
+            XmlPullParser parser = factory.newPullParser();
 
-        String filepath = id + "_pi.xml";
+            parser.setInput(fis, null);
+
+            while ((parser.next()) != XmlPullParser.END_DOCUMENT) {
+                String tag = parser.getName();
+                if (tag.equals("LightSchedule")) {
+                    parser.next();
+                    while(parser.getName().equals("details")) {
+                        LightSchedule light = new LightSchedule(
+                                Integer.parseInt(parser.getAttributeValue(0)),      // onHr
+                                Integer.parseInt(parser.getAttributeValue(2)),      // offHr
+                                Integer.parseInt(parser.getAttributeValue(1)),      // onMn
+                                Integer.parseInt(parser.getAttributeValue(3))       // offMn
+                        );
+                        lights.add(light);
+                        // next will take the same detail tag twice, I think because it needs a closing
+                        // tag to go with the opening one. next() twice to get to the actual next tag
+                        parser.next();
+                        parser.next();
+                    }
+                    fis.close();
+                    return lights;
+                }
+            }
+            fis.close();
+        } catch (XmlPullParserException e) {e.printStackTrace();}
+        catch (IOException e) {e.printStackTrace();}
+        return lights;
+    }
+
+
+
+    // Update data
+    private void write(String tag, String attribute, String value) {
+
+        String filepath = "tank_" + id + "_pi.xml";
         File newXml = new File(context.getFilesDir() + "/" + filepath);
 
         // Check to see if file exists, if file does not exist, create new
         if(!newXml.isFile())
-            createXml(context.getFilesDir() + filepath);
+            createXml(filepath);
 
         try {
-            // Modify XML using DOM
-            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-            Document doc = docBuilder.parse(context.openFileInput(filepath));
+        // Modify XML using DOM
+        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+        Document doc = docBuilder.parse(context.openFileInput(filepath));
 
-            // Search for tag and insert into a node object
-            NodeList nodes = doc.getElementsByTagName(tag);
-            Node detail = nodes.item(0);
+        // Search for tag and insert into a node object
+        NodeList nodes = doc.getElementsByTagName(tag);
+        Node detail = nodes.item(0);
 
-            // Get all child tags of our parent
+        // Get all child tags of our parent
             NodeList details = detail.getChildNodes();
             for(int i = 0; i < details.getLength(); i++){
                 Node item = details.item(i);
@@ -327,91 +421,89 @@ public class XmlPullParserHandler {
         }
     }
 
-    public void setCode(String value, int id){
-        write("Tank", "code", value, id);
+    public void setCode(String value){
+        write("Tank", "code", value);
     }
 
-    public void setpassword(String value, int id){
-        write("Tank", "password", value, id);
+    public void setpassword(String value){
+        write("Tank", "password", value);
     }
 
-    public void setSize(String value, int id){
-        write("Tank", "size", value, id);
+    public void setSize(float value){
+        write("Tank", "size", String.valueOf(value));
     }
 
-    public void setDescription(String value, int id){
-        write("Tank", "description", value, id);
+    public void setDescription(String value){
+        write("Tank", "description", value);
     }
 
-    public void setDateSent(String value, int id){
-        write("Date", "dateSent", value, id);
+    public void setDateSent(String value){
+        write("Date", "dateSent", value);
     }
 
-    public void setPush(String value, int id){
-        write("Settings", "push", value, id);
+    public void setPush(boolean value){ write("Settings", "push", String.valueOf(value)); }
+
+    public void setMain(int value){
+        write("Settings", "main", String.valueOf(value));
     }
 
-    public void setMain(String value, int id){
-        write("Settings", "main", value, id);
+    public void setFeed(boolean value, int id){
+        write("Feed", "feed", String.valueOf(value));
     }
 
-    public void setFeed(String value, int id){
-        write("Feed", "feed", value, id);
-    }
-
-    public void setAutoFeed(String value, int id){
-        write("Feed", "autoFeed", value, id);
+    public void setAutoFeed(boolean value){
+        write("Feed", "autoFeed", String.valueOf(value));
     }
 
 //    FeedSchedule
 //    LightSchedule
 
-    public void setLight(String value, int id){
-        write("Light", "light", value, id);
+    public void setLight(boolean value){
+        write("Light", "light", String.valueOf(value));
     }
 
-    public void setAutoLight(String value, int id){
-        write("Light", "autoLight", value, id);
+    public void setAutoLight(boolean value){
+        write("Light", "autoLight", String.valueOf(value));
     }
 
-    public void setTempMin(String value, int id){
-        write("Temperature", "min", value, id);
+    public void setTempMin(int value){
+        write("Temperature", "min", String.valueOf(value));
     }
 
-    public void setTempMax(String value, int id){
-        write("Temperature", "max", value, id);
+    public void setTempMax(int value){
+        write("Temperature", "max", String.valueOf(value));
     }
 
-    public void setAutoTemp(String value, int id){
-        write("Temperature", "autoTemp", value, id);
+    public void setAutoTemp(boolean value){
+        write("Temperature", "autoTemp", String.valueOf(value));
     }
 
-    public void setManualFan(String value, int id){
-        write("Temperature", "manualFan", value, id);
+    public void setManualFan(boolean value){
+        write("Temperature", "manualFan", String.valueOf(value));
     }
 
-    public void setManualHeater(String value, int id){
-        write("Temperature", "manualHeater", value, id);
+    public void setManualHeater(boolean value){
+        write("Temperature", "manualHeater", String.valueOf(value));
     }
 
-    public void setDrain(String value, int id){
-        write("Pump", "drain", value, id);
+    public void setDrain(boolean value){
+        write("Pump", "drain", String.valueOf(value));
     }
 
-    public void setFill(String value, int id){
-        write("Pump", "fill", value, id);
+    public void setFill(boolean value){
+        write("Pump", "fill", String.valueOf(value));
     }
 
-    public void setAutoWaterChange(String value, int id){
-        write("Pump", "autoWaterChange", value, id);
+    public void setAutoWaterChange(boolean value){
+        write("Pump", "autoWaterChange", String.valueOf(value));
     }
 
-    public void setPHMin(String value, int id){
-        write("Sensor", "pHmin", value, id);
+    public void setPHMin(float value){
+        write("Sensor", "pHmin", String.valueOf(value));
     }
 
-    public void setSensor(String value, int id){
-        write("Sensor", "pHmax", value, id);
+    public void setPHMax(float value){
+        write("Sensor", "pHmax", String.valueOf(value));
     }
 
     // Create new xml file with default values
@@ -428,9 +520,6 @@ public class XmlPullParserHandler {
             String size = "20";
             String description = "my fishy home";
             String dateSent = "0045-02-03-2017";
-            String push = "true";
-            String main = "1";
-            String log = "This is the log.";
             String feed = "false";
             String autoFeed = "false";
             String light = "false";
@@ -469,14 +558,6 @@ public class XmlPullParserHandler {
             xmlSerializer.endTag("", "details");
             xmlSerializer.endTag("", "Date");
 
-            // Settings
-            xmlSerializer.startTag("", "Settings");
-            xmlSerializer.startTag("", "details");
-            xmlSerializer.attribute("", "push", push);
-            xmlSerializer.attribute("", "main", main);
-            xmlSerializer.endTag("", "details");
-            xmlSerializer.endTag("", "Settings");
-
             // Feed
             xmlSerializer.startTag("", "Feed");
             xmlSerializer.startTag("", "details");
@@ -487,6 +568,44 @@ public class XmlPullParserHandler {
 
             // FeedSchedule
             xmlSerializer.startTag("", "FeedSchedule");
+            xmlSerializer.attribute("", "schedules", "3");
+
+            xmlSerializer.startTag("", "details");
+            xmlSerializer.attribute("", "hr", "13");
+            xmlSerializer.attribute("", "min", "50");
+            xmlSerializer.attribute("", "Mon", "true");
+            xmlSerializer.attribute("", "Tue", "false");
+            xmlSerializer.attribute("", "Wed", "true");
+            xmlSerializer.attribute("", "Thu", "true");
+            xmlSerializer.attribute("", "Fri", "true");
+            xmlSerializer.attribute("", "Sat", "false");
+            xmlSerializer.attribute("", "Sun", "false");
+            xmlSerializer.endTag("", "details");
+
+            xmlSerializer.startTag("", "details");
+            xmlSerializer.attribute("", "hr", "07");
+            xmlSerializer.attribute("", "min", "30");
+            xmlSerializer.attribute("", "Mon", "false");
+            xmlSerializer.attribute("", "Tue", "true");
+            xmlSerializer.attribute("", "Wed", "false");
+            xmlSerializer.attribute("", "Thu", "true");
+            xmlSerializer.attribute("", "Fri", "false");
+            xmlSerializer.attribute("", "Sat", "false");
+            xmlSerializer.attribute("", "Sun", "false");
+            xmlSerializer.endTag("", "details");
+
+            xmlSerializer.startTag("", "details");
+            xmlSerializer.attribute("", "hr", "21");
+            xmlSerializer.attribute("", "min", "45");
+            xmlSerializer.attribute("", "Mon", "false");
+            xmlSerializer.attribute("", "Tue", "false");
+            xmlSerializer.attribute("", "Wed", "true");
+            xmlSerializer.attribute("", "Thu", "true");
+            xmlSerializer.attribute("", "Fri", "true");
+            xmlSerializer.attribute("", "Sat", "true");
+            xmlSerializer.attribute("", "Sun", "false");
+            xmlSerializer.endTag("", "details");
+
             xmlSerializer.endTag("", "FeedSchedule");
 
             // Light
@@ -499,6 +618,22 @@ public class XmlPullParserHandler {
 
             // LightSchedule
             xmlSerializer.startTag("", "LightSchedule");
+            xmlSerializer.attribute("", "schedules", "2");
+
+            xmlSerializer.startTag("", "details");
+            xmlSerializer.attribute("", "onHr", "09");
+            xmlSerializer.attribute("", "onMin", "00");
+            xmlSerializer.attribute("", "offHr", "12");
+            xmlSerializer.attribute("", "offMin", "30");
+            xmlSerializer.endTag("", "details");
+
+            xmlSerializer.startTag("", "details");
+            xmlSerializer.attribute("", "onHr", "13");
+            xmlSerializer.attribute("", "onMin", "00");
+            xmlSerializer.attribute("", "offHr", "18");
+            xmlSerializer.attribute("", "offMin", "30");
+            xmlSerializer.endTag("", "details");
+
             xmlSerializer.endTag("", "LightSchedule");
 
             // Temperature

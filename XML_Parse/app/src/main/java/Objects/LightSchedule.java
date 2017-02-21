@@ -1,10 +1,7 @@
-package group7.piseas.Objects;
-
-import java.util.Arrays;
+package Objects;
 
 /**
- * Created by mmbab on 12/5/2016.
- *
+ * Created by mmbab on 2/8/2017.
  */
 
 public class LightSchedule {
