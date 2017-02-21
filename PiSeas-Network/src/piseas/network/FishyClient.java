@@ -1,6 +1,7 @@
 package piseas.network;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -60,52 +61,58 @@ public class FishyClient {
 	 * @param piXMLSavePath path the the directory to save pi xml data
 	 */
 	private static void retrieveServerData(String tankId, String transactionToPerform, String parentFilePath, String suffix) {
+		Socket clientSocket;
 		try {
-			Socket clientSocket = connectToServer();
-			System.out.println("Retrieving Data");
-	        ObjectOutputStream outToServer = new ObjectOutputStream(clientSocket.getOutputStream());
-	        ObjectInputStream inFromServer = new ObjectInputStream(clientSocket.getInputStream());
-	        String command = NetworkTransactionSwitch.DEVICE_RETRIEVE_MOBILE_SETTINGS.name();
-	        outToServer.writeObject(PASSCODE);
-	        outToServer.writeObject(command);
-	        outToServer.writeObject(tankId);
-	        
-	        Document document = (Document) inFromServer.readObject();
+			clientSocket = connectToServer();
+			try {
+				
+				System.out.println("Retrieving Data");
+		        ObjectOutputStream outToServer = new ObjectOutputStream(clientSocket.getOutputStream());
+		        ObjectInputStream inFromServer = new ObjectInputStream(clientSocket.getInputStream());
 
-	        String XMLFilePath = String.format("%s/%s%s.xml", parentFilePath, tankId, suffix);
-	        
-        	PrintWriter writer = new PrintWriter(XMLFilePath, "UTF-8");
-        	StreamResult result = new StreamResult(writer);
-        	TransformerFactory tFactory = TransformerFactory.newInstance();
-		    Transformer transformer = tFactory.newTransformer();
-
-		    DOMSource source = new DOMSource(document);
-		    transformer.transform(source, result);
-		    writer.close();
-		    System.out.println("Retrieved Pi Data...");
-		    
-		    outToServer.writeObject("");
-            return;
-		} catch (UnknownHostException e) {
-	        System.err.println("Client Error: " + e.getMessage());
-	        System.err.println("Localized: " + e.getLocalizedMessage());
-	        System.err.println("Stack Trace: " + e.getStackTrace());
-		} catch (IOException e) {
-	        System.err.println("Client Error: " + e.getMessage());
-	        System.err.println("Localized: " + e.getLocalizedMessage());
-	        System.err.println("Stack Trace: " + e.getStackTrace());
-		} catch (ClassNotFoundException e) {
-	        System.err.println("Client Error: " + e.getMessage());
-	        System.err.println("Localized: " + e.getLocalizedMessage());
-	        System.err.println("Stack Trace: " + e.getStackTrace());
-		} catch (TransformerConfigurationException e) {
-			System.err.println("Client Error: " + e.getMessage());
-	        System.err.println("Localized: " + e.getLocalizedMessage());
-	        System.err.println("Stack Trace: " + e.getStackTrace());
-		} catch (TransformerException e) {
-			System.err.println("Client Error: " + e.getMessage());
-	        System.err.println("Localized: " + e.getLocalizedMessage());
-	        System.err.println("Stack Trace: " + e.getStackTrace());
+		        outToServer.writeObject(PASSCODE);
+		        outToServer.writeObject(transactionToPerform);
+		        outToServer.writeObject(tankId);
+		        
+		        Document document = (Document) inFromServer.readObject();
+	
+		        String XMLFilePath = String.format("%s/%s%s.xml", parentFilePath, tankId, suffix);
+		        
+	        	PrintWriter writer = new PrintWriter(XMLFilePath, "UTF-8");
+	        	StreamResult result = new StreamResult(writer);
+	        	TransformerFactory tFactory = TransformerFactory.newInstance();
+			    Transformer transformer = tFactory.newTransformer();
+	
+			    DOMSource source = new DOMSource(document);
+			    transformer.transform(source, result);
+			    writer.close();
+			    System.out.println("Retrieved Pi Data...");
+			    
+			    outToServer.writeObject("");
+	            return;
+			} catch (ClassNotFoundException e) {
+		        System.err.println("Client Error: " + e.getMessage());
+		        System.err.println("Localized: " + e.getLocalizedMessage());
+		        System.err.println("Stack Trace: " + e.getStackTrace());
+			} catch (TransformerConfigurationException e) {
+				System.err.println("Client Error: " + e.getMessage());
+		        System.err.println("Localized: " + e.getLocalizedMessage());
+		        System.err.println("Stack Trace: " + e.getStackTrace());
+			} catch (TransformerException e) {
+				System.err.println("Client Error: " + e.getMessage());
+		        System.err.println("Localized: " + e.getLocalizedMessage());
+		        System.err.println("Stack Trace: " + e.getStackTrace());
+			}  catch (FileNotFoundException e) {
+				
+			}
+		
+			clientSocket.close();
+		} catch (UnknownHostException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
 		System.err.println("no data found, maybe xml not initialized yet");
 	}
@@ -161,48 +168,52 @@ public class FishyClient {
 	 * @param mobileXMLSavePath path to the xml file to send
 	 */
 	private static void writeToServerData(String tankId, String transactionToPerform, String parentFilePath, String suffix) {
+		Socket clientSocket = null;
 		try {
-			Socket clientSocket = connectToServer();
-	        ObjectOutputStream outToServer = new ObjectOutputStream(clientSocket.getOutputStream());
-	        ObjectInputStream inFromServer = new ObjectInputStream(clientSocket.getInputStream());
-	        System.in.read();
-	        outToServer.writeObject(PASSCODE);
-	        System.in.read();
-	        outToServer.writeObject(transactionToPerform);
-	        System.in.read();
-	        outToServer.writeObject(tankId);
-	        System.in.read();
-	        String fileName = tankId + suffix + ".xml";
-	        
-	        File file = new File(parentFilePath, fileName);
-        	DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        	DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-        	Document doc = dBuilder.parse(file);
-	        
-	        outToServer.writeObject(doc);
-	        inFromServer.readObject();
-	        System.out.println("Data sent");
-	        return;
-		} catch (UnknownHostException e) {
-	        System.err.println("Client Error: " + e.getMessage());
-	        System.err.println("Localized: " + e.getLocalizedMessage());
-	        System.err.println("Stack Trace: " + e.getStackTrace());
-		} catch (IOException e) {
-	        System.err.println("Client Error: " + e.getMessage());
-	        System.err.println("Localized: " + e.getLocalizedMessage());
-	        System.err.println("Stack Trace: " + e.getStackTrace());
-		} catch (ParserConfigurationException e) {
-			System.err.println("Client Error: " + e.getMessage());
-	        System.err.println("Localized: " + e.getLocalizedMessage());
-	        System.err.println("Stack Trace: " + e.getStackTrace());
-		} catch (SAXException e) {
-			System.err.println("Client Error: " + e.getMessage());
-	        System.err.println("Localized: " + e.getLocalizedMessage());
-	        System.err.println("Stack Trace: " + e.getStackTrace());
-		} catch (ClassNotFoundException e) {
+			clientSocket = connectToServer();
+			try {
+		        ObjectOutputStream outToServer = new ObjectOutputStream(clientSocket.getOutputStream());
+		        ObjectInputStream inFromServer = new ObjectInputStream(clientSocket.getInputStream());
+
+		        outToServer.writeObject(PASSCODE);
+		        outToServer.writeObject(transactionToPerform);
+		        outToServer.writeObject(tankId);
+
+		        String fileName = tankId + suffix + ".xml";
+		        
+		        File file = new File(parentFilePath, fileName);
+	        	DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+	        	DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+	        	Document doc = dBuilder.parse(file);
+		        
+		        outToServer.writeObject(doc);
+		        inFromServer.readObject();
+		        System.out.println("Data sent");
+		        
+			} catch (ParserConfigurationException e) {
+				System.err.println("Client Error: " + e.getMessage());
+		        System.err.println("Localized: " + e.getLocalizedMessage());
+		        System.err.println("Stack Trace: " + e.getStackTrace());
+			} catch (SAXException e) {
+				System.err.println("Client Error: " + e.getMessage());
+		        System.err.println("Localized: " + e.getLocalizedMessage());
+		        System.err.println("Stack Trace: " + e.getStackTrace());
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (FileNotFoundException e) {
+				
+			}
+			
+			clientSocket.close();
+		} catch (UnknownHostException e1) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
+
 		return;
 	}
 	

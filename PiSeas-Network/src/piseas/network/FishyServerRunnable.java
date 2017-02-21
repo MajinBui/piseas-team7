@@ -103,32 +103,32 @@ public class FishyServerRunnable implements Runnable {
 
 					if (transactionToPerform.equals(NetworkTransactionSwitch.SERVER_RETRIEVE_MOBILE_SETTINGS.name())) {
 						
-						printLogMessage('o', tankId, "preparing to receive sensor data");
+						printLogMessage('o', tankId, "preparing to receive mobile data");
 						recieveXMLDataFromClient(NetworkConstants.FILE_SUFFIX_MOBILE);
-						printLogMessage('o', tankId, "sensor data recieved");
+						printLogMessage('o', tankId, "mobile data recieved");
 
 					} else if (transactionToPerform.equals(NetworkTransactionSwitch.SERVER_RETRIEVE_SENSOR_DATA.name())) {
-						printLogMessage('o', tankId, "preparing to receive mobile data");
+						printLogMessage('o', tankId, "preparing to receive sensor data");
 						recieveXMLDataFromClient(NetworkConstants.FILE_SUFFIX_SENSOR);
-						printLogMessage('o', tankId, "mobile data recieved");
+						printLogMessage('o', tankId, "sensor data recieved");
 						
 					} else if (transactionToPerform.equals(NetworkTransactionSwitch.SERVER_RETRIEVE_ACTION_LOG.name())) {
 						
-						printLogMessage('o', tankId, "preparing to send sensor data");
+						printLogMessage('o', tankId, "preparing to receive log data");
 						recieveXMLDataFromClient(NetworkConstants.FILE_SUFFIX_LOG);
-						printLogMessage('o', tankId, "sensor data sent");
+						printLogMessage('o', tankId, "log data sent");
 
 					} else if (transactionToPerform.equals(NetworkTransactionSwitch.SERVER_RETRIEVE_MANUAL_COMMANDS.name())) {
 						
-						printLogMessage('o', tankId, "preparing to send sensor data");
+						printLogMessage('o', tankId, "preparing to receive command data");
 						recieveXMLDataFromClient(NetworkConstants.FILE_SUFFIX_COMMANDS);
-						printLogMessage('o', tankId, "sensor data sent");
+						printLogMessage('o', tankId, "command data sent");
 
 					} else if (transactionToPerform.equals(NetworkTransactionSwitch.DEVICE_RETRIEVE_MOBILE_SETTINGS.name())) {
 						
-						printLogMessage('o', tankId, "preparing to send sensor data");
+						printLogMessage('o', tankId, "preparing to send mobile data");
 						sendXMLDataToClient(NetworkConstants.FILE_SUFFIX_MOBILE);
-						printLogMessage('o', tankId, "sensor data sent");
+						printLogMessage('o', tankId, "mobile data sent");
 
 					} else if (transactionToPerform.equals(NetworkTransactionSwitch.DEVICE_RETRIEVE_SENSOR_DATA.name())) {
 						
@@ -183,6 +183,14 @@ public class FishyServerRunnable implements Runnable {
 			System.err.println("To String: " + e.toString());
 		}
 		endClientServerTransaction(tankId);
+		
+		try {
+			clientSocket.close();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 	}
 	/**
 	 * Checks if the server is ready to perform a client/server transaction with the given tankId.  Returns
