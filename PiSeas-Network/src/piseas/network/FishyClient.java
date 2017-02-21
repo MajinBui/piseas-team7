@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -27,12 +28,17 @@ public class FishyClient {
 	private final static String PASSCODE = "xBE3GnsotxlFSwb9sg7t";
 	public static void main(String args[]) {
     	String tankID = "QWERT"; // To access the saved data, its is at vanchaubui.com/fish_tanks/<tankID>.html
-
+    	System.out.println(NetworkTransactionSwitch.SERVER_RETRIEVE_SENSOR_DATA.name());
     	//	how to receive data
-    	FishyClient.writeToPiData(tankID, "C:\\Users\\Van\\Documents\\fish_test\\input\\QWERT_pi.xml");
-    	FishyClient.writeToMobileData(tankID, "C:\\Users\\Van\\Documents\\fish_test\\input\\QWERT_mobile.xml");
-        FishyClient.retrieveServerData(tankID, "C:\\Users\\Van\\Documents\\fish_test\\output\\", "C:\\Users\\Van\\Documents\\fish_test\\output\\");
-
+    	FishyClient.sendSensorData(tankID, "C:\\Users\\Van\\Documents\\fish_test\\input");
+    	FishyClient.sendMobileXmlData(tankID, "C:\\Users\\Van\\Documents\\fish_test\\input");
+    	FishyClient.sendActionLog(tankID, "C:\\Users\\Van\\Documents\\fish_test\\input");
+    	FishyClient.sendManualCommands(tankID, "C:\\Users\\Van\\Documents\\fish_test\\input");
+        
+        FishyClient.recieveMobileXmlData(tankID, "C:\\Users\\Van\\Documents\\fish_test\\output\\");
+        FishyClient.recieveSensorData(tankID, "C:\\Users\\Van\\Documents\\fish_test\\output\\");
+        FishyClient.recieveActionLog(tankID, "C:\\Users\\Van\\Documents\\fish_test\\output\\");
+        FishyClient.recieveManualCommands(tankID, "C:\\Users\\Van\\Documents\\fish_test\\output\\");
 	}
 	/**
 	 * Connects to the server
@@ -53,38 +59,31 @@ public class FishyClient {
 	 * @param mobileXMLSavePath path the the directory to save mobile xml data
 	 * @param piXMLSavePath path the the directory to save pi xml data
 	 */
-	private static void retrieveServerData(String tankId, String mobileXMLSavePath, String piXMLSavePath) {
+	private static void retrieveServerData(String tankId, String transactionToPerform, String parentFilePath, String suffix) {
 		try {
 			Socket clientSocket = connectToServer();
-			System.out.println("Retrieving Pi Data");
+			System.out.println("Retrieving Data");
 	        ObjectOutputStream outToServer = new ObjectOutputStream(clientSocket.getOutputStream());
 	        ObjectInputStream inFromServer = new ObjectInputStream(clientSocket.getInputStream());
-	        String command = "sending_pi";
+	        String command = NetworkTransactionSwitch.DEVICE_RETRIEVE_MOBILE_SETTINGS.name();
 	        outToServer.writeObject(PASSCODE);
 	        outToServer.writeObject(command);
 	        outToServer.writeObject(tankId);
 	        
-	        Document document_pi = (Document) inFromServer.readObject();
-	        Document document_mobile = (Document) inFromServer.readObject();
-	        String xml_filename_pi = String.format("%s/%s_pi.xml", mobileXMLSavePath, tankId);
-	        String xml_filename_mobile = String.format("%s/%s_mobile.xml", piXMLSavePath, tankId);
-        	PrintWriter writer = new PrintWriter(xml_filename_pi, "UTF-8");
+	        Document document = (Document) inFromServer.readObject();
+
+	        String XMLFilePath = String.format("%s/%s%s.xml", parentFilePath, tankId, suffix);
+	        
+        	PrintWriter writer = new PrintWriter(XMLFilePath, "UTF-8");
         	StreamResult result = new StreamResult(writer);
         	TransformerFactory tFactory = TransformerFactory.newInstance();
 		    Transformer transformer = tFactory.newTransformer();
 
-		    DOMSource source = new DOMSource(document_pi);
+		    DOMSource source = new DOMSource(document);
 		    transformer.transform(source, result);
 		    writer.close();
 		    System.out.println("Retrieved Pi Data...");
-		    System.out.println("Retrieving mobile Data...");
-		    PrintWriter writer2 = new PrintWriter(xml_filename_mobile, "UTF-8");
-        	StreamResult result2 = new StreamResult(writer2);
-
-		    source = new DOMSource(document_mobile);
-		    transformer.transform(source, result2);
-		    writer2.close();
-		    System.out.println("Retrieved mobile Data...");
+		    
 		    outToServer.writeObject("");
             return;
 		} catch (UnknownHostException e) {
@@ -110,22 +109,72 @@ public class FishyClient {
 		}
 		System.err.println("no data found, maybe xml not initialized yet");
 	}
+	
+	
+	/**
+	 * Updates the mobile device server data with the xml given according to id 
+	 * @param tankId the TankID of the tank that needs updating
+	 * @param mobileXMLSavePath path to the xml file to send
+	 */
+	public static void recieveMobileXmlData(String tankId, String parentFilePath) {
+		System.out.println("Sending mobile data...");
+		FishyClient.retrieveServerData(tankId, NetworkTransactionSwitch.DEVICE_RETRIEVE_MOBILE_SETTINGS.name(), parentFilePath, NetworkConstants.FILE_SUFFIX_MOBILE);
+	}
+	
+	
+	/**
+	 * Updates the pi device server data with the xml given according to id 
+	 * @param tankId the TankID of the tank that needs updating
+	 * @param mobileXMLSavePath path to the xml file to send
+	 */
+	public static void recieveSensorData(String tankId, String parentFilePath) {
+		System.out.println("Sending Sensor data...");
+		FishyClient.retrieveServerData(tankId, NetworkTransactionSwitch.DEVICE_RETRIEVE_SENSOR_DATA.name(), parentFilePath, NetworkConstants.FILE_SUFFIX_SENSOR);
+	}
+	
+	
+	/**
+	 * Updates the pi device server data with the xml given according to id 
+	 * @param tankId the TankID of the tank that needs updating
+	 * @param mobileXMLSavePath path to the xml file to send
+	 */
+	public static void recieveActionLog(String tankId, String parentFilePath) {
+		System.out.println("Sending ActionLog data...");
+		FishyClient.retrieveServerData(tankId, NetworkTransactionSwitch.DEVICE_RETRIEVE_ACTION_LOG.name(), parentFilePath, NetworkConstants.FILE_SUFFIX_LOG);
+	}
+	
+	
+	/**
+	 * Updates the pi device server data with the xml given according to id 
+	 * @param tankId the TankID of the tank that needs updating
+	 * @param mobileXMLSavePath path to the xml file to send
+	 */
+	public static void recieveManualCommands(String tankId, String parentFilePath) {
+		System.out.println("Sending ManualCommands data...");
+		FishyClient.retrieveServerData(tankId, NetworkTransactionSwitch.DEVICE_RETRIEVE_MANUAL_COMMANDS.name(), parentFilePath, NetworkConstants.FILE_SUFFIX_COMMANDS);
+	}
+	
 	/**
 	 * Updates the server data with the xml given according to id 
 	 * @param tankId the TankID of the tank that needs updating
 	 * @param command directive the server will perform
 	 * @param mobileXMLSavePath path to the xml file to send
 	 */
-	private static void writeToServerData(String tankId, String command, String mobileXMLSavePath) {
+	private static void writeToServerData(String tankId, String transactionToPerform, String parentFilePath, String suffix) {
 		try {
 			Socket clientSocket = connectToServer();
 	        ObjectOutputStream outToServer = new ObjectOutputStream(clientSocket.getOutputStream());
 	        ObjectInputStream inFromServer = new ObjectInputStream(clientSocket.getInputStream());
+	        System.in.read();
 	        outToServer.writeObject(PASSCODE);
-	        outToServer.writeObject(command);
+	        System.in.read();
+	        outToServer.writeObject(transactionToPerform);
+	        System.in.read();
 	        outToServer.writeObject(tankId);
+	        System.in.read();
+	        String fileName = tankId + suffix + ".xml";
 	        
-	        File file = new File(mobileXMLSavePath);
+	        File file = new File(parentFilePath, fileName);
         	DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         	DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         	Document doc = dBuilder.parse(file);
@@ -157,23 +206,49 @@ public class FishyClient {
 		return;
 	}
 	
+	
 	/**
 	 * Updates the mobile device server data with the xml given according to id 
 	 * @param tankId the TankID of the tank that needs updating
 	 * @param mobileXMLSavePath path to the xml file to send
 	 */
-	public static void writeToMobileData(String tankId, String mobileXMLSavePath) {
+	public static void sendMobileXmlData(String tankId, String parentFilePath) {
 		System.out.println("Sending mobile data...");
-		FishyClient.writeToServerData(tankId, "recieving_mobile", mobileXMLSavePath);
+		FishyClient.writeToServerData(tankId, NetworkTransactionSwitch.SERVER_RETRIEVE_MOBILE_SETTINGS.name(), parentFilePath, NetworkConstants.FILE_SUFFIX_MOBILE);
 	}
+	
+	
 	/**
 	 * Updates the pi device server data with the xml given according to id 
 	 * @param tankId the TankID of the tank that needs updating
 	 * @param mobileXMLSavePath path to the xml file to send
 	 */
-	public static void writeToPiData(String tankId, String piXMLSavePath) {
+	public static void sendSensorData(String tankId, String parentFilePath) {
 		System.out.println("Sending pi data...");
-		FishyClient.writeToServerData(tankId, "recieving_pi", piXMLSavePath);
+		FishyClient.writeToServerData(tankId, NetworkTransactionSwitch.SERVER_RETRIEVE_SENSOR_DATA.name(), parentFilePath, NetworkConstants.FILE_SUFFIX_SENSOR);
 	}
+	
+	
+	/**
+	 * Updates the pi device server data with the xml given according to id 
+	 * @param tankId the TankID of the tank that needs updating
+	 * @param mobileXMLSavePath path to the xml file to send
+	 */
+	public static void sendActionLog(String tankId, String parentFilePath) {
+		System.out.println("Sending pi data...");
+		FishyClient.writeToServerData(tankId, NetworkTransactionSwitch.SERVER_RETRIEVE_ACTION_LOG.name(), parentFilePath, NetworkConstants.FILE_SUFFIX_LOG);
+	}
+	
+	
+	/**
+	 * Updates the pi device server data with the xml given according to id 
+	 * @param tankId the TankID of the tank that needs updating
+	 * @param mobileXMLSavePath path to the xml file to send
+	 */
+	public static void sendManualCommands(String tankId, String parentFilePath) {
+		System.out.println("Sending pi data...");
+		FishyClient.writeToServerData(tankId, NetworkTransactionSwitch.SERVER_RETRIEVE_MANUAL_COMMANDS.name(), parentFilePath, NetworkConstants.FILE_SUFFIX_COMMANDS);
+	}
+	
 	
 }
