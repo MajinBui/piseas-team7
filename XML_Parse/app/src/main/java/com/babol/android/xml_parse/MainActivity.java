@@ -34,6 +34,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import Objects.FeedSchedule;
 import Objects.LightSchedule;
+import Objects.LogEnum;
+import Objects.Logs;
 
 public class MainActivity extends Activity {
 
@@ -43,8 +45,6 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
     }
 
     public void onData(View view) throws IOException{
@@ -105,6 +105,14 @@ public class MainActivity extends Activity {
         XmlPullParserHandler parser = new XmlPullParserHandler(this, tank_id);
 
         parser.setCode(et_code.getText().toString());
+    }
+
+    public void onLogs(View view) throws IOException{
+
+        XmlPullParserHandler parser = new XmlPullParserHandler(this, tank_id);
+
+        Logs newLog = parser.getLogs();
+        LogEnum code = LogEnum.x001;
 
     }
 
