@@ -52,6 +52,8 @@ import javax.xml.transform.stream.StreamResult;
 
 import Objects.FeedSchedule;
 import Objects.LightSchedule;
+import Objects.LogEnum;
+import Objects.Logs;
 
 
 public class XmlPullParserHandler {
@@ -360,7 +362,43 @@ public class XmlPullParserHandler {
         return lights;
     }
 
+    // Parsing of the tank_<id>_pi.xml file, file saved in Assets
+    public Logs getLogs(){
+        Logs logs = new Logs();
+        try{
 
+            is = context.getAssets().open("tank_" + id + "_log.xml");
+
+            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+            factory.setNamespaceAware(true);
+            XmlPullParser parser = factory.newPullParser();
+
+            is.reset();
+            parser.setInput(is, null);
+
+            while ((parser.next()) != XmlPullParser.END_DOCUMENT) {
+                String tag = parser.getName();
+
+                parser.nextTag();
+                tag = parser.getName();
+                while(parser.getName().equals("Log")) {
+                    logs.add(
+                            LogEnum.valueOf(parser.getAttributeValue(0)),
+                             new piDate(parser.getAttributeValue(1)));
+                    // next will take the same detail tag twice, I think because it needs a closing
+                    // tag to go with the opening one. next() twice to get to the actual next tag
+                    parser.nextTag();
+                    parser.nextTag();
+                }
+                is.close();
+                return logs;
+               // }
+            }
+            is.close();
+        } catch (XmlPullParserException e) {e.printStackTrace();}
+        catch (IOException e) {e.printStackTrace();}
+        return logs;
+    }
 
     // Update data
     private void write(String tag, String attribute, String value) {
