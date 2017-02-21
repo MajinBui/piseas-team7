@@ -43,16 +43,28 @@ public class FishyServerRunnable implements Runnable {
 	private ObjectInputStream inFromClient;
 	private ObjectOutputStream outToClient;
 	private Socket clientSocket;
+	private SERVER_STATE serverState;
 
-	public SERVER_STATE serverState;
-
-
+	/**
+	 * Creates a thread to handle a server transaction.  Takes a client socket to recieve and send data.
+	 * @param clientSocket
+	 */
 	public FishyServerRunnable( Socket clientSocket ) {
 		this.clientSocket = clientSocket;
 		serverState = SERVER_STATE.PROCESS_LOGIN;
 	}
-
-
+	
+	
+	/**
+	 * Should never be created without a given clientSocket
+	 */
+	private FishyServerRunnable(){}
+	/**
+	 * Enumeration used to keep track of server states.
+	 * A normal transaction process should be processed as followed:  PROCESS_LOGIN -> CONNECTED -> ENDED 
+	 * @author Van
+	 *
+	 */
 	public enum SERVER_STATE {
 		PROCESS_LOGIN, CONNECTED, CONNECTED_READING, CONNECTED_WRITING, ENDED
 	}
@@ -64,11 +76,10 @@ public class FishyServerRunnable implements Runnable {
 		try {
 			while (serverState != SERVER_STATE.ENDED){
 				if (serverState == SERVER_STATE.PROCESS_LOGIN) {
-					System.out.println("Waiting for client to connect...");
-					System.out.println("Socket Extablished...");
+					printLogMessage('o', tankId, "socket Extablished");
 					inFromClient = new ObjectInputStream(clientSocket.getInputStream());
 					outToClient = new ObjectOutputStream(clientSocket.getOutputStream());
-					String passcode = (String)inFromClient.readObject();
+					String passcode = (String) inFromClient.readObject();
 
 					if (passcode.equals(PASSCODE)) {
 						printLogMessage('o', null, "Passcode correct, establishing connection");
@@ -79,8 +90,8 @@ public class FishyServerRunnable implements Runnable {
 					}
 				} else if (serverState == SERVER_STATE.CONNECTED) {
 					//	Read the read or write option and then the tankId to modify
-					String readOrWrite = (String)inFromClient.readObject();
-					tankId = (String)inFromClient.readObject();
+					String transactionToPerform = (String) inFromClient.readObject();
+					tankId = (String) inFromClient.readObject();
 					while (!startClientServerTransaction(tankId)) {
 						printLogMessage('o', tankId, "transaction for given tankId already started;  Waiting in queue.");
 						try {
@@ -89,74 +100,55 @@ public class FishyServerRunnable implements Runnable {
 							printLogMessage('e', tankId, "unable to sleep thread");
 						}
 					}
-					String xml_filename_pi = String.format("/var/www/vanchaubui.com/public_html/fish_tanks/%s_pi.xml", tankId);
-					String xml_filename_mobile = String.format("/var/www/vanchaubui.com/public_html/fish_tanks/%s_mobile.xml", tankId);
-					if (readOrWrite.equals("recieving_pi")) {
-						serverState = SERVER_STATE.CONNECTED_WRITING;
-						printLogMessage('o', tankId, "recieving tank data");
 
-						Document document = (Document) inFromClient.readObject();
-						PrintWriter writer = new PrintWriter(xml_filename_pi, "UTF-8");
-						StreamResult result = new StreamResult(writer);
-						TransformerFactory tFactory = TransformerFactory.newInstance();
-						Transformer transformer = tFactory.newTransformer();
+					if (transactionToPerform.equals(NetworkTransactionSwitch.DEVICE_RETRIEVE_MOBILE_SETTINGS.name())) {
+						
+						printLogMessage('o', tankId, "preparing to receive sensor data");
+						recieveXMLDataFromClient(NetworkConstants.FILE_SUFFIX_MOBILE);
+						printLogMessage('o', tankId, "sensor data recieved");
 
-						DOMSource source = new DOMSource(document);
-						transformer.transform(source, result);
-						writer.close();
-						serverState = SERVER_STATE.ENDED;
-						outToClient.writeObject("");
-						System.out.println("Done recieving_pi");
+					} else if (transactionToPerform.equals(NetworkTransactionSwitch.DEVICE_RETRIEVE_SENSOR_DATA.name())) {
+						printLogMessage('o', tankId, "preparing to receive mobile data");
+						recieveXMLDataFromClient(NetworkConstants.FILE_SUFFIX_SENSOR);
+						printLogMessage('o', tankId, "mobile data recieved");
+						
+					} else if (transactionToPerform.equals(NetworkTransactionSwitch.SERVER_RETRIEVE_ACTION_LOG.name())) {
+						
+						printLogMessage('o', tankId, "preparing to send sensor data");
+						recieveXMLDataFromClient(NetworkConstants.FILE_SUFFIX_LOG);
+						printLogMessage('o', tankId, "sensor data sent");
 
-					} else if (readOrWrite.equals("recieving_mobile")) {
-						serverState = SERVER_STATE.CONNECTED_WRITING;
-						printLogMessage('o', tankId, "receiving mobile data...");
-						Document document = (Document) inFromClient.readObject();
-						PrintWriter writer = new PrintWriter(xml_filename_mobile, "UTF-8");
-						StreamResult result = new StreamResult(writer);
-						TransformerFactory tFactory = TransformerFactory.newInstance();
-						Transformer transformer = tFactory.newTransformer();
+					} else if (transactionToPerform.equals(NetworkTransactionSwitch.DEVICE_RETRIEVE_MANUAL_COMMANDS.name())) {
+						
+						printLogMessage('o', tankId, "preparing to send sensor data");
+						recieveXMLDataFromClient(NetworkConstants.FILE_SUFFIX_COMMANDS);
+						printLogMessage('o', tankId, "sensor data sent");
 
-						DOMSource source = new DOMSource(document);
-						transformer.transform(source, result);
-						writer.close();
-						serverState = SERVER_STATE.ENDED;
-						outToClient.writeObject("");
-						System.out.println("Done recieving_mobile");
-					} else if (readOrWrite.equals("sending_pi")) {
-						serverState = SERVER_STATE.CONNECTED_WRITING;
+					} else if (transactionToPerform.equals(NetworkTransactionSwitch.DEVICE_RETRIEVE_MOBILE_SETTINGS.name())) {
+						
+						printLogMessage('o', tankId, "preparing to send sensor data");
+						sendXMLDataToClient(NetworkConstants.FILE_SUFFIX_MOBILE);
+						printLogMessage('o', tankId, "sensor data sent");
 
-						System.out.println("sending xml data to pi...");
-						File filePi = new File(xml_filename_pi);
-						File fileMobile = new File(xml_filename_mobile);
-						DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-						DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-						Document doc_pi = dBuilder.parse(filePi);
-						Document doc_mobile = dBuilder.parse(fileMobile);
-
-						outToClient.writeObject(doc_pi);
-						outToClient.writeObject(doc_mobile);
-						serverState = SERVER_STATE.ENDED;
-						inFromClient.readObject();
-						System.out.println("Done sending_pi");
-
-					} else if (readOrWrite.equals("sending_mobile")) {
-						serverState = SERVER_STATE.CONNECTED_WRITING;
-
-						System.out.println("sending xml data to mobile...");
-						File filePi = new File(xml_filename_pi);
-						File fileMobile = new File(xml_filename_mobile);
-						DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-						DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-						Document doc_pi = dBuilder.parse(filePi);
-						Document doc_mobile = dBuilder.parse(fileMobile);
-
-						outToClient.writeObject(doc_pi);
-						outToClient.writeObject(doc_mobile);
-						serverState = SERVER_STATE.ENDED;
-						inFromClient.readObject();
-						System.out.println("Done sending_mobile");
-					}
+					} else if (transactionToPerform.equals(NetworkTransactionSwitch.DEVICE_RETRIEVE_SENSOR_DATA.name())) {
+						
+						printLogMessage('o', tankId, "preparing to send sensor data");
+						sendXMLDataToClient(NetworkConstants.FILE_SUFFIX_SENSOR);
+						printLogMessage('o', tankId, "sensor data sent");
+						
+					} else if (transactionToPerform.equals(NetworkTransactionSwitch.DEVICE_RETRIEVE_ACTION_LOG.name())) {
+						
+						printLogMessage('o', tankId, "preparing to send action log");
+						sendXMLDataToClient(NetworkConstants.FILE_SUFFIX_LOG);
+						printLogMessage('o', tankId, "action log sent");
+						
+					} else if (transactionToPerform.equals(NetworkTransactionSwitch.DEVICE_RETRIEVE_MANUAL_COMMANDS.name())) {
+						
+						printLogMessage('o', tankId, "preparing to send manual commands");
+						sendXMLDataToClient(NetworkConstants.FILE_SUFFIX_COMMANDS);
+						printLogMessage('o', tankId, "manual commands sent");
+						
+					} 
 				}
 			}		
 		} catch (ClassNotFoundException e2) {
@@ -201,7 +193,7 @@ public class FishyServerRunnable implements Runnable {
 	 */
 	private synchronized boolean startClientServerTransaction(String tankId) {
 		boolean rc = false;
-
+		
 		if (TANK_IDS.get(tankId) == null) { // no queue, add transaction and continue
 			Queue<FishyServerRunnable> queue = new LinkedList<FishyServerRunnable>();
 			queue.add(this);
@@ -233,7 +225,70 @@ public class FishyServerRunnable implements Runnable {
 		TANK_IDS.get(tankId).remove();
 		return true;
 	}
+	
+	/**
+	 * Helper function to choose and send a specified xml to the client with the given suffix
+	 * @throws IOException thrown if server connection ends prematurely
+	 * @throws SAXException parser unable to read xml
+	 * @throws ParserConfigurationException parser unable to read xml
+	 * @throws ClassNotFoundException if object recieved by stream is of an unknown type
+	 * 
+	 * @param suffix the file to build the file path for
+	 */
+	private void sendXMLDataToClient(String suffix) throws 	ClassNotFoundException,
+															ParserConfigurationException,
+															SAXException,
+															IOException {
+		serverState = SERVER_STATE.CONNECTED_WRITING;
 
+		File file = new File(buildFilePath(suffix));
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document document = dBuilder.parse(file);
+
+		outToClient.writeObject(document); // send xml
+		serverState = SERVER_STATE.ENDED;
+		inFromClient.readObject();  // recieve empty string
+	}
+	
+	/**
+	 * Helper function to choose and recieve a specified xml from the client with the given suffix
+	 * @param suffix
+	 * @throws ClassNotFoundException if object recieved by stream is of an unknown type
+	 * @throws IOException thrown if server connection ends prematurely
+	 * @throws TransformerConfigurationException parser unable to write xml
+	 * @throws TransformerException parser unable to write xml
+	 */
+	private void recieveXMLDataFromClient(String suffix) throws	ClassNotFoundException,
+																IOException,
+																TransformerConfigurationException,
+																TransformerException {
+		serverState = SERVER_STATE.CONNECTED_WRITING;
+		Document document = (Document) inFromClient.readObject();
+		PrintWriter writer = new PrintWriter(buildFilePath(suffix), "UTF-8");
+		StreamResult result = new StreamResult(writer);
+		TransformerFactory tFactory = TransformerFactory.newInstance();
+		Transformer transformer = tFactory.newTransformer();
+
+		DOMSource source = new DOMSource(document);
+		transformer.transform(source, result);
+		writer.close();
+		serverState = SERVER_STATE.ENDED;
+		outToClient.writeObject("");
+
+	}
+	
+	
+	/**
+	 * Builds a file path for the given suffix.
+	 * @param suffix the file to build the file path for
+	 * @return returns the complete file directory of the given suffix
+	 */
+	private static String buildFilePath(String suffix) {
+		return String.format(NetworkConstants.FILE_LOCATION_FORMAT, NetworkConstants.FILE_LOCATION_SERVER, suffix, NetworkConstants.FILE_EXTENSION);
+	}
+	
+	
 	/**
 	 * Helper function to print server log messages
 	 * @param tankId the tankId associated to the error
@@ -251,7 +306,10 @@ public class FishyServerRunnable implements Runnable {
 			System.out.printf(LOG_FORMAT, timeNow, tankId, message);
 		}
 	}
-
+	
+	
+	
+	
 	public static void main(String args[]) {
 		Thread[] threads = new Thread[10];
 		int numberOfConnections = 0;
@@ -280,5 +338,5 @@ public class FishyServerRunnable implements Runnable {
 			e1.printStackTrace();
 		}
 	}
-
+	
 }
