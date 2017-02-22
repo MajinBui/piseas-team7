@@ -28,6 +28,6 @@
     <details pHmin="1" pHmax="9"/>
   </Sensor>
   <Conductivity>
-    <details value="1.5"/>
+    <details cMin="1.5" cMax="7.5"/>
   </Conductivity>
 </Piseas>
