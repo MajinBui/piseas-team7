@@ -4,8 +4,11 @@ import android.content.Intent;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -20,6 +23,7 @@ public class FeedingManagementActivity extends AppCompatActivity {
     private List<FeedSchedule> feeds;
     private ListView listView;
     private final String tankID = "Matt";
+    Switch autoFeed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +31,8 @@ public class FeedingManagementActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feeding_management);
+        autoFeed = (Switch) findViewById(R.id.autoLight);
+
         populateList();
     }
 
@@ -41,8 +47,9 @@ public class FeedingManagementActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
-        super.onResume();
+        Log.i("ONRESUME", "");
         populateList();
+        super.onResume();
     }
 
     private void populateList(){
@@ -55,7 +62,7 @@ public class FeedingManagementActivity extends AppCompatActivity {
         FeedingAdapter adapter = new FeedingAdapter(this, R.layout.days_list_items, feeds);
 
         listView.setAdapter(adapter);
-
+        validateAuto();
     }
 
     public void getData(){
@@ -88,5 +95,28 @@ public class FeedingManagementActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    public void validateAuto(){
+        //validation for automation
+        if(feeds.isEmpty()){
+            autoFeed.setClickable(false);
+            autoFeed.setOnClickListener(new CompoundButton.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getBaseContext(), "Can not enable, create schedule first",
+                            Toast.LENGTH_LONG).show();
+                    autoFeed.setChecked(false);
+                }
+            });
+        }
+        else
+            autoFeed.setClickable(true);
+    }
+
+    @Override
+    protected void onRestart() {
+        validateAuto();
+        super.onRestart();
     }
 }

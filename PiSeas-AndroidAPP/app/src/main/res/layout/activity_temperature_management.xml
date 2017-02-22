@@ -64,41 +64,6 @@
         android:layout_alignStart="@+id/curTempTV"
         android:theme="@style/SwitchColor" />
 
-    <TextView
-        android:text="@string/manualHeater"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView6"
-        android:textSize="18sp"
-        android:layout_alignBottom="@+id/manualHeaterCtrl"
-        android:layout_alignEnd="@+id/textView5" />
-
-    <Switch
-        android:id="@+id/manualHeaterCtrl"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:theme="@color/SwitchColor"
-        android:layout_marginBottom="30dp"
-        android:layout_above="@+id/manualFanCtrl"
-        android:layout_alignStart="@+id/enableTempRegSW" />
-
-    <TextView
-        android:text="@string/manualFan"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView7"
-        android:textSize="18sp"
-        android:layout_alignBottom="@+id/manualFanCtrl"
-        android:layout_alignEnd="@+id/textView6" />
-
-    <Switch
-        android:id="@+id/manualFanCtrl"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_alignEnd="@+id/manualHeaterCtrl"
-        android:theme="@color/SwitchColor" />
-
     <Button
         android:id="@+id/updateTempRangeBTN"
         android:text="@string/setTempBtn"
@@ -106,7 +71,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="19dp"
         android:onClick="onUpdateTempClick"
-        android:layout_below="@+id/textView7"
+        android:layout_below="@+id/textView5"
         android:layout_alignEnd="@+id/removeTempRangeBTN"
         android:layout_alignStart="@+id/removeTempRangeBTN" />
 

@@ -5,13 +5,18 @@ import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 
 import java.util.HashMap;
+
+import static group7.piseas.R.id.autoLight;
 
 
 public class LightManagementActivity extends AppCompatActivity {
     private final String tankID = "Matt";
-
+    private Switch auto;
+    private Switch manual;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +24,16 @@ public class LightManagementActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_light_managment);
+
+        auto = (Switch) findViewById(R.id.autoLight);
+        manual = (Switch) findViewById(R.id.manLight);
+
+        manual.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton manual, boolean isChecked) {
+                if (isChecked)
+                    auto.setChecked(false);
+            }
+        });
     }
 
     public void addSchedule(View view) {

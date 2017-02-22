@@ -24,10 +24,6 @@ public class Tank {
         return id;
     }
 
-    public int getPw() {
-        return pw;
-    }
-
     public int getSize() {
         return size;
     }

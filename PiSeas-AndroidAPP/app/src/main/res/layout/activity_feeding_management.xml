@@ -33,7 +33,8 @@
             android:layout_height="wrap_content"
             android:paddingStart="20dp"
             android:paddingEnd="10dp"
-            android:layout_alignParentEnd="true"/>
+            android:layout_alignParentEnd="true"
+            android:theme="@style/SwitchColor"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -57,7 +58,6 @@
         android:layout_marginBottom="20dp"
         android:text="@string/manualFeed"
         android:textSize="15sp"
-        android:textColor="@color/text"
         android:onClick="onManualFeed"/>
 
     <RelativeLayout

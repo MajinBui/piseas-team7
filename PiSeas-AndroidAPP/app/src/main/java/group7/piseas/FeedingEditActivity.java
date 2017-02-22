@@ -158,8 +158,8 @@ public class FeedingEditActivity extends AppCompatActivity {
         int feedsPerDay[] = new int[7];
 
         for(FeedSchedule feed : schedule){
-            for(int i=0; i<7; i++){
-                if(feed.getWeek(i))
+            for(int i=0; i<7; i++) {
+                if (feed.getWeek(i))
                     feedsPerDay[i]++;
             }
         }

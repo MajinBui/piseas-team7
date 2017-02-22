@@ -68,6 +68,12 @@ public class TankMainPageActivity extends AppCompatActivity {
         i.putExtra("id", index);
         startActivity(i);
     }
+    public void logButtonClick(View view){
+        Intent i = new Intent(this, LogActivity.class);
+        i.putExtra("id", index);
+        startActivity(i);
+    }
+
     @Override
     protected void onPause() {
         super.onPause();

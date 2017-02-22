@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +24,7 @@ public class TemperatureManagementActivity extends AppCompatActivity {
     private String maxTemp;
     private TextView minTempTable;
     private TextView maxTempTable;
+    Switch auto;
 
     private TextView curTempTV;
     private long UPDATE_VALUE_DELAY = 10000;
@@ -45,6 +47,7 @@ public class TemperatureManagementActivity extends AppCompatActivity {
 
         minTempTable = (TextView) findViewById(R.id.minTempValTV);
         maxTempTable = (TextView) findViewById(R.id.maxTempValTV);
+        auto = (Switch) findViewById(R.id.enableTempRegSW);
 
         curTempTV = (TextView)findViewById(R.id.curTempTV);
         handler.postDelayed(runnable, UPDATE_VALUE_DELAY);
@@ -109,6 +112,8 @@ public class TemperatureManagementActivity extends AppCompatActivity {
 
         minTempTable.setText(minTemp);
         maxTempTable.setText(maxTemp);
+
+        validateAuto();
     }
 
     @Override
@@ -129,5 +134,22 @@ public class TemperatureManagementActivity extends AppCompatActivity {
         fillTable();
         handler.postDelayed(runnable, UPDATE_VALUE_DELAY);
 
+    }
+
+    public void validateAuto(){
+        //validation for automation
+        if(minTemp.isEmpty()|| maxTemp.isEmpty()){
+            auto.setClickable(false);
+            auto.setOnClickListener(new CompoundButton.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getBaseContext(), "Can not enable, set range first",
+                            Toast.LENGTH_LONG).show();
+                    auto.setChecked(false);
+                }
+            });
+        }
+        else
+            auto.setClickable(true);
     }
 }
