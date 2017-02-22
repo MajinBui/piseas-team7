@@ -125,40 +125,37 @@ public class FeedingEditActivity extends AppCompatActivity {
     public void getData(){
         HashMap<String, String> retrieveList = FishyClient.retrieveServerData(tankID);
 
-        for(int i=0; i<7; i++){
-            if(!retrieveList.get(days[i]).equals("-")){
-                String[] separate = retrieveList.get(days[i]).split(divider);
+            for(int i=0; i<7; i++){
+                if(!retrieveList.get(days[i]).equals("-")){
+                    String[] separate = retrieveList.get(days[i]).split(divider);
 
-                for (String aSeparate : separate) {
-                    boolean found = false;
-                    for (FeedSchedule feed : schedule) {
-                        if (feed.getTime().equals(aSeparate)) {
-                            feed.setWeek(i);
-                            found = true;
+                    for (String aSeparate : separate) {
+                        boolean found = false;
+                        for (FeedSchedule feed : schedule) {
+                            if (feed.getTime().equals(aSeparate)) {
+                                feed.setWeek(i);
+                                found = true;
+                            }
                         }
-                    }
-                    if(!found){
-                        String[] timeSplit = aSeparate.split(":");
-                        int hr = Integer.parseInt(timeSplit[0]);
-                        int min = Integer.parseInt(timeSplit[1]);
-                        FeedSchedule dayFeed = new FeedSchedule(hr, min);
-                        dayFeed.setWeek(i);
-                        schedule.add(dayFeed);
+                        if(!found){
+                            String[] timeSplit = aSeparate.split(":");
+                            int hr = Integer.parseInt(timeSplit[0]);
+                            int min = Integer.parseInt(timeSplit[1]);
+                            FeedSchedule dayFeed = new FeedSchedule(hr, min);
+                            dayFeed.setWeek(i);
+                            schedule.add(dayFeed);
+                        }
                     }
                 }
             }
-        }
         lightVal = retrieveList.get(light);
     }
 
     private boolean checkMax(){
         curSchedule = new FeedSchedule(hour, min);
+        int hourMin = (hour-MAX)%24;
+        int hourMax = (hour+MAX)%24;
         int feedsPerDay[] = new int[7];
-        int time = hour * 100 + min;
-        int timeMin = time - (MAX * 100);
-        int timeMax = time + (MAX * 100);
-
-        // getTimeCompare
 
         for(FeedSchedule feed : schedule){
             for(int i=0; i<7; i++){
@@ -168,7 +165,6 @@ public class FeedingEditActivity extends AppCompatActivity {
         }
 
         for(int i=0; i<7; i++){
-
             if(day[i]){
                 if(feedsPerDay[i]+1 > 2){
                     Toast.makeText(this, "Can only have 2 feeds per day!", Toast.LENGTH_LONG).show();
@@ -176,9 +172,19 @@ public class FeedingEditActivity extends AppCompatActivity {
                 }
                 curSchedule.setWeek(i);
                 for(FeedSchedule feed : schedule){
-                    if(feed.getWeek(i) && timeMin <= feed.getTimeCompare() && timeMax >= feed.getTimeCompare()){
-                        Toast.makeText(this, "Feeding times must be at least 2 hours apart!", Toast.LENGTH_LONG).show();
-                        return false;
+                    if(hourMax > hourMin) {
+                        // check if hour is 2hr within another feed, current time is near midnight
+                        if (feed.getWeek(i) && (feed.getHour() >= hourMin && feed.getHour() <= hourMax)) {
+                            Toast.makeText(this, "Feeding times must be at least 2 hours apart!", Toast.LENGTH_LONG).show();
+                            return false;
+                        }
+                    // check if hour is 2hr within another feed
+                    }
+                    else {
+                        if (feed.getWeek(i) && feed.getHour() >= hourMin || feed.getHour() <= hourMax) {
+                            Toast.makeText(this, "Feeding times must be at least 2 hours apart!", Toast.LENGTH_LONG).show();
+                            return false;
+                        }
                     }
                 }
             }

@@ -79,7 +79,7 @@
         />
 
     <Button
-        android:id="@+id/addButton"
+        android:id="@+id/updateButton"
         android:text="Save Information"
         android:layout_below="@+id/descEditor"
         android:layout_margin="10dp"

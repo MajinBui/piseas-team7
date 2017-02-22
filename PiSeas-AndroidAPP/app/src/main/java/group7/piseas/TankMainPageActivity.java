@@ -10,7 +10,7 @@ import android.widget.TextView;
 import group7.piseas.Helpers.TankTimer;
 
 public class TankMainPageActivity extends AppCompatActivity {
-    int index;
+    static int index;
 
     TextView temperatureTextView;
     TextView pHTextView;
