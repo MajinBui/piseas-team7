@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Data>
-  <Tank code="xyz789" password="helloworld" />
-  <Date year="2017" month="2" day="9" hour="17" min="55" sec="25"/>
-  <Feed totalFeeds="1" feedTime="1425" />
-  <Temperature currentTemp="19" />
-  <Sensor pHcurrent="8" conductivity="1" />
-</Data>
