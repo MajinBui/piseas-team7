@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Logs>
+  <Log type="ACT" date="2017-01-28T09:24:01+0500" desc="FEEX" />
+  <Log type="NOT" date="2017-02-12T04:13:27+0500" desc="PHLEVELS" />
+  <Log type="MANACT" date="2017-02-20T19:19:19+0500" desc="HEATON" />
+</Logs>
+
+
+
+<!--
+update date for mobile_settings         - ✔
+update date for sensor_data             - ✔
+add conductivity parsing                - ✔
+add conductivity updating               - ✔
+update light/feed for mobile settings   - ✔
+set schedules                           -
+update tag for mobile_settings (write)  - ✔
+log ENUMS                               -
+git documentation                       -
+mobile settings writing                 - ✔
+upload updated #_mobile_settings.xml    - ✔
+
+-->

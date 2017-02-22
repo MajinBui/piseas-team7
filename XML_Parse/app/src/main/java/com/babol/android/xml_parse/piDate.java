@@ -1,6 +1,7 @@
 package com.babol.android.xml_parse;
 
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by mmbab on 2/20/2017.
@@ -15,10 +16,21 @@ public class piDate {
     private int min;
     private int sec;
 
+    // Create Date object using current time
     piDate(){
-        date="";
+        Date date = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+
+        year = cal.get(Calendar.YEAR);
+        month = cal.get(Calendar.MONTH);
+        day = cal.get(Calendar.DAY_OF_MONTH);
+        hour = cal.get(Calendar.HOUR);
+        min = cal.get(Calendar.MINUTE);
+        sec = cal.get(Calendar.SECOND);
     }
 
+    // Create Date time with a time string coming in
     piDate(String d){
         date = d;
         parseData();
@@ -65,9 +77,6 @@ public class piDate {
         day = cal.get(Calendar.DAY_OF_MONTH);
         hour = cal.get(Calendar.HOUR_OF_DAY);
         min = cal.get(Calendar.MINUTE);
-
-        int s = 0;
-        s++;
     }
 
     public int getYear(){
@@ -95,7 +104,6 @@ public class piDate {
     }
 
     public String toString(){
-
         return year + "-" + month + "-" + day + " " + hour + ":" + min + ":" + sec;
     }
 

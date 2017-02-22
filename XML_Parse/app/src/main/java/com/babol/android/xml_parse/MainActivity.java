@@ -56,42 +56,45 @@ public class MainActivity extends Activity {
         TextView tv_current_temp = (TextView) findViewById(R.id.tv_current_temp);
         TextView tv_ph = (TextView) findViewById(R.id.tv_ph);
         TextView tv_conductivity = (TextView) findViewById(R.id.tv_conductivity);
+        TextView tv_codeMobile = (TextView) findViewById(R.id.tv_mobilecode);
 
 
+        // Parser test
         XmlPullParserHandler parser = new XmlPullParserHandler(this, tank_id);
 
-        tv_code.setText(parser.getCode());
-        tv_password.setText(parser.getPassword());
+        tv_code.setText(parser.getSensorCode());
+        tv_password.setText(parser.getSensorPassword());
         //tv_date_sent.setText(parser.getDateSent(is));
-        CurrDate ds = parser.getDateSent();
+        piDate ds = parser.getSensorDate();
 
-        int totalFeeds = parser.getTotalFeeds();
-        int feedTime = parser.getFeedTime();
-        int currTemp = parser.getCurrentTemp();
-        float phLevel = parser.getPH();
-        float cond =  parser.getConductivity();
+        int totalFeeds = parser.getSensorTotalFeeds();
+        int feedTime = parser.getSensorFeedTime();
+        int currTemp = parser.getSensorCurrentTemp();
+        float phLevel = parser.getSensorPH();
+        float cond =  parser.getSensorConductivity();
 
-        TextView tv_codeMobile = (TextView) findViewById(R.id.tv_mobilecode);
-        tv_codeMobile.setText(parser.getPiCode());
+        tv_codeMobile.setText(parser.getSettingsCode());
 
-        String piPass = parser.getPiPassword();
-        float piSize = parser.getPiSize();
-        String PiDesc = parser.getPiDescription();
-        CurrDate piDate = parser.getPiDateSent();
-        boolean piFeed = parser.getPiFeed();
-        boolean piAutoFeed = parser.getPiAutoFeed();
-        boolean getPiLight = parser.getPiLight();
-        boolean piAutoLight = parser.getPiAutoLight();
-        float piMin = parser.getPiMin();
-        float piMax = parser.getPiMax();
-        boolean piAutoTemp = parser.getPiAutoTemp();
-        boolean piManualFan = parser.getPiManualFan();
-        boolean piManH = parser.getPiManualHeater();
-        boolean piDrain = parser.getPiDrain();
-        boolean piFill = parser.getPiFill();
-        boolean piAutoChange = parser.getPiAutoWaterChange();
-        float piPHMin = parser.getPiPHMin();
-        float piPHMax = parser.getPiPHMax();
+        String piPass = parser.getSettingsPassword();
+        float piSize = parser.getSettingsSize();
+        String PiDesc = parser.getSettingsDescription();
+        piDate piDate = parser.getSettingsDate();
+        boolean piFeed = parser.getSettingsFeed();
+        boolean piAutoFeed = parser.getSettingsAutoFeed();
+        boolean getPiLight = parser.getSettingsLight();
+        boolean piAutoLight = parser.getSettingsAutoLight();
+        float piMin = parser.getSettingsMin();
+        float piMax = parser.getSettingsMax();
+        boolean piAutoTemp = parser.getSettingsAutoTemp();
+        boolean piManualFan = parser.getSettingsManualFan();
+        boolean piManH = parser.getSettingsManualHeater();
+        boolean piDrain = parser.getSettingsDrain();
+        boolean piFill = parser.getSettingsFill();
+        boolean piAutoChange = parser.getSettingsAutoWaterChange();
+        float piPHMin = parser.getSettingsPHMin();
+        float piPHMax = parser.getSettingsPHMax();
+        float cMin = parser.getSettingsCMin();
+        float cHMax = parser.getSettingsCMax();
 
         ArrayList<FeedSchedule> feeds = parser.getFeedSchedules();
         ArrayList<LightSchedule> lights = parser.getLightSchedules();
@@ -102,8 +105,10 @@ public class MainActivity extends Activity {
         TextView et_code = (TextView) findViewById(R.id.et_code);
         TextView et_password = (TextView) findViewById(R.id.et_password);
         TextView et_size = (TextView) findViewById(R.id.et_size);
-        XmlPullParserHandler parser = new XmlPullParserHandler(this, tank_id);
 
+
+        // Parser test
+        XmlPullParserHandler parser = new XmlPullParserHandler(this, tank_id);
         parser.setCode(et_code.getText().toString());
     }
 

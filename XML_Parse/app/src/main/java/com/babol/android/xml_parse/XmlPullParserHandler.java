@@ -70,16 +70,15 @@ public class XmlPullParserHandler {
     // Retrieve data
 
     // Parsing of the tank_<id>_mobile.xml file, file is save in Assets
-    private String parseMobile(String TAG_NAME, int attribute){
+    private String parseSensor(String TAG_NAME, int attribute){
         String code = "-";
         try{
-            is = context.getAssets().open("tank_" + id + "_mobile.xml");
+            is = context.getAssets().open(id + "_sensor_data.xml");
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
             XmlPullParser parser = factory.newPullParser();
 
             is.reset();
-
             parser.setInput(is, null);
 
            int event;
@@ -102,54 +101,51 @@ public class XmlPullParserHandler {
         return code;
     }
 
-    public String getCode(){
+    public String getSensorCode(){
         // Parse from tag "Tank", attribute 0
-        return parseMobile("Tank", 0);
+        return parseSensor("Tank", 0);
     }
 
-    public String getPassword(){
+    public String getSensorPassword(){
         // Parse from tag "Tank", attribute 1
-        return parseMobile("Tank", 1);
+        return parseSensor("Tank", 1);
     }
 
-    public CurrDate getDateSent(){
-        int ds[] = new int[6];
-        for(int i = 0; i<6 ;i++)
-            ds[i] = Integer.parseInt(parseMobile("Date", i));
-
-        return new CurrDate(ds[0], ds[1], ds[2], ds[3], ds[4], ds[5]);
+    public piDate getSensorDate(){
+        // Parse from tag Date, attribute 0
+        return new piDate(parseSensor("Date", 0));
     }
 
-    public int getTotalFeeds(){
+    public int getSensorTotalFeeds(){
         // Parse from tag "Feed", attribute 0
-        return Integer.parseInt(parseMobile("Feed", 0));
+        return Integer.parseInt(parseSensor("Feed", 0));
     }
 
-    public int getFeedTime(){
+    public int getSensorFeedTime(){
         // Parse from tag "Feed", attribute 1
-        return Integer.parseInt(parseMobile("Feed", 1));
+        return Integer.parseInt(parseSensor("Feed", 1));
     }
 
-    public int getCurrentTemp(){
+    public int getSensorCurrentTemp(){
         // Parse from tag "Temperature", attribute 0
-        return Integer.parseInt(parseMobile("Temperature", 0));
+        return Integer.parseInt(parseSensor("Temperature", 0));
     }
 
-    public float getPH(){
+    public float getSensorPH(){
         // Parse from tag "Sensor", attribute 0
-        return Float.parseFloat(parseMobile("Sensor", 0));
+        return Float.parseFloat(parseSensor("Sensor", 0));
     }
 
-    public float getConductivity(){
+    public float getSensorConductivity(){
         // Parse from tag "Sensor", attribute 1
-        return Float.parseFloat(parseMobile("Sensor", 1));
+        return Float.parseFloat(parseSensor("Sensor", 1));
     }
 
     // Parsing of the tank_<id>_pi.xml file, file saved in internal storage
-    private String parsePi(String TAG_NAME, int attribute){
+    private String parseSettings(String TAG_NAME, int attribute){
         String code = "-";
         try{
-            File file = new File(context.getFilesDir() + "/tank_" + id + "_pi.xml");
+            File file = new File(context.getFilesDir() + "/" + id + "_mobile_settings.xml");
             FileInputStream fis = new FileInputStream(file);
 
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
@@ -165,6 +161,12 @@ public class XmlPullParserHandler {
                     String tag = parser.getName();
 
                     if (TAG_NAME.equals(tag)) {
+                        if(TAG_NAME.equals("Feed") || TAG_NAME.equals("Light")) {
+                            code = parser.getAttributeValue(attribute);
+                            fis.close();
+                            return code;
+                        }
+                        // Go to details tag
                         parser.nextTag();
                         tag = parser.getName();
                         if(tag.equals("details")){
@@ -182,108 +184,115 @@ public class XmlPullParserHandler {
         return code;
     }
 
-    public String getPiCode(){
+    public String getSettingsCode(){
         // Parse from tag "Tank", attribute 0
-        return parsePi("Tank", 0);
+        return parseSettings("Tank", 0);
     }
 
-    public String getPiPassword(){
+    public String getSettingsPassword(){
         // Parse from tag "Tank", attribute 1
-        return parsePi("Tank", 1);
+        return parseSettings("Tank", 1);
     }
 
-    public float getPiSize(){
+    public float getSettingsSize(){
         // Parse from tag "Tank", attribute 2
-        return Float.parseFloat(parsePi("Tank", 2));
+        return Float.parseFloat(parseSettings("Tank", 2));
     }
 
-    public String getPiDescription(){
+    public String getSettingsDescription(){
         // Parse from tag "Tank", attribute 3
-        return parsePi("Tank", 3);
+        return parseSettings("Tank", 3);
     }
 
-    public CurrDate getPiDateSent(){
-        int ds[] = new int[6];
-        for(int i = 0; i<6 ;i++)
-            ds[i] = Integer.parseInt(parseMobile("Date", i));
-
-        return new CurrDate(ds[0], ds[1], ds[2], ds[3], ds[4], ds[5]);
+    public piDate getSettingsDate(){
+        // Parse from tag "Date", attribute 0
+        return new piDate(parseSensor("Date", 0));
     }
 
-    public boolean getPiFeed(){
-        // Parse from tag "Feed", attribute 0
-        return Boolean.parseBoolean(parsePi("Feed", 0));
-    }
-
-    public boolean getPiAutoFeed(){
+    public boolean getSettingsFeed(){
         // Parse from tag "Feed", attribute 1
-        return Boolean.parseBoolean(parsePi("Feed", 1));
+        return Boolean.parseBoolean(parseSettings("Feed", 1));
     }
 
-    public boolean getPiLight(){
-        // Parse from tag "Light", attribute 0
-        return Boolean.parseBoolean(parsePi("Light", 0));
+    public boolean getSettingsAutoFeed(){
+        // Parse from tag "Feed", attribute 2
+        return Boolean.parseBoolean(parseSettings("Feed", 2));
     }
 
-    public boolean getPiAutoLight(){
+    public boolean getSettingsLight(){
         // Parse from tag "Light", attribute 1
-        return Boolean.parseBoolean(parsePi("Light", 1));
+        return Boolean.parseBoolean(parseSettings("Light", 1));
     }
 
-    public float getPiMin(){
+    public boolean getSettingsAutoLight(){
+        // Parse from tag "Light", attribute 2
+        return Boolean.parseBoolean(parseSettings("Light", 2));
+    }
+
+    public float getSettingsMin(){
         // Parse from tag "Temperature", attribute 0
-        return Float.parseFloat(parsePi("Temperature", 0));
+        return Float.parseFloat(parseSettings("Temperature", 0));
     }
 
-    public float getPiMax(){
+    public float getSettingsMax(){
         // Parse from tag "Temperature", attribute 1
-        return Float.parseFloat(parsePi("Temperature", 1));
+        return Float.parseFloat(parseSettings("Temperature", 1));
     }
 
-    public boolean getPiAutoTemp(){
+    public boolean getSettingsAutoTemp(){
         // Parse from tag "Temperature", attribute 2
-        return Boolean.parseBoolean(parsePi("Temperature", 2));
+        return Boolean.parseBoolean(parseSettings("Temperature", 2));
     }
 
-    public boolean getPiManualFan(){
+    public boolean getSettingsManualFan(){
         // Parse from tag "Temperature", attribute 3
-        return Boolean.parseBoolean(parsePi("Temperature", 3));
+        return Boolean.parseBoolean(parseSettings("Temperature", 3));
     }
 
-    public boolean getPiManualHeater(){
+    public boolean getSettingsManualHeater(){
         // Parse from tag "Temperature", attribute 4
-        return Boolean.parseBoolean(parsePi("Temperature", 4));
+        return Boolean.parseBoolean(parseSettings("Temperature", 4));
     }
 
-    public boolean getPiDrain(){
+    public boolean getSettingsDrain(){
         // Parse from tag "Pump", attribute 0
-        return Boolean.parseBoolean(parsePi("Pump", 0));
+        return Boolean.parseBoolean(parseSettings("Pump", 0));
     }
 
-    public boolean getPiFill(){
+    public boolean getSettingsFill(){
         // Parse from tag "Pump", attribute 1
-        return Boolean.parseBoolean(parsePi("Pump", 1));
+        return Boolean.parseBoolean(parseSettings("Pump", 1));
     }
 
-    public boolean getPiAutoWaterChange(){
+    public boolean getSettingsAutoWaterChange(){
         // Parse from tag "Pump", attribute 2
-        return Boolean.parseBoolean(parsePi("Pump", 2));
+        return Boolean.parseBoolean(parseSettings("Pump", 2));
     }
 
-    public float getPiPHMin(){
+    public float getSettingsPHMin(){
         // Parse from tag "Sensor", attribute 0
-        return Float.parseFloat(parsePi("Sensor", 0));
+        return Float.parseFloat(parseSettings("Sensor", 0));
     }
 
-    public float getPiPHMax(){
+    public float getSettingsPHMax(){
         // Parse from tag "Sensor", attribute 1
-        return Float.parseFloat(parsePi("Sensor", 1));
-}
+        return Float.parseFloat(parseSettings("Sensor", 1));
+    }
+
+    public float getSettingsCMin() {
+        // Parse from tag "Conductivity", attribute 0
+        return Float.parseFloat(parseSettings("Conductivity", 0));
+    }
+
+    public float getSettingsCMax() {
+        // Parse from tag "Conductivity", attribute 1
+        return Float.parseFloat(parseSettings("Conductivity", 1));
+    }
 
     public ArrayList<FeedSchedule> getFeedSchedules(){
         ArrayList<FeedSchedule> feeds = new ArrayList<>();
         try{
-            File file = new File(context.getFilesDir() + "/tank_" + id + "_pi.xml");
+            File file = new File(context.getFilesDir() + "/" + id + "_mobile_settings.xml");
             FileInputStream fis = new FileInputStream(file);
 
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
@@ -294,7 +303,7 @@ public class XmlPullParserHandler {
 
             while ((parser.next()) != XmlPullParser.END_DOCUMENT) {
                 String tag = parser.getName();
-                if (tag.equals("FeedSchedule")) {
+                if (tag.equals("Feed")) {
                     parser.next();
                     while(parser.getName().equals("details")) {
                         // grab the first 2 attributes, hour/min, create the FeedSchedule object. All days are automatically
@@ -305,7 +314,7 @@ public class XmlPullParserHandler {
                         for (int i = 2; i < 9; i++) {
                             boolean day = Boolean.parseBoolean(parser.getAttributeValue(i));
                             if (day)
-                                feed.setWeek(i);
+                                feed.setWeek(i-2);
                         }
                         feeds.add(feed);
                         // next will take the same detail tag twice, I think because it needs a closing
@@ -327,7 +336,7 @@ public class XmlPullParserHandler {
     public ArrayList<LightSchedule> getLightSchedules(){
         ArrayList<LightSchedule> lights = new ArrayList<>();
         try{
-            File file = new File(context.getFilesDir() + "/tank_" + id + "_pi.xml");
+            File file = new File(context.getFilesDir() + "/" + id + "_mobile_settings.xml");
             FileInputStream fis = new FileInputStream(file);
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
@@ -337,7 +346,7 @@ public class XmlPullParserHandler {
 
             while ((parser.next()) != XmlPullParser.END_DOCUMENT) {
                 String tag = parser.getName();
-                if (tag.equals("LightSchedule")) {
+                if (tag.equals("Light")) {
                     parser.next();
                     while(parser.getName().equals("details")) {
                         LightSchedule light = new LightSchedule(
@@ -362,12 +371,11 @@ public class XmlPullParserHandler {
         return lights;
     }
 
-    // Parsing of the tank_<id>_pi.xml file, file saved in Assets
+    // Parsing of the tank_<id>_action_log.xml file, file saved in Assets
     public Logs getLogs(){
         Logs logs = new Logs();
         try{
-
-            is = context.getAssets().open("tank_" + id + "_log.xml");
+            is = context.getAssets().open(id + "_action_log.xml");
 
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
@@ -392,7 +400,6 @@ public class XmlPullParserHandler {
                 }
                 is.close();
                 return logs;
-               // }
             }
             is.close();
         } catch (XmlPullParserException e) {e.printStackTrace();}
@@ -403,7 +410,7 @@ public class XmlPullParserHandler {
     // Update data
     private void write(String tag, String attribute, String value) {
 
-        String filepath = "tank_" + id + "_pi.xml";
+        String filepath = id + "_mobile_settings.xml";
         File newXml = new File(context.getFilesDir() + "/" + filepath);
 
         // Check to see if file exists, if file does not exist, create new
@@ -411,17 +418,36 @@ public class XmlPullParserHandler {
             createXml(filepath);
 
         try {
-        // Modify XML using DOM
-        DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-        Document doc = docBuilder.parse(context.openFileInput(filepath));
+            // Modify XML using DOM
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            Document doc = docBuilder.parse(context.openFileInput(filepath));
 
-        // Search for tag and insert into a node object
-        NodeList nodes = doc.getElementsByTagName(tag);
-        Node detail = nodes.item(0);
-
-        // Get all child tags of our parent
+            // search for Updated tag
+            NodeList nodes = doc.getElementsByTagName("Update");
+            // get the Updated tag
+            Node detail = nodes.item(0);
+            // get the only child of Updated, detail, and place into array
             NodeList details = detail.getChildNodes();
+            // get the single detail tag and place into Node
+            Node checks = details.item(0);
+            // get all attributes into Attr array
+            NamedNodeMap allAtts = checks.getAttributes();
+            // loop through all attributes, set the one that we are changing to true, all else are false
+            for (int i = 0; i<6; i++){
+                Attr attribs = (Attr)allAtts.item(i);
+                if(attribs.getNodeName().toLowerCase().equals(tag))
+                    attribs.setNodeValue("true");
+                else
+                    attribs.setNodeValue("false");
+            }
+
+            // Search for tag and insert into a node object
+            nodes = doc.getElementsByTagName(tag);
+            detail = nodes.item(0);
+
+            // Get all child tags of our parent
+            details = detail.getChildNodes();
             for(int i = 0; i < details.getLength(); i++){
                 Node item = details.item(i);
 
@@ -429,13 +455,8 @@ public class XmlPullParserHandler {
                 NamedNodeMap detailNodes = item.getAttributes();
                 for(int z = 0; z < detailNodes.getLength(); z++){
                     Attr attr = (Attr) detailNodes.item(z);
-                    String attrV = attr.getValue(); // ------------testing
                     if(attr.getNodeName().equals(attribute))
                         attr.setNodeValue(value);
-                    String attrV2 = attr.getValue(); // ------------testing
-
-                    int zzz = 4;    // -----------------------------testing
-                    zzz++;          // -----------------------------testing
                 }
             }
 
@@ -493,8 +514,8 @@ public class XmlPullParserHandler {
         write("Feed", "autoFeed", String.valueOf(value));
     }
 
-//    FeedSchedule
-//    LightSchedule
+//    FeedSchedule  - need to implement
+//    LightSchedule - need to implement
 
     public void setLight(boolean value){
         write("Light", "light", String.valueOf(value));
@@ -544,7 +565,16 @@ public class XmlPullParserHandler {
         write("Sensor", "pHmax", String.valueOf(value));
     }
 
-    // Create new xml file with default values
+    public void setCMin(float value){
+        write("Conductivity", "cmin", String.valueOf(value));
+    }
+
+    public void setCMax(float value){
+        write("Conductivity", "cmax", String.valueOf(value));
+    }
+
+    // Create new xml file with default values incase there is no #_mobile_settings.xml
+    // used mostly for testing
     private void createXml(String filename){
         try {
             FileOutputStream myFile = context.openFileOutput(filename, context.MODE_PRIVATE);
@@ -553,11 +583,17 @@ public class XmlPullParserHandler {
             StringWriter writer = new StringWriter();
 
             // Initial data to fill into new XML file - temporary
+            String updateFeed = "false";
+            String updateLight = "false";
+            String updateTemp = "false";
+            String updatePump = "false";
+            String updatepH = "false";
+            String updateCond = "false";
             String code = "abc123";
             String password = "helloworld";
             String size = "20";
             String description = "my fishy home";
-            String dateSent = "0045-02-03-2017";
+            String dateSent = "2017-02-20T19:19:19+0500";
             String feed = "false";
             String autoFeed = "false";
             String light = "false";
@@ -572,12 +608,33 @@ public class XmlPullParserHandler {
             String autoWaterChange = "true";
             String pHMin = "1";
             String pHMax = "9";
+            String cMin = "1.5";
+            String cMax = "7.5";
 
             xmlSerializer.setOutput(writer);
             // start document
             xmlSerializer.startDocument("UTF-8", true);
             // open tags and insert attributes into each individual
             xmlSerializer.startTag("", "Piseas");
+
+            // Update
+            xmlSerializer.startTag("", "Update");
+            xmlSerializer.startTag("", "details");
+            xmlSerializer.attribute("", "feed", updateFeed);
+            xmlSerializer.attribute("", "light", updateLight);
+            xmlSerializer.attribute("", "temperature", updateTemp);
+            xmlSerializer.attribute("", "pump", updatePump);
+            xmlSerializer.attribute("", "pH", updatepH);
+            xmlSerializer.attribute("", "conductivity", updateCond);
+            xmlSerializer.endTag("", "details");
+            xmlSerializer.endTag("", "Update");
+
+            // Date
+            xmlSerializer.startTag("", "Date");
+            xmlSerializer.startTag("", "details");
+            xmlSerializer.attribute("", "date", dateSent);
+            xmlSerializer.endTag("", "details");
+            xmlSerializer.endTag("", "Date");
 
             // Tank
             xmlSerializer.startTag("", "Tank");
@@ -589,24 +646,11 @@ public class XmlPullParserHandler {
             xmlSerializer.endTag("", "details");
             xmlSerializer.endTag("", "Tank");
 
-            // Date
-            xmlSerializer.startTag("", "Date");
-            xmlSerializer.startTag("", "details");
-            xmlSerializer.attribute("", "dateSent", dateSent);
-            xmlSerializer.endTag("", "details");
-            xmlSerializer.endTag("", "Date");
-
             // Feed
             xmlSerializer.startTag("", "Feed");
-            xmlSerializer.startTag("", "details");
+            xmlSerializer.attribute("", "schedules", "3");
             xmlSerializer.attribute("", "feed", feed);
             xmlSerializer.attribute("", "autoFeed", autoFeed);
-            xmlSerializer.endTag("", "details");
-            xmlSerializer.endTag("", "Feed");
-
-            // FeedSchedule
-            xmlSerializer.startTag("", "FeedSchedule");
-            xmlSerializer.attribute("", "schedules", "3");
 
             xmlSerializer.startTag("", "details");
             xmlSerializer.attribute("", "hr", "13");
@@ -644,21 +688,15 @@ public class XmlPullParserHandler {
             xmlSerializer.attribute("", "Sun", "false");
             xmlSerializer.endTag("", "details");
 
-            xmlSerializer.endTag("", "FeedSchedule");
+            xmlSerializer.endTag("", "Feed");
 
             // Light
             xmlSerializer.startTag("", "Light");
-            xmlSerializer.startTag("", "details");
+            xmlSerializer.attribute("", "schedules", "2");
             xmlSerializer.attribute("", "light", light);
             xmlSerializer.attribute("", "autoLight", autoLight);
-            xmlSerializer.endTag("", "details");
-            xmlSerializer.endTag("", "Light");
-
-            // LightSchedule
-            xmlSerializer.startTag("", "LightSchedule");
-            xmlSerializer.attribute("", "schedules", "2");
-
             xmlSerializer.startTag("", "details");
+
             xmlSerializer.attribute("", "onHr", "09");
             xmlSerializer.attribute("", "onMin", "00");
             xmlSerializer.attribute("", "offHr", "12");
@@ -670,9 +708,9 @@ public class XmlPullParserHandler {
             xmlSerializer.attribute("", "onMin", "00");
             xmlSerializer.attribute("", "offHr", "18");
             xmlSerializer.attribute("", "offMin", "30");
-            xmlSerializer.endTag("", "details");
 
-            xmlSerializer.endTag("", "LightSchedule");
+            xmlSerializer.endTag("", "details");
+            xmlSerializer.endTag("", "Light");
 
             // Temperature
             xmlSerializer.startTag("", "Temperature");
@@ -701,6 +739,14 @@ public class XmlPullParserHandler {
             xmlSerializer.attribute("", "pHmax", pHMax);
             xmlSerializer.endTag("", "details");
             xmlSerializer.endTag("", "Sensor");
+
+            // Conductivity
+            xmlSerializer.startTag("", "Conductivity");
+            xmlSerializer.startTag("", "details");
+            xmlSerializer.attribute("", "cMin", cMin);
+            xmlSerializer.attribute("", "cMax", cMax);
+            xmlSerializer.endTag("", "details");
+            xmlSerializer.endTag("", "Conductivity");
 
             xmlSerializer.endTag("", "Piseas");
 
