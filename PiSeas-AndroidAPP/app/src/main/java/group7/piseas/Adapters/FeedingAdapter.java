@@ -19,6 +19,7 @@ import group7.piseas.R;
 /**
  * Created by Mat on 12/03/2016.
  *
+ * Custom list adapter for directions
  */
 
 public class FeedingAdapter extends ArrayAdapter<FeedSchedule> {

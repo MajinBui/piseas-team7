@@ -1,7 +1,5 @@
 package group7.piseas.Objects;
 
-import java.util.Arrays;
-
 /**
  * Created by mmbab on 12/5/2016.
  *
@@ -32,10 +30,6 @@ public class LightSchedule {
     public int getOffMin(){
         return offMin;
     }
-
-    public int getTimeOnCompare(){return onHour * 100 + onMin;}
-
-    public int getTimeOffCompare(){return offHour * 100 + offMin;}
 
     public String getOnTime(){
         String padding = "00";

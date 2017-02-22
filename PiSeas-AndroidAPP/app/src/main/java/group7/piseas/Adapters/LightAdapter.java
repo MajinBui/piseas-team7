@@ -19,7 +19,7 @@ import group7.piseas.R;
  */
 
 public class LightAdapter extends ArrayAdapter<LightSchedule>{
-    private Context context;
+private Context context;
 
     public LightAdapter(Context context, int resource, List<LightSchedule> items) {
         super(context, resource, items);
@@ -27,7 +27,8 @@ public class LightAdapter extends ArrayAdapter<LightSchedule>{
     }
 
     private class ViewHolder{
-        TextView txtTime;
+        TextView txtTimeOn;
+        TextView txtTimeOff;
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -39,20 +40,14 @@ public class LightAdapter extends ArrayAdapter<LightSchedule>{
         LayoutInflater mInflater = (LayoutInflater) context.getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
 
         if(convertView == null) {
-            convertView = mInflater.inflate(R.layout.lights_item_list, null);
+            convertView = mInflater.inflate(R.layout.days_list_items, null);
 
             holder = new LightAdapter.ViewHolder();
 
-            holder.txtTime = (TextView) convertView.findViewById(R.id.txtTime);
-
-            convertView.setTag(holder);
+            holder.txtTimeOn = (TextView) convertView.findViewById(R.id.txtTimeOn);
+            holder.txtTimeOff = (TextView) convertView.findViewById(R.id.txtTimeOff);
         }
-        else
-            holder = (ViewHolder) convertView.getTag();
-
-        holder.txtTime.setText(row.getTime());
-
-        return convertView;
+            return convertView;
     }
 
 }

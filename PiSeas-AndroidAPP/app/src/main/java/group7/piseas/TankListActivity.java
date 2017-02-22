@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +30,6 @@ public class TankListActivity extends AppCompatActivity {
     ListView listView;
     static TankAdapter adapter;
     ImageButton addButton;
-    int REQUEST_CODE = 8;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,19 +137,23 @@ public class TankListActivity extends AppCompatActivity {
         for (int i=0;i<size; i++){
             int tankCode = sharedPref.getInt("code"+i, 0);
             Log.i("TANKLIST", "LOAD Tank Code" + tankCode);
-            HashMap<String, String> dataList = FishyClient.retrieveServerData(tankCode+"");
-            if (!dataList.get("pw").isEmpty())
-                pw = Integer.parseInt(dataList.get("pw"));
-            if (!dataList.get("name").isEmpty())
-                name = dataList.get("name");
-            if (!dataList.get("desc").isEmpty())
-                desc = dataList.get("desc");
-            if (!dataList.get("type").isEmpty())
-                type = Integer.parseInt(dataList.get("type"));
-            if (!dataList.get("size").isEmpty())
-                tankSize = Integer.parseInt(dataList.get("size"));
-            Log.i("TANKLIST", "LOAD ADD TANK " + tankCode + ", "+ pw + ", "+ name + ", "+ type + ", "+ size+ ", "+desc);
-            tankList.add(new Tank(tankCode, pw ,name, type, tankSize, desc));
+            try {
+                HashMap<String, String> dataList = FishyClient.retrieveServerData(tankCode + "");
+                if (!dataList.get("pw").isEmpty())
+                    pw = Integer.parseInt(dataList.get("pw"));
+                if (!dataList.get("name").isEmpty())
+                    name = dataList.get("name");
+                if (!dataList.get("desc").isEmpty())
+                    desc = dataList.get("desc");
+                if (!dataList.get("type").isEmpty())
+                    type = Integer.parseInt(dataList.get("type"));
+                if (!dataList.get("size").isEmpty())
+                    tankSize = Integer.parseInt(dataList.get("size"));
+                Log.i("TANKLIST", "LOAD ADD TANK " + tankCode + ", "+ pw + ", "+ name + ", "+ type + ", "+ size+ ", "+desc);
+                tankList.add(new Tank(tankCode, pw ,name, type, tankSize, desc));
+            } catch (NullPointerException e) {
+                Toast.makeText(this, "No internet connection available!", Toast.LENGTH_LONG).show();
+            }
         }
         adapter.notifyDataSetChanged();
     }

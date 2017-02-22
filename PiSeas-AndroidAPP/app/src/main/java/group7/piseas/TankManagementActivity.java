@@ -47,8 +47,8 @@ public class TankManagementActivity extends AppCompatActivity implements Adapter
         nameEdit = (EditText) findViewById(R.id.nameEditer);
         descEdit = (EditText) findViewById(R.id.descEditor);
 
-        Button addButton = (Button) findViewById(R.id.addButton);
-        addButton.setOnClickListener (new View.OnClickListener() {
+        Button updateButton = (Button) findViewById(R.id.updateButton);
+        updateButton.setOnClickListener (new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 name = nameEdit.getText().toString();
@@ -102,7 +102,7 @@ public class TankManagementActivity extends AppCompatActivity implements Adapter
         spinner2.setOnItemSelectedListener(this);
 
         if (index>=0){//load current data to display from phone
-            Log.i("TankMangement", "Load from phone");
+            Log.i("TankMangement", "Load from phone at index" + index);
             nameEdit.setText(TankListActivity.tankList.get(index).getName());
             descEdit.setText(TankListActivity.tankList.get(index).getDesc());
             spinner.setSelection(TankListActivity.tankList.get(index).getType());
@@ -125,9 +125,11 @@ public class TankManagementActivity extends AppCompatActivity implements Adapter
             spinner.setSelection(fishType);
             spinner2.setSelection(tankSize);
         }
+        Log.i("TankMangement", "Successful Loading of page");
     }
 
     private boolean uniqueName(String str){
+        Log.i("Tank Management", "Unique Name");
         for (Tank tank:TankListActivity.tankList){
             if (str.equals(tank.getName()))
                 return false;
@@ -137,20 +139,21 @@ public class TankManagementActivity extends AppCompatActivity implements Adapter
 
     private void update(int i){
         Log.i("Tank Management", "Update");
-        TankListActivity.tankList.get(index).setName(name);
-        TankListActivity.tankList.get(index).setType(tankSize);
-        TankListActivity.tankList.get(index).setSize(tankSize);
-        TankListActivity.tankList.get(index).setDesc(desc);
+        TankListActivity.tankList.get(i).setName(name);
+        TankListActivity.tankList.get(i).setType(tankSize);
+        TankListActivity.tankList.get(i).setSize(tankSize);
+        TankListActivity.tankList.get(i).setDesc(desc);
         HashMap<String, String> dataList = new HashMap<String, String>();
         dataList.put("name", name);
         dataList.put("type", fishType+"");
         dataList.put("size", tankSize+"");
         dataList.put("desc", desc);
-        FishyClient.writeToServerData(TankListActivity.tankList.get(index).getId()+"", dataList);
+        FishyClient.writeToServerData(TankListActivity.tankList.get(i).getId()+"", dataList);
     }
 
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        Log.i("TankMangement", "onItemSelected, spinner");
         Spinner spin = (Spinner)adapterView;
         Spinner spin2 = (Spinner)adapterView;
         if(spin.getId() == R.id.fishEditer)

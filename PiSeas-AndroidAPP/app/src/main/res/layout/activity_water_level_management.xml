@@ -75,7 +75,7 @@
         android:layout_below="@+id/bar2"/>
 
     <Switch
-        android:id="@+id/enablePH"
+        android:id="@+id/enableAuto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/bar2"
