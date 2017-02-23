@@ -147,7 +147,17 @@ public class XmlPullParserHandler {
         String code = "-";
         try{
             File file = new File(context.getFilesDir() + "/" + id + "_mobile_settings.xml");
+
+
+            boolean del = file.delete();              // TESTING ONLY, DELETE EXISTING XML IN STORAGE
+            // Create new xml file   USED FOR TESTING PURPOSES
+            if(!file.isFile())
+                createXml(id + "_mobile_settings.xml");
+
+
             FileInputStream fis = new FileInputStream(file);
+
+
 
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
@@ -272,12 +282,12 @@ public class XmlPullParserHandler {
 
     public float getSettingsPHMin(){
         // Parse from tag "Sensor", attribute 0
-        return Float.parseFloat(parseSettings("Sensor", 0));
+        return Float.parseFloat(parseSettings("PH", 0));
     }
 
     public float getSettingsPHMax(){
         // Parse from tag "Sensor", attribute 1
-        return Float.parseFloat(parseSettings("Sensor", 1));
+        return Float.parseFloat(parseSettings("PH", 1));
     }
 
     public float getSettingsCMin() {
@@ -482,7 +492,7 @@ public class XmlPullParserHandler {
     }
 
     public void setCode(String value){
-        write("Tank", "code", value);
+        write("Tank", "id", value);
     }
 
     public void setpassword(String value){
@@ -594,6 +604,7 @@ public class XmlPullParserHandler {
             String password = "helloworld";
             String size = "20";
             String description = "my fishy home";
+            String type = "true";
             String dateSent = "2017-02-20T19:19:19+0500";
             String feed = "false";
             String autoFeed = "false";
@@ -602,8 +613,6 @@ public class XmlPullParserHandler {
             String minTemp = "16";
             String maxTemp = "22";
             String autoTemp = "false";
-            String manualFan = "false";
-            String manualHeater = "false";
             String drain = "false";
             String fill = "false";
             String autoWaterChange = "true";
@@ -644,6 +653,7 @@ public class XmlPullParserHandler {
             xmlSerializer.attribute("", "password", password);
             xmlSerializer.attribute("", "size", size);
             xmlSerializer.attribute("", "description", description);
+            xmlSerializer.attribute("", "type", type);
             xmlSerializer.endTag("", "details");
             xmlSerializer.endTag("", "Tank");
 
@@ -719,8 +729,6 @@ public class XmlPullParserHandler {
             xmlSerializer.attribute("", "min", minTemp);
             xmlSerializer.attribute("", "max", maxTemp);
             xmlSerializer.attribute("", "autoTemp", autoTemp);
-            xmlSerializer.attribute("", "manualFan", manualFan);
-            xmlSerializer.attribute("", "manualHeater", manualHeater);
             xmlSerializer.endTag("", "details");
             xmlSerializer.endTag("", "Temperature");
 
@@ -733,13 +741,13 @@ public class XmlPullParserHandler {
             xmlSerializer.endTag("", "details");
             xmlSerializer.endTag("", "Pump");
 
-            // Sensor
-            xmlSerializer.startTag("", "Sensor");
+            // PH
+            xmlSerializer.startTag("", "PH");
             xmlSerializer.startTag("", "details");
             xmlSerializer.attribute("", "pHmin", pHMin);
             xmlSerializer.attribute("", "pHmax", pHMax);
             xmlSerializer.endTag("", "details");
-            xmlSerializer.endTag("", "Sensor");
+            xmlSerializer.endTag("", "PH");
 
             // Conductivity
             xmlSerializer.startTag("", "Conductivity");

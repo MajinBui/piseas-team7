@@ -10,6 +10,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import group7.piseas.Helpers.XmlPullParserHandler;
+
 public class WaterAnalysisManagementActivity extends AppCompatActivity {
     NumberPicker lowPH;
     NumberPicker highPH;
@@ -31,6 +33,10 @@ public class WaterAnalysisManagementActivity extends AppCompatActivity {
         highCon = (NumberPicker) findViewById(R.id.CMaxInput);
         autoCon = (Switch) findViewById(R.id.enableCCheck);
         autoPH = (Switch) findViewById(R.id.enablePH);
+
+        // USED FOR TESTING PURPOSES, THIS IS HOW I GRABBED THE VALUE
+        XmlPullParserHandler parser = new XmlPullParserHandler(this, "1");
+        float lowPHVal = parser.getSettingsPHMin();
 
         lowPH.setMinValue(0);
         lowPH.setMaxValue(14);
