@@ -132,14 +132,14 @@ public class TemperatureManagementActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         fillTable();
+        validateAuto();
         handler.postDelayed(runnable, UPDATE_VALUE_DELAY);
 
     }
 
     public void validateAuto(){
         //validation for automation
-        if(minTemp.isEmpty()|| maxTemp.isEmpty()){
-            auto.setClickable(false);
+        if(minTempTable.getText() == "" || maxTempTable.getText() == "" ){
             auto.setOnClickListener(new CompoundButton.OnClickListener(){
                 @Override
                 public void onClick(View v) {
@@ -149,7 +149,11 @@ public class TemperatureManagementActivity extends AppCompatActivity {
                 }
             });
         }
-        else
-            auto.setClickable(true);
+        else auto.setOnClickListener(new CompoundButton.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 }

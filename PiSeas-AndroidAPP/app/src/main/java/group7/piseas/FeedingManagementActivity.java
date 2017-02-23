@@ -100,7 +100,6 @@ public class FeedingManagementActivity extends AppCompatActivity {
     public void validateAuto(){
         //validation for automation
         if(feeds.isEmpty()){
-            autoFeed.setClickable(false);
             autoFeed.setOnClickListener(new CompoundButton.OnClickListener(){
                 @Override
                 public void onClick(View v) {
@@ -111,7 +110,11 @@ public class FeedingManagementActivity extends AppCompatActivity {
             });
         }
         else
-            autoFeed.setClickable(true);
+            autoFeed.setOnClickListener(new CompoundButton.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                }
+            });
     }
 
     @Override

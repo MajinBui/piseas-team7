@@ -43,6 +43,8 @@ public class LogActivity extends AppCompatActivity {
 
     private void load(){
         logList.add(new LogItem("7:00pm", "Tank Light Turned On"));
+        logList.add(new LogItem("10:00pm", "Tank Light Turned Off"));
+        logList.add(new LogItem("8:00am", "Feed fish"));
         if (tankID != -1){
             //make call to parser to create list of log objects to display
         }

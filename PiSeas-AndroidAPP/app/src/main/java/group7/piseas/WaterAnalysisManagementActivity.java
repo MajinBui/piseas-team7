@@ -3,7 +3,6 @@ package group7.piseas;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.NumberPicker;
 import android.widget.Switch;
@@ -34,14 +33,12 @@ public class WaterAnalysisManagementActivity extends AppCompatActivity {
         autoCon = (Switch) findViewById(R.id.enableCCheck);
         autoPH = (Switch) findViewById(R.id.enablePH);
 
-        // USED FOR TESTING PURPOSES, THIS IS HOW I GRABBED THE VALUE
         XmlPullParserHandler parser = new XmlPullParserHandler(this, "1");
-        float lowPHVal = parser.getSettingsPHMin();
 
         lowPH.setMinValue(0);
         lowPH.setMaxValue(14);
         lowPH.setWrapSelectorWheel(false);
-        lowPH.setValue(0);
+        lowPH.setValue((int)parser.getSettingsPHMin());
 
         highPH.setMinValue(0);
         highPH.setMaxValue(14);
@@ -73,7 +70,11 @@ public class WaterAnalysisManagementActivity extends AppCompatActivity {
             });
         }
         else
-            autoCon.setClickable(true);
+            autoCon.setOnClickListener(new CompoundButton.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                }
+            });
 
         if(lowPH.getValue() >= highPH.getValue()){
             autoPH.setOnClickListener(new CompoundButton.OnClickListener(){
@@ -86,7 +87,11 @@ public class WaterAnalysisManagementActivity extends AppCompatActivity {
             });
         }
         else
-            autoPH.setClickable(true);
+            autoPH.setOnClickListener(new CompoundButton.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                }
+            });
     }
 
     public void save(View view) {
