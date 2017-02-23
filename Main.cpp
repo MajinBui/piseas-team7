@@ -39,14 +39,6 @@ void printTemp(TempData &td) {
 
 }
 
-void setTime(LightSchedule &ls) {
-	XmlParser::updateLightSchedule(ls);
-}
-
-void setTemp(TempData &td) {
-	XmlParser::updateTemperatureRange(td);
-}
-
 void setup(){
 	wiringPiSetupGpio();
 	
@@ -60,19 +52,31 @@ void setup(){
 	digitalWrite(FAN_PIN, LOW);
 }
 
+void updateLight(LightSchedule &ls) {
+	XmlParser::updateLightSchedule(ls);
+}
+
+void updateTemperature(TempData &td) {
+	XmlParser::updateTemperatureRange(td);
+}
+
+void updateData(Tank &t){
+		updateLight(t.getLightSchedule());
+		updateTemperature(t.getTemperatureData());
+}
+
 int main() {
 	Tank t;
 	setup();
 
 	for(;;){
-		setTime(t.getLightSchedule());
-		setTemp(t.getTemperatureData());
+		updateData(t);
 
 		std::thread lightThread;
 		std::thread temperatureThread(&TempData::regulate, t.getTemperatureData(), false);
 
 		if(t.getLightSchedule().getAutoRegulate()){
-			lightThread = std::thread(&LightSchedule::regulate, "LightSchedule Thread 1 : ", t.getLightSchedule().getSchedule(), .350);
+			lightThread = std::thread(&LightSchedule::regulate, t.getLightSchedule().getSchedule(), false);
 		}
 		if(t.getLightSchedule().getAutoRegulate()){
 			lightThread.join();

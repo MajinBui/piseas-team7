@@ -36,7 +36,7 @@ std::list<LightAction> LightSchedule::getSchedule(){
 }
 
 #include <iostream>
-void LightSchedule::regulate(std::string s, std::list<LightAction> la, int y) {
+void LightSchedule::regulate(std::list<LightAction> la, bool manual) {
 	struct tm curTime;
 	time_t t = std::time(0);
 	curTime = *localtime(&t);

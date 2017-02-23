@@ -16,6 +16,6 @@ public:
 	void addLightAction(tm, bool);
 	void setAutoRegulate(bool);
 	bool getAutoRegulate();
-	static void regulate(std::string, std::list<LightAction>, int);
+	static void regulate(std::list<LightAction>, bool);
 };
 #endif

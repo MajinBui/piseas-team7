@@ -21,8 +21,9 @@ A major change from the original requirements document is the connection process
 
 * Server set up to receive and send XML data
 * Server is multi-threaded 
-* Programming Pi side (relay, light and fan)
-* Programming Pi side (self regulation logic, light and fan)
+* Programming Pi side (relay, light and fan) 
+* Programming Pi side (self regulation logic, light and fan) 
+* Programming Pi side (temperature sensor)
 
 
 ## To-Do
