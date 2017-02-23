@@ -2,17 +2,23 @@ package group7.piseas;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import group7.piseas.Helpers.XmlPullParserHandler;
 
 public class WaterLevelManagementActivity extends AppCompatActivity {
     private Switch drain;
     private Switch fill;
     private Switch auto;
+    private XmlPullParserHandler parser = new XmlPullParserHandler(this, "1");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_water_level_management);
         int index = getIntent().getIntExtra("id", -1);
@@ -57,8 +63,38 @@ public class WaterLevelManagementActivity extends AppCompatActivity {
                 }
             }
         });
-
     }
 
+    private void loadXmlData() {
+
+        fill.setChecked(parser.getSettingsFill());
+        auto.setChecked(parser.getSettingsAutoWaterChange());
+        drain.setChecked(parser.getSettingsDrain());
+        Log.d("activity; load", "fill" + " : " + parser.getSettingsFill());
+    }
+
+    private void saveXmlData() {
+        parser.setFill(fill.isChecked());
+        parser.setAutoWaterChange(auto.isChecked());
+        parser.setDrain(drain.isChecked());
+
+        Log.d("activity; save", "fill" + " : " + fill.isChecked());
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        saveXmlData();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadXmlData();
+    }
 
 }
