@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Piseas>
+  <Date date="2017-02-20T19:19:19+0500"/>
+  <Logs>
+    <Log type="ACT" date="2017-01-28T09:24:01+0500" desc="FEEDACTIVE" />
+    <Log type="NOT" date="2017-02-12T04:13:27+0500" desc="TEMPRANGE" />
+    <Log type="MANACT" date="2017-02-20T19:19:19+0500" desc="MANFEEDING" />
+  </Logs>
+</Piseas>
+
+
+<!--
+update date for mobile_settings           - ✔
+update date for sensor_data               - ✔
+add conductivity parsing                  - ✔
+add conductivity updating                 - ✔
+update light/feed for mobile settings     - ✔
+set schedules                             -
+update tag for mobile_settings (write)    - ✔
+log ENUMS                                 -
+git documentation                         -
+mobile settings writing                   - ✔
+upload updated #_mobile_settings.xml      - ✔
+sensor_data - fix feed time               - ✔
+mobile_settings - remove manual fan/temp  - ✔
+mobile add type true/false to tank        - ✔
+change attributes to find values          -
+fix timestamp in _mobile, not details     - ✔
+add timestamp in Log                      -
+
+-->

@@ -5,40 +5,23 @@ import android.util.Xml;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
-import java.io.BufferedReader;
-import java.io.DataInput;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import org.xmlpull.v1.XmlSerializer;
 
-import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.io.StringWriter;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -50,11 +33,12 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import Log.LogDesc;
+import Log.LogType;
 import Objects.FeedSchedule;
 import Objects.LightSchedule;
-import Objects.LogEnum;
 import Objects.Logs;
-
+import Objects.Log;
 
 public class XmlPullParserHandler {
 
@@ -121,8 +105,13 @@ public class XmlPullParserHandler {
         return Integer.parseInt(parseSensor("Feed", 0));
     }
 
-    public int getSensorFeedTime(){
+    public int getSensorFeedHr(){
         // Parse from tag "Feed", attribute 1
+        return Integer.parseInt(parseSensor("Feed", 1));
+    }
+
+    public int getSensorFeedMin(){
+        // Parse from tag "Feed", attribute 2
         return Integer.parseInt(parseSensor("Feed", 1));
     }
 
@@ -141,11 +130,12 @@ public class XmlPullParserHandler {
         return Float.parseFloat(parseSensor("Sensor", 1));
     }
 
-    // Parsing of the tank_<id>_pi.xml file, file saved in internal storage
+    // Parsing of the tank_<id>_mobile_settings.xml file, file saved in internal storage
     private String parseSettings(String TAG_NAME, int attribute){
         String code = "-";
         try{
             File file = new File(context.getFilesDir() + "/" + id + "_mobile_settings.xml");
+
             FileInputStream fis = new FileInputStream(file);
 
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
@@ -161,7 +151,7 @@ public class XmlPullParserHandler {
                     String tag = parser.getName();
 
                     if (TAG_NAME.equals(tag)) {
-                        if(TAG_NAME.equals("Feed") || TAG_NAME.equals("Light")) {
+                        if(TAG_NAME.equals("Feed") || TAG_NAME.equals("Light") || TAG_NAME.equals("Date")) {
                             code = parser.getAttributeValue(attribute);
                             fis.close();
                             return code;
@@ -204,6 +194,13 @@ public class XmlPullParserHandler {
         return parseSettings("Tank", 3);
     }
 
+    // Type of fish, cold water or tropical
+    // cold water = false, tropical = true
+    public Boolean getSettingsType(){
+        // Parse from tag "Tank", attribute 3
+        return Boolean.valueOf(parseSettings("Tank", 4));
+    }
+
     public piDate getSettingsDate(){
         // Parse from tag "Date", attribute 0
         return new piDate(parseSensor("Date", 0));
@@ -229,29 +226,14 @@ public class XmlPullParserHandler {
         return Boolean.parseBoolean(parseSettings("Light", 2));
     }
 
-    public float getSettingsMin(){
+    public float getSettingsMinTemp(){
         // Parse from tag "Temperature", attribute 0
         return Float.parseFloat(parseSettings("Temperature", 0));
     }
 
-    public float getSettingsMax(){
+    public float getSettingsMaxTemp(){
         // Parse from tag "Temperature", attribute 1
         return Float.parseFloat(parseSettings("Temperature", 1));
-    }
-
-    public boolean getSettingsAutoTemp(){
-        // Parse from tag "Temperature", attribute 2
-        return Boolean.parseBoolean(parseSettings("Temperature", 2));
-    }
-
-    public boolean getSettingsManualFan(){
-        // Parse from tag "Temperature", attribute 3
-        return Boolean.parseBoolean(parseSettings("Temperature", 3));
-    }
-
-    public boolean getSettingsManualHeater(){
-        // Parse from tag "Temperature", attribute 4
-        return Boolean.parseBoolean(parseSettings("Temperature", 4));
     }
 
     public boolean getSettingsDrain(){
@@ -271,12 +253,12 @@ public class XmlPullParserHandler {
 
     public float getSettingsPHMin(){
         // Parse from tag "Sensor", attribute 0
-        return Float.parseFloat(parseSettings("Sensor", 0));
+        return Float.parseFloat(parseSettings("PH", 0));
     }
 
     public float getSettingsPHMax(){
         // Parse from tag "Sensor", attribute 1
-        return Float.parseFloat(parseSettings("Sensor", 1));
+        return Float.parseFloat(parseSettings("PH", 1));
     }
 
     public float getSettingsCMin() {
@@ -387,12 +369,19 @@ public class XmlPullParserHandler {
             while ((parser.next()) != XmlPullParser.END_DOCUMENT) {
                 String tag = parser.getName();
 
-                parser.nextTag();
+                while(!parser.getName().equals("Log")){
+                    if(parser.getName().equals("Date"))
+                        logs.timeStamp(parser.getAttributeValue(0));
+                    parser.nextTag();
+                }
                 tag = parser.getName();
                 while(parser.getName().equals("Log")) {
-                    logs.add(
-                            LogEnum.valueOf(parser.getAttributeValue(0)),
-                             new piDate(parser.getAttributeValue(1)));
+
+                    logs.add(new Log(
+                            parser.getAttributeValue(1),
+                            parser.getAttributeValue(0),
+                            parser.getAttributeValue(2)
+                    ));
                     // next will take the same detail tag twice, I think because it needs a closing
                     // tag to go with the opening one. next() twice to get to the actual next tag
                     parser.nextTag();
@@ -412,6 +401,8 @@ public class XmlPullParserHandler {
 
         String filepath = id + "_mobile_settings.xml";
         File newXml = new File(context.getFilesDir() + "/" + filepath);
+
+        boolean del = newXml.delete();              // TESTING ONLY, DELETE EXISTING XML IN STORAGE
 
         // Check to see if file exists, if file does not exist, create new
         if(!newXml.isFile())
@@ -496,6 +487,10 @@ public class XmlPullParserHandler {
         write("Tank", "description", value);
     }
 
+    public void setType(String value){
+        write("Tank", "type", value);
+    }
+
     public void setDateSent(String value){
         write("Date", "dateSent", value);
     }
@@ -535,14 +530,6 @@ public class XmlPullParserHandler {
 
     public void setAutoTemp(boolean value){
         write("Temperature", "autoTemp", String.valueOf(value));
-    }
-
-    public void setManualFan(boolean value){
-        write("Temperature", "manualFan", String.valueOf(value));
-    }
-
-    public void setManualHeater(boolean value){
-        write("Temperature", "manualHeater", String.valueOf(value));
     }
 
     public void setDrain(boolean value){
@@ -593,6 +580,7 @@ public class XmlPullParserHandler {
             String password = "helloworld";
             String size = "20";
             String description = "my fishy home";
+            String type = "true";
             String dateSent = "2017-02-20T19:19:19+0500";
             String feed = "false";
             String autoFeed = "false";
@@ -601,8 +589,6 @@ public class XmlPullParserHandler {
             String minTemp = "16";
             String maxTemp = "22";
             String autoTemp = "false";
-            String manualFan = "false";
-            String manualHeater = "false";
             String drain = "false";
             String fill = "false";
             String autoWaterChange = "true";
@@ -643,6 +629,7 @@ public class XmlPullParserHandler {
             xmlSerializer.attribute("", "password", password);
             xmlSerializer.attribute("", "size", size);
             xmlSerializer.attribute("", "description", description);
+            xmlSerializer.attribute("", "type", type);
             xmlSerializer.endTag("", "details");
             xmlSerializer.endTag("", "Tank");
 
@@ -718,8 +705,6 @@ public class XmlPullParserHandler {
             xmlSerializer.attribute("", "min", minTemp);
             xmlSerializer.attribute("", "max", maxTemp);
             xmlSerializer.attribute("", "autoTemp", autoTemp);
-            xmlSerializer.attribute("", "manualFan", manualFan);
-            xmlSerializer.attribute("", "manualHeater", manualHeater);
             xmlSerializer.endTag("", "details");
             xmlSerializer.endTag("", "Temperature");
 
@@ -732,13 +717,13 @@ public class XmlPullParserHandler {
             xmlSerializer.endTag("", "details");
             xmlSerializer.endTag("", "Pump");
 
-            // Sensor
-            xmlSerializer.startTag("", "Sensor");
+            // PH
+            xmlSerializer.startTag("", "PH");
             xmlSerializer.startTag("", "details");
             xmlSerializer.attribute("", "pHmin", pHMin);
             xmlSerializer.attribute("", "pHmax", pHMax);
             xmlSerializer.endTag("", "details");
-            xmlSerializer.endTag("", "Sensor");
+            xmlSerializer.endTag("", "PH");
 
             // Conductivity
             xmlSerializer.startTag("", "Conductivity");

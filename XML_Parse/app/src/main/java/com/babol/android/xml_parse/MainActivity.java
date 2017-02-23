@@ -1,40 +1,17 @@
 package com.babol.android.xml_parse;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 import android.os.Bundle;
 import android.app.Activity;
-import android.util.Xml;
 import android.view.Menu;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.xml.sax.SAXException;
-import org.xmlpull.v1.XmlSerializer;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
+import Log.LogDesc;
 import Objects.FeedSchedule;
 import Objects.LightSchedule;
-import Objects.LogEnum;
 import Objects.Logs;
 
 public class MainActivity extends Activity {
@@ -58,7 +35,6 @@ public class MainActivity extends Activity {
         TextView tv_conductivity = (TextView) findViewById(R.id.tv_conductivity);
         TextView tv_codeMobile = (TextView) findViewById(R.id.tv_mobilecode);
 
-
         // Parser test
         XmlPullParserHandler parser = new XmlPullParserHandler(this, tank_id);
 
@@ -68,7 +44,8 @@ public class MainActivity extends Activity {
         piDate ds = parser.getSensorDate();
 
         int totalFeeds = parser.getSensorTotalFeeds();
-        int feedTime = parser.getSensorFeedTime();
+        int feedHr = parser.getSensorFeedHr();
+        int feedMin = parser.getSensorFeedMin();
         int currTemp = parser.getSensorCurrentTemp();
         float phLevel = parser.getSensorPH();
         float cond =  parser.getSensorConductivity();
@@ -77,17 +54,15 @@ public class MainActivity extends Activity {
 
         String piPass = parser.getSettingsPassword();
         float piSize = parser.getSettingsSize();
-        String PiDesc = parser.getSettingsDescription();
+        String piDesc = parser.getSettingsDescription();
+        Boolean piType = parser.getSettingsType();
         piDate piDate = parser.getSettingsDate();
         boolean piFeed = parser.getSettingsFeed();
         boolean piAutoFeed = parser.getSettingsAutoFeed();
         boolean getPiLight = parser.getSettingsLight();
         boolean piAutoLight = parser.getSettingsAutoLight();
-        float piMin = parser.getSettingsMin();
-        float piMax = parser.getSettingsMax();
-        boolean piAutoTemp = parser.getSettingsAutoTemp();
-        boolean piManualFan = parser.getSettingsManualFan();
-        boolean piManH = parser.getSettingsManualHeater();
+        float piMin = parser.getSettingsMinTemp();
+        float piMax = parser.getSettingsMaxTemp();
         boolean piDrain = parser.getSettingsDrain();
         boolean piFill = parser.getSettingsFill();
         boolean piAutoChange = parser.getSettingsAutoWaterChange();
@@ -117,8 +92,6 @@ public class MainActivity extends Activity {
         XmlPullParserHandler parser = new XmlPullParserHandler(this, tank_id);
 
         Logs newLog = parser.getLogs();
-        LogEnum code = LogEnum.x001;
-
     }
 
     @Override

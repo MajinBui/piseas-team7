@@ -15,9 +15,10 @@ public class piDate {
     private int hour;
     private int min;
     private int sec;
+    private String timeZone;        // need to implement
 
     // Create Date object using current time
-    piDate(){
+    public piDate(){
         Date date = new Date();
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
@@ -31,7 +32,7 @@ public class piDate {
     }
 
     // Create Date time with a time string coming in
-    piDate(String d){
+    public piDate(String d){
         date = d;
         parseData();
     }
@@ -67,10 +68,6 @@ public class piDate {
 
         cal.add(Calendar.MINUTE, ((c=='-') ? zoneMin : zoneMin * -1));
         cal.add(Calendar.HOUR_OF_DAY, ((c=='-') ?  zoneHr : zoneHr * -1));
-
-//        cal.add(Calendar.MINUTE, 10);
-//        cal.add(Calendar.HOUR, 1);
-
 
         year = cal.get(Calendar.YEAR);
         month = cal.get(Calendar.MONTH);
