@@ -5,14 +5,14 @@
   </Update>
   <Date date="2017-02-20T19:19:19+0500"/>
   <Tank>
-    <details code="xyz789" password="helloworld" size="20" description="my fishy home" type="true"/>
+    <details id="xyz789" password="helloworld" size="20" description="my fishy home" type="true"/>
   </Tank>
-  <Feed schedules="3" manual  ="false" auto="true" >
+  <Feed schedules="3" manual="false" auto="true" >
     <details hr="13" min="50" Mon="true" Tue="false" Wed="true" Thu="true" Fri="true" Sat="false" Sun="false"/>
     <details hr="07" min="30" Mon="false" Tue="true" Wed="false" Thu="true" Fri="false" Sat="false" Sun="false"/>
     <details hr="21" min="45" Mon="false" Tue="false" Wed="false" Thu="false" Fri="false" Sat="true" Sun="false"/>
   </Feed>
-  <Light schedules="2" manualLight="false" autoLight="true" >
+  <Light schedules="2" manual="false" autoLight="true" >
     <details onHr="09" onMin="00" offHr="12" offMin="30"/>
     <details onHr="13" onMin="00" offHr="18" offMin="30"/>
   </Light>
@@ -23,9 +23,9 @@
     <details manualDrain="true" manualFill="true" auto="true"/>
   </Pump>
   <PH>
-    <details pHmin="1" pHmax="9"/>
+    <details min="1" max="9" auto="false"/>
   </PH>
   <Conductivity>
-    <details cMin="1.5" cMax="7.5"/>
+    <details min="1.5" max="7.5" auto="false"/>
   </Conductivity>
 </Piseas>
