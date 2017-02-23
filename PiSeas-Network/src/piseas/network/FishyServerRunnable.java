@@ -18,6 +18,7 @@ import java.util.Queue;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -51,6 +52,7 @@ public class FishyServerRunnable implements Runnable {
 	private ObjectOutputStream outToClient;
 	private Socket clientSocket;
 	private SERVER_STATE serverState;
+	private Transformer transformer;
 
 	/**
 	 * Creates a thread to handle a server transaction.  Takes a client socket to recieve and send data.
@@ -59,6 +61,16 @@ public class FishyServerRunnable implements Runnable {
 	public FishyServerRunnable( Socket clientSocket ) {
 		this.clientSocket = clientSocket;
 		serverState = SERVER_STATE.PROCESS_LOGIN;
+		
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer = null;
+		try {
+			transformer = transformerFactory.newTransformer();
+			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+			transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+		} catch (TransformerConfigurationException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	
@@ -308,8 +320,6 @@ public class FishyServerRunnable implements Runnable {
 		Document document = (Document) inFromClient.readObject();
 		PrintWriter writer = new PrintWriter(buildFilePath(tankId, suffix), "UTF-8");
 		StreamResult result = new StreamResult(writer);
-		TransformerFactory tFactory = TransformerFactory.newInstance();
-		Transformer transformer = tFactory.newTransformer();
 		
 		XPath xpath = XPathFactory.newInstance().newXPath();
 		NodeList dateNode = (NodeList) xpath.evaluate(DATE_XPATH_EXPRESSION, document, XPathConstants.NODESET);
@@ -361,8 +371,6 @@ public class FishyServerRunnable implements Runnable {
 		NodeList dateNode = (NodeList) xpath.evaluate(DATE_XPATH_EXPRESSION, document, XPathConstants.NODESET);
 		dateNode.item(0).setNodeValue(DATE_FORMAT.format(CALENDAR.getTime()));
 		
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		Transformer transformer = transformerFactory.newTransformer();
 		DOMSource source = new DOMSource(document);
 		StreamResult result = new StreamResult(file);
 		transformer.transform(source, result);
@@ -408,8 +416,6 @@ public class FishyServerRunnable implements Runnable {
 		NodeList dateNode = (NodeList) xpath.evaluate(DATE_XPATH_EXPRESSION, document, XPathConstants.NODESET);
 		dateNode.item(0).setNodeValue(DATE_FORMAT.format(CALENDAR.getTime()));
 		
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		Transformer transformer = transformerFactory.newTransformer();
 		DOMSource source = new DOMSource(document);
 		StreamResult result = new StreamResult(file);
 		transformer.transform(source, result);
@@ -452,8 +458,6 @@ public class FishyServerRunnable implements Runnable {
 		NodeList dateNode = (NodeList) xpath.evaluate(DATE_XPATH_EXPRESSION, document, XPathConstants.NODESET);
 		dateNode.item(0).setNodeValue(DATE_FORMAT.format(CALENDAR.getTime()));
 		
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		Transformer transformer = transformerFactory.newTransformer();
 		DOMSource source = new DOMSource(document);
 		StreamResult result = new StreamResult(file);
 		transformer.transform(source, result);
