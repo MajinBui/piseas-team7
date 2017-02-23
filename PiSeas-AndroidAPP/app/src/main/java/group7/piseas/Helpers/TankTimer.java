@@ -25,7 +25,7 @@ public class TankTimer implements Runnable{
     }
     public void run() {
         HashMap<String, String> dataList = FishyClient.retrieveServerData("VAN");
-        temperature.run(dataList);
-        pH.run(dataList);
+        //temperature.run(dataList);
+        //pH.run(dataList);
     }
 }

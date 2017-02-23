@@ -1,6 +1,7 @@
 package group7.piseas.Helpers;
 
 import android.content.Context;
+import android.util.Log;
 import android.util.Xml;
 
 import org.w3c.dom.Attr;
@@ -149,7 +150,7 @@ public class XmlPullParserHandler {
             File file = new File(context.getFilesDir() + "/" + id + "_mobile_settings.xml");
 
 
-            boolean del = file.delete();              // TESTING ONLY, DELETE EXISTING XML IN STORAGE
+            //boolean del = file.delete();              // TESTING ONLY, DELETE EXISTING XML IN STORAGE
             // Create new xml file   USED FOR TESTING PURPOSES
             if(!file.isFile())
                 createXml(id + "_mobile_settings.xml");
@@ -422,11 +423,17 @@ public class XmlPullParserHandler {
     private void write(String tag, String attribute, String value) {
 
         String filepath = id + "_mobile_settings.xml";
-        File newXml = new File(context.getFilesDir() + "/" + filepath);
+        File newXml = new File(context.getFilesDir(), filepath);
 
         // Check to see if file exists, if file does not exist, create new
-        if(!newXml.isFile())
+        if(!newXml.isFile()) {
             createXml(filepath);
+            Log.d("Parser", "defaulted");
+        }
+//        else {
+//            createXml(filepath);
+//            Log.d("Parser", "else defaulted");
+//        }
 
         try {
             // Modify XML using DOM
@@ -466,8 +473,16 @@ public class XmlPullParserHandler {
                 NamedNodeMap detailNodes = item.getAttributes();
                 for(int z = 0; z < detailNodes.getLength(); z++){
                     Attr attr = (Attr) detailNodes.item(z);
-                    if(attr.getNodeName().equals(attribute))
+                    Log.d("Parser; edit; before if", attr.getName() + " : " + attribute);
+                    if(attr.getName().equals(attribute)) {
                         attr.setNodeValue(value);
+                        Log.d("Parser; edit", attr.getName() + " : " + attr.getValue());
+                    }
+                }
+
+                for(int z = 0; z < detailNodes.getLength(); z++){
+                    Attr attr = (Attr) detailNodes.item(z);
+                    Log.d("Parser; outcome", attr.getName() + " : " + attr.getValue());
                 }
             }
 
@@ -548,24 +563,26 @@ public class XmlPullParserHandler {
         write("Temperature", "autoTemp", String.valueOf(value));
     }
 
+
     public void setManualFan(boolean value){
         write("Temperature", "manualFan", String.valueOf(value));
     }
 
+    @Deprecated
     public void setManualHeater(boolean value){
         write("Temperature", "manualHeater", String.valueOf(value));
     }
 
     public void setDrain(boolean value){
-        write("Pump", "drain", String.valueOf(value));
+        write("Pump", "manualDrain", String.valueOf(value));
     }
 
     public void setFill(boolean value){
-        write("Pump", "fill", String.valueOf(value));
+        write("Pump", "manualFill", String.valueOf(value));
     }
 
     public void setAutoWaterChange(boolean value){
-        write("Pump", "autoWaterChange", String.valueOf(value));
+        write("Pump", "auto", String.valueOf(value));
     }
 
     public void setPHMin(float value){
@@ -735,9 +752,9 @@ public class XmlPullParserHandler {
             // Pump
             xmlSerializer.startTag("", "Pump");
             xmlSerializer.startTag("", "details");
-            xmlSerializer.attribute("", "drain", drain);
-            xmlSerializer.attribute("", "fill", fill);
-            xmlSerializer.attribute("", "autoWaterChange", autoWaterChange);
+            xmlSerializer.attribute("", "manualDrain", drain);
+            xmlSerializer.attribute("", "manualFill", fill);
+            xmlSerializer.attribute("", "auto", autoWaterChange);
             xmlSerializer.endTag("", "details");
             xmlSerializer.endTag("", "Pump");
 
