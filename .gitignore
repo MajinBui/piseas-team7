@@ -19,3 +19,15 @@ PiSeas-Network/.externalToolBuilders/
 
 # Locally stored "Eclipse launch configurations"
 PiSeas-Network/*.launch
+
+
+# Android Studio igonored files
+PiSeas-AndroidAPP/*.iml
+PiSeas-AndroidAPP/.gradle
+PiSeas-AndroidAPP/local.properties
+PiSeas-AndroidAPP/.idea/workspace.xml
+PiSeas-AndroidAPP/.idea/libraries
+PiSeas-AndroidAPP/.DS_Store
+PiSeas-AndroidAPP/build
+PiSeas-AndroidAPP/captures
+PiSeas-AndroidAPP/.externalNativeBuild
