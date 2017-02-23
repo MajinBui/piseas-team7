@@ -21,6 +21,8 @@ A major change from the original requirements document is the connection process
 
 * Server set up to receive and send XML data
 * Server is multi-threaded 
+* Programming Pi side (relay, light and fan)
+* Programming Pi side (self regulation logic, light and fan)
 
 
 ## To-Do
@@ -29,9 +31,9 @@ A major change from the original requirements document is the connection process
 * Create XML parser for Pi side using c++ 
 * Save relevant XML on Android device through app  
 
-* Programming Pi side (relays)
+* Programming Pi side (relay, heater and pumps)
 * Programming Pi side (sensors, with API)
-* Programming Pi side (self regulation logic)  
+* Programming Pi side (self regulation logic, heater and pumps)  
 
 * Add missing validation on phone app   
 * Create log activity on app
