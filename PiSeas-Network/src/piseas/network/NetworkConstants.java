@@ -13,6 +13,6 @@ public class NetworkConstants {
 	public static final String FILE_LOCATION_SERVER = "/var/www/vanchaubui.com/public_html/fish_tanks/";
 	public static final String FILE_LOCATION_PISEAS ="";
 	
-	public static final String FILE_LOCATION_FORMAT = "%s%s%s";
+	public static final String FILE_LOCATION_FORMAT = "%s%s%s%s";
 	
 }

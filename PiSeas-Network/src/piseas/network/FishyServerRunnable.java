@@ -24,20 +24,27 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-// TODO: check for PIN
-// TODO: display detailed message about empty xml
-// TODO: add time stamp to xmls
+// TODO: set up server transaction for when the server first starts
 
 public class FishyServerRunnable implements Runnable {
-	private static final long THREAD_WAIT_TIME = 5000;
-	private static final DateFormat DATEFORMAT = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+	private static final long THREAD_WAIT_TIME = 100;
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 	private static final Calendar CALENDAR = Calendar.getInstance();
-	private static final String LOG_FORMAT = "%s %s: %s\n";  // displays as the following:  <date> <tankId>: <log message>
+	private static final String LOG_FORMAT = "%-25s %-10s: %s\n";  // displays as the following:  <date> <tankId>: <log message>
 	private static final String PASSCODE = "xBE3GnsotxlFSwb9sg7t";
-
+	private static final String DATE_XPATH_EXPRESSION = "/Piseas/Date/@date";
+	private static final String UPDATE_XPATH_EXPRESSION = "/Piseas/Update/details";
 	private static HashMap<String, Queue<FishyServerRunnable>> TANK_IDS = new HashMap<String, Queue<FishyServerRunnable>>();
 
 	private ObjectInputStream inFromClient;
@@ -104,51 +111,71 @@ public class FishyServerRunnable implements Runnable {
 					if (transactionToPerform.equals(NetworkTransactionSwitch.SERVER_RETRIEVE_MOBILE_SETTINGS.name())) {
 						
 						printLogMessage('o', tankId, "preparing to receive mobile data");
-						recieveXMLDataFromClient(NetworkConstants.FILE_SUFFIX_MOBILE);
+						recieveXMLDataFromClient(tankId, NetworkConstants.FILE_SUFFIX_MOBILE);
 						printLogMessage('o', tankId, "mobile data recieved");
 
 					} else if (transactionToPerform.equals(NetworkTransactionSwitch.SERVER_RETRIEVE_SENSOR_DATA.name())) {
 						printLogMessage('o', tankId, "preparing to receive sensor data");
-						recieveXMLDataFromClient(NetworkConstants.FILE_SUFFIX_SENSOR);
+						recieveXMLDataFromClient(tankId, NetworkConstants.FILE_SUFFIX_SENSOR);
 						printLogMessage('o', tankId, "sensor data recieved");
 						
 					} else if (transactionToPerform.equals(NetworkTransactionSwitch.SERVER_RETRIEVE_ACTION_LOG.name())) {
 						
 						printLogMessage('o', tankId, "preparing to receive log data");
-						recieveXMLDataFromClient(NetworkConstants.FILE_SUFFIX_LOG);
+						recieveXMLDataFromClient(tankId, NetworkConstants.FILE_SUFFIX_LOG);
 						printLogMessage('o', tankId, "log data sent");
 
 					} else if (transactionToPerform.equals(NetworkTransactionSwitch.SERVER_RETRIEVE_MANUAL_COMMANDS.name())) {
 						
 						printLogMessage('o', tankId, "preparing to receive command data");
-						recieveXMLDataFromClient(NetworkConstants.FILE_SUFFIX_COMMANDS);
+						recieveXMLDataFromClient(tankId, NetworkConstants.FILE_SUFFIX_COMMANDS);
 						printLogMessage('o', tankId, "command data sent");
 
 					} else if (transactionToPerform.equals(NetworkTransactionSwitch.DEVICE_RETRIEVE_MOBILE_SETTINGS.name())) {
 						
 						printLogMessage('o', tankId, "preparing to send mobile data");
-						sendXMLDataToClient(NetworkConstants.FILE_SUFFIX_MOBILE);
+						sendXMLDataToClient(tankId, NetworkConstants.FILE_SUFFIX_MOBILE);
 						printLogMessage('o', tankId, "mobile data sent");
 
 					} else if (transactionToPerform.equals(NetworkTransactionSwitch.DEVICE_RETRIEVE_SENSOR_DATA.name())) {
 						
 						printLogMessage('o', tankId, "preparing to send sensor data");
-						sendXMLDataToClient(NetworkConstants.FILE_SUFFIX_SENSOR);
+						sendXMLDataToClient(tankId, NetworkConstants.FILE_SUFFIX_SENSOR);
 						printLogMessage('o', tankId, "sensor data sent");
 						
 					} else if (transactionToPerform.equals(NetworkTransactionSwitch.DEVICE_RETRIEVE_ACTION_LOG.name())) {
 						
 						printLogMessage('o', tankId, "preparing to send action log");
-						sendXMLDataToClient(NetworkConstants.FILE_SUFFIX_LOG);
+						sendXMLDataToClient(tankId, NetworkConstants.FILE_SUFFIX_LOG);
 						printLogMessage('o', tankId, "action log sent");
 						
 					} else if (transactionToPerform.equals(NetworkTransactionSwitch.DEVICE_RETRIEVE_MANUAL_COMMANDS.name())) {
 						
 						printLogMessage('o', tankId, "preparing to send manual commands");
-						sendXMLDataToClient(NetworkConstants.FILE_SUFFIX_COMMANDS);
+						sendXMLDataToClient(tankId, NetworkConstants.FILE_SUFFIX_COMMANDS);
 						printLogMessage('o', tankId, "manual commands sent");
 						
-					} 
+					} else if (transactionToPerform.equals(NetworkTransactionSwitch.SERVER_MODIFY_MOBILE_SETTINGS.name())) {
+						
+						printLogMessage('o', tankId, "preparing to modify mobile settings attribute");
+						updateXmlUsingUsingXpath(tankId, NetworkConstants.FILE_SUFFIX_MOBILE);
+						printLogMessage('o', tankId, "settings modified");
+						
+					} else if (transactionToPerform.equals(NetworkTransactionSwitch.SERVER_CLEAR_MOBILE_SETTINGS.name())) {
+						
+						printLogMessage('o', tankId, "preparing to clear settings attribute");
+						clearXmlDetails(tankId, NetworkConstants.FILE_SUFFIX_MOBILE);
+						printLogMessage('o', tankId, "xml cleared");
+						
+					} else if (transactionToPerform.equals(NetworkTransactionSwitch.SERVER_APPEND_MOBILE_SETTINGS.name())) {
+						
+						printLogMessage('o', tankId, "preparing to append to settings element");
+						appendXmlData(tankId, NetworkConstants.FILE_SUFFIX_MOBILE);
+						printLogMessage('o', tankId, "appended to settings element");
+						
+					} else {
+						serverState = SERVER_STATE.ENDED;
+					}
 				}
 			}		
 		} catch (ClassNotFoundException e2) {
@@ -177,6 +204,11 @@ public class FishyServerRunnable implements Runnable {
 			System.err.println("Stack Trace: " + e.getStackTrace());
 			System.err.println("To String: " + e.toString());
 		} catch (IOException e) {
+			System.err.println("Server Error: " + e.getMessage());
+			System.err.println("Localized: " + e.getLocalizedMessage());
+			System.err.println("Stack Trace: " + e.getStackTrace());
+			System.err.println("To String: " + e.toString());
+		} catch (XPathExpressionException e) {
 			System.err.println("Server Error: " + e.getMessage());
 			System.err.println("Localized: " + e.getLocalizedMessage());
 			System.err.println("Stack Trace: " + e.getStackTrace());
@@ -243,13 +275,13 @@ public class FishyServerRunnable implements Runnable {
 	 * 
 	 * @param suffix the file to build the file path for
 	 */
-	private void sendXMLDataToClient(String suffix) throws 	ClassNotFoundException,
-															ParserConfigurationException,
-															SAXException,
-															IOException {
+	private void sendXMLDataToClient(String tankId, String suffix) throws 	ClassNotFoundException,
+																			ParserConfigurationException,
+																			SAXException,
+																			IOException {
 		serverState = SERVER_STATE.CONNECTED_WRITING;
 
-		File file = new File(buildFilePath(suffix));
+		File file = new File(buildFilePath(tankId, suffix));
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document document = dBuilder.parse(file);
@@ -266,18 +298,23 @@ public class FishyServerRunnable implements Runnable {
 	 * @throws IOException thrown if server connection ends prematurely
 	 * @throws TransformerConfigurationException parser unable to write xml
 	 * @throws TransformerException parser unable to write xml
+	 * @throws XPathExpressionException xml does not have the correct xml
 	 */
-	private void recieveXMLDataFromClient(String suffix) throws	ClassNotFoundException,
-																IOException,
-																TransformerConfigurationException,
-																TransformerException {
+	private void recieveXMLDataFromClient(String tankId, String suffix) throws	ClassNotFoundException,
+																				IOException,
+																				TransformerConfigurationException,
+																				TransformerException, XPathExpressionException {
 		serverState = SERVER_STATE.CONNECTED_WRITING;
 		Document document = (Document) inFromClient.readObject();
-		PrintWriter writer = new PrintWriter(buildFilePath(suffix), "UTF-8");
+		PrintWriter writer = new PrintWriter(buildFilePath(tankId, suffix), "UTF-8");
 		StreamResult result = new StreamResult(writer);
 		TransformerFactory tFactory = TransformerFactory.newInstance();
 		Transformer transformer = tFactory.newTransformer();
-
+		
+		XPath xpath = XPathFactory.newInstance().newXPath();
+		NodeList dateNode = (NodeList) xpath.evaluate(DATE_XPATH_EXPRESSION, document, XPathConstants.NODESET);
+		dateNode.item(0).setNodeValue(DATE_FORMAT.format(CALENDAR.getTime()));
+		
 		DOMSource source = new DOMSource(document);
 		transformer.transform(source, result);
 		writer.close();
@@ -287,13 +324,151 @@ public class FishyServerRunnable implements Runnable {
 	}
 	
 	
+	private void updateXmlUsingUsingXpath(String tankId, String suffix) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException, TransformerException, ClassNotFoundException {
+		
+		serverState = SERVER_STATE.CONNECTED_WRITING;
+		String xpathExpression = (String) inFromClient.readObject();
+		String attributeName = (String) inFromClient.readObject();
+		String updatedValue = (String) inFromClient.readObject();
+
+		File file = new File(buildFilePath(tankId, suffix));
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document document = dBuilder.parse(file);
+		
+		XPath xpath = XPathFactory.newInstance().newXPath();
+		Node widgetNode = (Node) xpath.evaluate(xpathExpression, document, XPathConstants.NODE);
+		
+		NamedNodeMap nodeMap = widgetNode.getAttributes();
+		
+		Node nammedAttr = nodeMap.getNamedItem(attributeName);
+		nammedAttr.setTextContent(updatedValue);
+		
+		String[] updatedSections = {"feed", "light", "temperature", "pump", "pH", "conductivity"};
+		
+		for (String term : updatedSections) {
+			if (xpathExpression.toLowerCase().contains("/"+ term +"/")) {
+				Node updateNode = (Node) xpath.evaluate(UPDATE_XPATH_EXPRESSION, document, XPathConstants.NODE);
+				NamedNodeMap updateNodeMap = updateNode.getAttributes();
+				
+				printLogMessage('o', tankId, term);
+				System.out.println(updateNodeMap);
+				Node updatedAttr = updateNodeMap.getNamedItem(term);
+				updatedAttr.setTextContent("true");
+			}
+		}
+		
+		NodeList dateNode = (NodeList) xpath.evaluate(DATE_XPATH_EXPRESSION, document, XPathConstants.NODESET);
+		dateNode.item(0).setNodeValue(DATE_FORMAT.format(CALENDAR.getTime()));
+		
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer = transformerFactory.newTransformer();
+		DOMSource source = new DOMSource(document);
+		StreamResult result = new StreamResult(file);
+		transformer.transform(source, result);
+		
+		serverState = SERVER_STATE.ENDED;
+		outToClient.writeObject("");
+		
+	}
+	
+	
+	private void appendXmlData(String tankId, String suffix) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException, TransformerException, ClassNotFoundException {
+		serverState = SERVER_STATE.CONNECTED_WRITING;
+		
+		String xpathExpression = (String) inFromClient.readObject();
+		HashMap<String, String> data = (HashMap<String, String>) inFromClient.readObject();
+		File file = new File(buildFilePath(tankId, suffix));
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document document = dBuilder.parse(file);
+		
+		XPath xpath = XPathFactory.newInstance().newXPath();
+		Node widgetNode = (Node) xpath.evaluate(xpathExpression, document, XPathConstants.NODE);
+		Element details = document.createElement("details");
+		
+		for (String key : data.keySet()) {
+			details.setAttribute(key, data.get(key));
+		}
+		widgetNode.appendChild(details);
+		
+		String[] updatedSections = {"feed", "light", "temperature", "pump", "pH", "conductivity"};
+		
+		for (String term : updatedSections) {
+			if (xpathExpression.toLowerCase().contains("/"+ term +"/")) {
+				Node updateNode = (Node) xpath.evaluate(UPDATE_XPATH_EXPRESSION + "@" + term, document, XPathConstants.NODE);
+				NamedNodeMap updateNodeMap = updateNode.getAttributes();
+				
+				
+				Node updatedAttr = updateNodeMap.getNamedItem(term);
+				updatedAttr.setTextContent("true");
+			}
+		}
+		
+		NodeList dateNode = (NodeList) xpath.evaluate(DATE_XPATH_EXPRESSION, document, XPathConstants.NODESET);
+		dateNode.item(0).setNodeValue(DATE_FORMAT.format(CALENDAR.getTime()));
+		
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer = transformerFactory.newTransformer();
+		DOMSource source = new DOMSource(document);
+		StreamResult result = new StreamResult(file);
+		transformer.transform(source, result);
+		
+		serverState = SERVER_STATE.ENDED;
+		outToClient.writeObject("");
+	}
+	
+	private void clearXmlDetails(String tankId, String suffix) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException, TransformerException, ClassNotFoundException {
+		
+		serverState = SERVER_STATE.CONNECTED_WRITING;
+		String xpathExpression = (String) inFromClient.readObject();
+		
+		File file = new File(buildFilePath(tankId, suffix));
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document document = dBuilder.parse(file);
+		
+		XPath xpath = XPathFactory.newInstance().newXPath();
+		Node widgetNode = (Node) xpath.evaluate(xpathExpression, document, XPathConstants.NODE);
+		
+		
+		while (widgetNode.hasChildNodes()) {
+			widgetNode.removeChild(widgetNode.getLastChild());
+		}
+		
+		String[] updatedSections = {"feed", "light", "temperature", "pump", "pH", "conductivity"};
+		
+		for (String term : updatedSections) {
+			if (xpathExpression.toLowerCase().contains("/"+ term +"/")) {
+				Node updateNode = (Node) xpath.evaluate(UPDATE_XPATH_EXPRESSION + "@" + term, document, XPathConstants.NODE);
+				NamedNodeMap updateNodeMap = updateNode.getAttributes();
+				
+				
+				Node updatedAttr = updateNodeMap.getNamedItem(term);
+				updatedAttr.setTextContent("true");
+			}
+		}
+		
+		NodeList dateNode = (NodeList) xpath.evaluate(DATE_XPATH_EXPRESSION, document, XPathConstants.NODESET);
+		dateNode.item(0).setNodeValue(DATE_FORMAT.format(CALENDAR.getTime()));
+		
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer = transformerFactory.newTransformer();
+		DOMSource source = new DOMSource(document);
+		StreamResult result = new StreamResult(file);
+		transformer.transform(source, result);
+		
+		serverState = SERVER_STATE.ENDED;
+		outToClient.writeObject("");
+	}
+	
 	/**
 	 * Builds a file path for the given suffix.
 	 * @param suffix the file to build the file path for
 	 * @return returns the complete file directory of the given suffix
 	 */
-	private static String buildFilePath(String suffix) {
-		return String.format(NetworkConstants.FILE_LOCATION_FORMAT, NetworkConstants.FILE_LOCATION_SERVER, suffix, NetworkConstants.FILE_EXTENSION);
+	private static String buildFilePath(String tankId, String suffix) {
+		return String.format(NetworkConstants.FILE_LOCATION_FORMAT, NetworkConstants.FILE_LOCATION_SERVER, tankId, suffix, NetworkConstants.FILE_EXTENSION);
 	}
 	
 	
@@ -307,15 +482,13 @@ public class FishyServerRunnable implements Runnable {
 		if (tankId == null || tankId.equals(""))
 			tankId = "<noId>";
 
-		String timeNow = DATEFORMAT.format(CALENDAR.getTime());
+		String timeNow = DATE_FORMAT.format(CALENDAR.getTime());
 		if (output == 'e') {
 			System.err.printf(LOG_FORMAT, timeNow, tankId, message);
 		} else {
 			System.out.printf(LOG_FORMAT, timeNow, tankId, message);
 		}
 	}
-	
-	
 	
 	
 	public static void main(String args[]) {
