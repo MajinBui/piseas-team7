@@ -1,36 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-  THIS IS NOT THE XML FILE THAT THE PROGRAM IS EDITING/SENDING, THIS IS JUST A COPY.
-  THE XML FILE THAT THE PROGRAM IS WORKING WITH IS SAVED IN INTERNAL STORAGE.
--->
 <Piseas>
   <Update>
     <details feed="false" light="false" temperature="false" pump="false" pH="false" conductivity="false" />
   </Update>
-  <Date>
-    <details date="2017-02-20T19:19:19+0500"/>
-  </Date>
+  <Date date="2017-02-20T19:19:19+0500"/>
   <Tank>
-    <details code="xyz789" password="helloworld" size="20" description="my fishy home"/>
+    <details code="xyz789" password="helloworld" size="20" description="my fishy home" type="true"/>
   </Tank>
-  <Feed schedules="3" feed="false" autoFeed="true" >
+  <Feed schedules="3" manual  ="false" auto="true" >
     <details hr="13" min="50" Mon="true" Tue="false" Wed="true" Thu="true" Fri="true" Sat="false" Sun="false"/>
     <details hr="07" min="30" Mon="false" Tue="true" Wed="false" Thu="true" Fri="false" Sat="false" Sun="false"/>
     <details hr="21" min="45" Mon="false" Tue="false" Wed="false" Thu="false" Fri="false" Sat="true" Sun="false"/>
   </Feed>
-  <Light schedules="2" light="false" autoLight="true" >
+  <Light schedules="2" manualLight="false" autoLight="true" >
     <details onHr="09" onMin="00" offHr="12" offMin="30"/>
     <details onHr="13" onMin="00" offHr="18" offMin="30"/>
   </Light>
   <Temperature>
-    <details min="16.0" max="22.0" autoTemp="true" manualFan="0" manualHeater="0"/>
+    <details min="16.0" max="22.0" auto="true" />
   </Temperature>
   <Pump>
-    <details drain="true" fill="true" autoWaterChange="true"/>
+    <details manualDrain="true" manualFill="true" auto="true"/>
   </Pump>
-  <Sensor>
+  <PH>
     <details pHmin="1" pHmax="9"/>
-  </Sensor>
+  </PH>
   <Conductivity>
     <details cMin="1.5" cMax="7.5"/>
   </Conductivity>
