@@ -41,3 +41,5 @@ A major change from the original requirements document is the connection process
 * Turn tank superclass into a service 
 * Responsive layouts for all android devices 
 * Additional graphics and UI/UX components
+
+* Wrap FishyClient into C++ wrapper
