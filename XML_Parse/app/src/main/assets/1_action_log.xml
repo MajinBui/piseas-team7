@@ -26,6 +26,6 @@ mobile_settings - remove manual fan/temp  - ✔
 mobile add type true/false to tank        - ✔
 change attributes to find values          -
 fix timestamp in _mobile, not details     - ✔
-add timestamp in Log                      -
+add timestamp in Log                      - ✔
 
 -->
