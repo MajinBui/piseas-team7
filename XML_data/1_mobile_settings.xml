@@ -12,20 +12,20 @@
     <details hr="07" min="30" Mon="false" Tue="true" Wed="false" Thu="true" Fri="false" Sat="false" Sun="false"/>
     <details hr="21" min="45" Mon="false" Tue="false" Wed="false" Thu="false" Fri="false" Sat="true" Sun="false"/>
   </Feed>
-  <Light schedules="2" manual="false" autoLight="true" >
+  <Light schedules="2" manual="false" auto="true" >
     <details onHr="09" onMin="00" offHr="12" offMin="30"/>
     <details onHr="13" onMin="00" offHr="18" offMin="30"/>
   </Light>
   <Temperature>
-    <details min="16.0" max="22.0" auto="true" />
+    <details min="16.0" max="22.0"/>
   </Temperature>
   <Pump>
     <details manualDrain="true" manualFill="true" auto="true"/>
   </Pump>
   <PH>
-    <details min="1" max="9" auto="false"/>
+    <details pHmin="1" pHmax="9"/>
   </PH>
   <Conductivity>
-    <details min="1.5" max="7.5" auto="false"/>
+    <details cMin="1.5" cMax="7.5"/>
   </Conductivity>
 </Piseas>
