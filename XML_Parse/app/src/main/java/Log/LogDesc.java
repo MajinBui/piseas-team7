@@ -37,12 +37,17 @@ public enum LogDesc {
 
     private String description;
 
-    LogDesc(String url) {
-        this.description = url;
+    LogDesc(String dd) {
+        this.description = dd;
     }
 
-    public String getDescription() {
-        return description;
+    public static String fromString(String text) {
+        for (LogDesc ll: LogDesc.values()) {
+            if (ll.name().equals(text)) {
+                return ll.description;
+            }
+        }
+        return "Error, unknown code.";
     }
 }
 

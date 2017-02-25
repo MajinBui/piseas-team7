@@ -9,10 +9,9 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 
-import Log.LogDesc;
 import Objects.FeedSchedule;
 import Objects.LightSchedule;
-import Objects.Logs;
+import Log.Logs;
 
 public class MainActivity extends Activity {
 
@@ -38,7 +37,7 @@ public class MainActivity extends Activity {
         // Parser test
         XmlPullParserHandler parser = new XmlPullParserHandler(this, tank_id);
 
-        tv_code.setText(parser.getSensorCode());
+        tv_code.setText(parser.getSensorID());
         tv_password.setText(parser.getSensorPassword());
         //tv_date_sent.setText(parser.getDateSent(is));
         piDate ds = parser.getSensorDate();
@@ -50,7 +49,7 @@ public class MainActivity extends Activity {
         float phLevel = parser.getSensorPH();
         float cond =  parser.getSensorConductivity();
 
-        tv_codeMobile.setText(parser.getSettingsCode());
+        tv_codeMobile.setText(parser.getSettingsID());
 
         String piPass = parser.getSettingsPassword();
         float piSize = parser.getSettingsSize();
@@ -74,6 +73,12 @@ public class MainActivity extends Activity {
         ArrayList<FeedSchedule> feeds = parser.getFeedSchedules();
         ArrayList<LightSchedule> lights = parser.getLightSchedules();
 
+
+        String ddd = ds.toString();
+        String timez = piDate.toString();
+        int asd = 8;
+        asd++;
+
     }
 
     public void onPiseas(View view) throws IOException{
@@ -91,6 +96,8 @@ public class MainActivity extends Activity {
 
         XmlPullParserHandler parser = new XmlPullParserHandler(this, tank_id);
 
+
+        // A Logs object is created, with a list of Log objects inside
         Logs newLog = parser.getLogs();
     }
 

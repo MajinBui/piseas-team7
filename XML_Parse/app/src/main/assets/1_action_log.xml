@@ -17,15 +17,16 @@ add conductivity updating                 - ✔
 update light/feed for mobile settings     - ✔
 set schedules                             -
 update tag for mobile_settings (write)    - ✔
-log ENUMS                                 -
+log ENUMS                                 - ✔
 git documentation                         -
 mobile settings writing                   - ✔
 upload updated #_mobile_settings.xml      - ✔
 sensor_data - fix feed time               - ✔
 mobile_settings - remove manual fan/temp  - ✔
 mobile add type true/false to tank        - ✔
-change attributes to find values          -
+change attributes to find values          - ✔
 fix timestamp in _mobile, not details     - ✔
 add timestamp in Log                      - ✔
+Fixed toString in piDate                  -
 
 -->

@@ -101,7 +101,8 @@ public class piDate {
     }
 
     public String toString(){
-        return year + "-" + month + "-" + day + " " + hour + ":" + min + ":" + sec;
+        return String.format("%04d", year) + "-" + String.format("%02d", month) + "-" + String.format("%02d", day)
+                + " " + String.format("%02d", hour) + ":" + String.format("%02d", min) + ":" + String.format("%02d", sec);
     }
-
+    //String str = String.format("%04d", 9);  // 0009
 }
