@@ -39,13 +39,14 @@ import org.xml.sax.SAXException;
 // TODO: set up server transaction for when the server first starts
 
 public class FishyServerRunnable implements Runnable {
-	private static final long THREAD_WAIT_TIME = 100;
+	private static final long THREAD_WAIT_TIME = 500;
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 	private static final Calendar CALENDAR = Calendar.getInstance();
 	private static final String LOG_FORMAT = "%-25s %-10s: %s\n";  // displays as the following:  <date> <tankId>: <log message>
 	private static final String PASSCODE = "xBE3GnsotxlFSwb9sg7t";
 	private static final String DATE_XPATH_EXPRESSION = "/Piseas/Date/@date";
 	private static final String UPDATE_XPATH_EXPRESSION = "/Piseas/Update/details";
+	private static final String[] UPDATE_SECTIONS = {"feed", "light", "temperature", "pump", "pH", "conductivity"};
 	private static HashMap<String, Queue<FishyServerRunnable>> TANK_IDS = new HashMap<String, Queue<FishyServerRunnable>>();
 
 	private ObjectInputStream inFromClient;
@@ -63,7 +64,6 @@ public class FishyServerRunnable implements Runnable {
 		serverState = SERVER_STATE.PROCESS_LOGIN;
 		
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		Transformer transformer = null;
 		try {
 			transformer = transformerFactory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -77,6 +77,7 @@ public class FishyServerRunnable implements Runnable {
 	/**
 	 * Should never be created without a given clientSocket
 	 */
+	@SuppressWarnings("unused")
 	private FishyServerRunnable(){}
 	/**
 	 * Enumeration used to keep track of server states.
@@ -95,11 +96,11 @@ public class FishyServerRunnable implements Runnable {
 		try {
 			while (serverState != SERVER_STATE.ENDED){
 				if (serverState == SERVER_STATE.PROCESS_LOGIN) {
-					printLogMessage('o', tankId, "socket Extablished");
+					printLogMessage('o', null, "socket Extablished");
 					inFromClient = new ObjectInputStream(clientSocket.getInputStream());
 					outToClient = new ObjectOutputStream(clientSocket.getOutputStream());
 					String passcode = (String) inFromClient.readObject();
-
+					// Check if passcode matches, else exit
 					if (passcode.equals(PASSCODE)) {
 						printLogMessage('o', null, "Passcode correct, establishing connection");
 						serverState = SERVER_STATE.CONNECTED;
@@ -107,19 +108,24 @@ public class FishyServerRunnable implements Runnable {
 						printLogMessage('o', null, "Passcode incorrect, ending connection");
 						serverState = SERVER_STATE.ENDED;
 					}
-				} else if (serverState == SERVER_STATE.CONNECTED) {
-					//	Read the read or write option and then the tankId to modify
+				} else if (serverState != SERVER_STATE.PROCESS_LOGIN) {
+					//	Receive which use case to fulfil
 					String transactionToPerform = (String) inFromClient.readObject();
 					tankId = (String) inFromClient.readObject();
-					while (!startClientServerTransaction(tankId)) {
-						printLogMessage('o', tankId, "transaction for given tankId already started;  Waiting in queue.");
-						try {
-							Thread.sleep(THREAD_WAIT_TIME);
-						} catch (InterruptedException e) {
-							printLogMessage('e', tankId, "unable to sleep thread");
+					//  Check if a transaction for the given tankId is already in progress
+					//  Put in queue if so, other wise continue
+					if (serverState == SERVER_STATE.CONNECTED) {
+						while (!startClientServerTransaction(tankId)) {
+							printLogMessage('o', tankId, "transaction for given tankId already started;  Waiting in queue.");
+							try {
+								Thread.sleep(THREAD_WAIT_TIME);
+							} catch (InterruptedException e) {
+								printLogMessage('e', tankId, "unable to sleep thread");
+							}
 						}
 					}
-
+					printLogMessage('o', tankId, "Switch: " + transactionToPerform);
+					//  Each of the following is a use case a client would want to fulfil
 					if (transactionToPerform.equals(NetworkTransactionSwitch.SERVER_RETRIEVE_MOBILE_SETTINGS.name())) {
 						
 						printLogMessage('o', tankId, "preparing to receive mobile data");
@@ -137,12 +143,6 @@ public class FishyServerRunnable implements Runnable {
 						recieveXMLDataFromClient(tankId, NetworkConstants.FILE_SUFFIX_LOG);
 						printLogMessage('o', tankId, "log data sent");
 
-					} else if (transactionToPerform.equals(NetworkTransactionSwitch.SERVER_RETRIEVE_MANUAL_COMMANDS.name())) {
-						
-						printLogMessage('o', tankId, "preparing to receive command data");
-						recieveXMLDataFromClient(tankId, NetworkConstants.FILE_SUFFIX_COMMANDS);
-						printLogMessage('o', tankId, "command data sent");
-
 					} else if (transactionToPerform.equals(NetworkTransactionSwitch.DEVICE_RETRIEVE_MOBILE_SETTINGS.name())) {
 						
 						printLogMessage('o', tankId, "preparing to send mobile data");
@@ -156,23 +156,28 @@ public class FishyServerRunnable implements Runnable {
 						printLogMessage('o', tankId, "sensor data sent");
 						
 					} else if (transactionToPerform.equals(NetworkTransactionSwitch.DEVICE_RETRIEVE_ACTION_LOG.name())) {
-						
 						printLogMessage('o', tankId, "preparing to send action log");
 						sendXMLDataToClient(tankId, NetworkConstants.FILE_SUFFIX_LOG);
 						printLogMessage('o', tankId, "action log sent");
-						
-					} else if (transactionToPerform.equals(NetworkTransactionSwitch.DEVICE_RETRIEVE_MANUAL_COMMANDS.name())) {
-						
-						printLogMessage('o', tankId, "preparing to send manual commands");
-						sendXMLDataToClient(tankId, NetworkConstants.FILE_SUFFIX_COMMANDS);
-						printLogMessage('o', tankId, "manual commands sent");
 						
 					} else if (transactionToPerform.equals(NetworkTransactionSwitch.SERVER_MODIFY_MOBILE_SETTINGS.name())) {
 						
 						printLogMessage('o', tankId, "preparing to modify mobile settings attribute");
 						updateXmlUsingUsingXpath(tankId, NetworkConstants.FILE_SUFFIX_MOBILE);
 						printLogMessage('o', tankId, "settings modified");
+					
+					} else if (transactionToPerform.equals(NetworkTransactionSwitch.SERVER_MODIFY_SENSOR_DATA.name())) {
 						
+						printLogMessage('o', tankId, "preparing to modify sensor attribute");
+						updateXmlUsingUsingXpath(tankId, NetworkConstants.FILE_SUFFIX_SENSOR);
+						printLogMessage('o', tankId, "settings modified");
+					
+					} else if (transactionToPerform.equals(NetworkTransactionSwitch.SERVER_MODIFY_ACTION_LOG.name())) {
+						
+						printLogMessage('o', tankId, "preparing to modify log attribute");
+						updateXmlUsingUsingXpath(tankId, NetworkConstants.FILE_SUFFIX_LOG);
+						printLogMessage('o', tankId, "settings modified");
+					
 					} else if (transactionToPerform.equals(NetworkTransactionSwitch.SERVER_CLEAR_MOBILE_SETTINGS.name())) {
 						
 						printLogMessage('o', tankId, "preparing to clear settings attribute");
@@ -185,8 +190,35 @@ public class FishyServerRunnable implements Runnable {
 						appendXmlData(tankId, NetworkConstants.FILE_SUFFIX_MOBILE);
 						printLogMessage('o', tankId, "appended to settings element");
 						
-					} else {
+					} else if (transactionToPerform.equals(NetworkTransactionSwitch.SERVER_APPEND_ACTION_LOG.name())) {
+						
+						printLogMessage('o', tankId, "preparing to append to log element");
+						appendXmlData(tankId, NetworkConstants.FILE_SUFFIX_LOG);
+						printLogMessage('o', tankId, "appended to log element");
+						
+					} else if (transactionToPerform.equals(NetworkTransactionSwitch.DEVICE_CHECK_DATE_MOBILE_SETTINGS.name())) {
+						
+						printLogMessage('o', tankId, "preparing to return last modified date of mobile settings");
+						getFileDate(tankId, NetworkConstants.FILE_SUFFIX_MOBILE);
+						printLogMessage('o', tankId, "date returned of mobile settings");
+						
+					} else if (transactionToPerform.equals(NetworkTransactionSwitch.DEVICE_CHECK_DATE_SENSOR_DATA.name())) {
+						
+						printLogMessage('o', tankId, "preparing to return last modified date of sensor data");
+						getFileDate(tankId, NetworkConstants.FILE_SUFFIX_SENSOR);
+						printLogMessage('o', tankId, "date returned of sensor data");
+						
+					} else if (transactionToPerform.equals(NetworkTransactionSwitch.DEVICE_CHECK_DATE_ACTION_LOG.name())) {
+						
+						printLogMessage('o', tankId, "preparing to return last modified date of action log");
+						getFileDate(tankId, NetworkConstants.FILE_SUFFIX_LOG);
+						printLogMessage('o', tankId, "date returned of action log");
+						
+					} else if (transactionToPerform.equals(NetworkTransactionSwitch.DEVICE_END_TRANSACTION.name())) {
+						printLogMessage('o', tankId, "closing connection");
+						outToClient.writeObject("FIN");
 						serverState = SERVER_STATE.ENDED;
+						printLogMessage('o', tankId, "connection closed");
 					}
 				}
 			}		
@@ -233,6 +265,11 @@ public class FishyServerRunnable implements Runnable {
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
+		} catch (Exception e) {
+			System.err.println("Server Error: " + e.getMessage());
+			System.err.println("Localized: " + e.getLocalizedMessage());
+			System.err.println("Stack Trace: " + e.getStackTrace());
+			System.err.println("To String: " + e.toString());
 		}
 		
 	}
@@ -292,14 +329,13 @@ public class FishyServerRunnable implements Runnable {
 																			SAXException,
 																			IOException {
 		serverState = SERVER_STATE.CONNECTED_WRITING;
-
+		// Open file and send
 		File file = new File(buildFilePath(tankId, suffix));
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document document = dBuilder.parse(file);
 
 		outToClient.writeObject(document); // send xml
-		serverState = SERVER_STATE.ENDED;
 		inFromClient.readObject();  // recieve empty string
 	}
 	
@@ -328,7 +364,6 @@ public class FishyServerRunnable implements Runnable {
 		DOMSource source = new DOMSource(document);
 		transformer.transform(source, result);
 		writer.close();
-		serverState = SERVER_STATE.ENDED;
 		outToClient.writeObject("");
 
 	}
@@ -352,17 +387,14 @@ public class FishyServerRunnable implements Runnable {
 		NamedNodeMap nodeMap = widgetNode.getAttributes();
 		
 		Node nammedAttr = nodeMap.getNamedItem(attributeName);
-		nammedAttr.setTextContent(updatedValue);
+		if (updatedValue != null)
+			nammedAttr.setTextContent(updatedValue);
 		
-		String[] updatedSections = {"feed", "light", "temperature", "pump", "pH", "conductivity"};
-		
-		for (String term : updatedSections) {
-			if (xpathExpression.toLowerCase().contains("/"+ term +"/")) {
+		for (String term : UPDATE_SECTIONS) {
+			if (xpathExpression.toLowerCase().contains(term.toLowerCase())) {
 				Node updateNode = (Node) xpath.evaluate(UPDATE_XPATH_EXPRESSION, document, XPathConstants.NODE);
 				NamedNodeMap updateNodeMap = updateNode.getAttributes();
 				
-				printLogMessage('o', tankId, term);
-				System.out.println(updateNodeMap);
 				Node updatedAttr = updateNodeMap.getNamedItem(term);
 				updatedAttr.setTextContent("true");
 			}
@@ -375,7 +407,6 @@ public class FishyServerRunnable implements Runnable {
 		StreamResult result = new StreamResult(file);
 		transformer.transform(source, result);
 		
-		serverState = SERVER_STATE.ENDED;
 		outToClient.writeObject("");
 		
 	}
@@ -385,6 +416,7 @@ public class FishyServerRunnable implements Runnable {
 		serverState = SERVER_STATE.CONNECTED_WRITING;
 		
 		String xpathExpression = (String) inFromClient.readObject();
+		@SuppressWarnings("unchecked")
 		HashMap<String, String> data = (HashMap<String, String>) inFromClient.readObject();
 		File file = new File(buildFilePath(tankId, suffix));
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -393,18 +425,20 @@ public class FishyServerRunnable implements Runnable {
 		
 		XPath xpath = XPathFactory.newInstance().newXPath();
 		Node widgetNode = (Node) xpath.evaluate(xpathExpression, document, XPathConstants.NODE);
-		Element details = document.createElement("details");
+		String childElementName = "details";
+		if (suffix.equals(NetworkConstants.FILE_SUFFIX_LOG)) {
+			childElementName = "Log";
+		}
+		Element details = document.createElement(childElementName);
 		
 		for (String key : data.keySet()) {
 			details.setAttribute(key, data.get(key));
 		}
 		widgetNode.appendChild(details);
 		
-		String[] updatedSections = {"feed", "light", "temperature", "pump", "pH", "conductivity"};
-		
-		for (String term : updatedSections) {
-			if (xpathExpression.toLowerCase().contains("/"+ term +"/")) {
-				Node updateNode = (Node) xpath.evaluate(UPDATE_XPATH_EXPRESSION + "@" + term, document, XPathConstants.NODE);
+		for (String term : UPDATE_SECTIONS) {
+			if (xpathExpression.toLowerCase().contains(term.toLowerCase())) {
+				Node updateNode = (Node) xpath.evaluate(UPDATE_XPATH_EXPRESSION, document, XPathConstants.NODE);
 				NamedNodeMap updateNodeMap = updateNode.getAttributes();
 				
 				
@@ -420,7 +454,6 @@ public class FishyServerRunnable implements Runnable {
 		StreamResult result = new StreamResult(file);
 		transformer.transform(source, result);
 		
-		serverState = SERVER_STATE.ENDED;
 		outToClient.writeObject("");
 	}
 	
@@ -442,13 +475,10 @@ public class FishyServerRunnable implements Runnable {
 			widgetNode.removeChild(widgetNode.getLastChild());
 		}
 		
-		String[] updatedSections = {"feed", "light", "temperature", "pump", "pH", "conductivity"};
-		
-		for (String term : updatedSections) {
-			if (xpathExpression.toLowerCase().contains("/"+ term +"/")) {
-				Node updateNode = (Node) xpath.evaluate(UPDATE_XPATH_EXPRESSION + "@" + term, document, XPathConstants.NODE);
+		for (String term : UPDATE_SECTIONS) {
+			if (xpathExpression.toLowerCase().contains(term.toLowerCase())) {
+				Node updateNode = (Node) xpath.evaluate(UPDATE_XPATH_EXPRESSION, document, XPathConstants.NODE);
 				NamedNodeMap updateNodeMap = updateNode.getAttributes();
-				
 				
 				Node updatedAttr = updateNodeMap.getNamedItem(term);
 				updatedAttr.setTextContent("true");
@@ -462,8 +492,35 @@ public class FishyServerRunnable implements Runnable {
 		StreamResult result = new StreamResult(file);
 		transformer.transform(source, result);
 		
-		serverState = SERVER_STATE.ENDED;
+
 		outToClient.writeObject("");
+	}
+	
+	/**
+	 * Return the last modified date of the chosen file
+	 * @param tankId
+	 * @param suffix
+	 * @throws XPathExpressionException
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws IOException
+	 */
+	private void getFileDate(String tankId, String suffix) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
+		serverState = SERVER_STATE.CONNECTED_READING;
+		
+		File file = new File(buildFilePath(tankId, suffix));
+		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		Document document = dBuilder.parse(file);
+		
+		XPath xpath = XPathFactory.newInstance().newXPath();
+		NodeList dateNode = (NodeList) xpath.evaluate(DATE_XPATH_EXPRESSION, document, XPathConstants.NODESET);
+		
+		outToClient.writeObject(dateNode.item(0).getNodeValue());
+		
+		outToClient.writeObject("");
+		
+		
 	}
 	
 	/**
