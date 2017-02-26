@@ -80,6 +80,8 @@ public class FishyClient {
     	final int conductivity = 2;
     	final float pHcurrent = 10f;
     	
+    	final int feedHr = 12;
+    	final int feedMin = 30;
     	Runnable test1 = new Runnable() {
     		
     		@Override
@@ -92,20 +94,23 @@ public class FishyClient {
     	    	FishyClient.setLighting(tankID, onHr, onMin, offHr, offMin, true, false);
     	    	FishyClient.setFeeding(tankID, weekArr, hour, minute, true, false);
     	    	
-    	    	FishyClient.updateSensorSensorData(tankID, conductivity, pHcurrent);
     	    	FishyClient.appendActionLog(tankID, date, desc, type);
     	    	FishyClient.checkActionLogUpdated(tankID, "2017-02-20T19:19:19+0500");
     	    	FishyClient.updateConductivityRange(tankID, 7, 1);
     	    	FishyClient.updateTemperatureRange(tankID, 7, 1);
     	    	FishyClient.updatePhRange(tankID, 1, 7);
-    	    	FishyClient.updatePump(tankID, true, false, false);
-    	    	FishyClient.updateSensorSensorData(tankID, 3, 11f);
     	    	FishyClient.updateTankDetailsMobileSettings(tankID, "1234", 20, "blah blah", "tropical");
+    	    	FishyClient.updatePump(tankID, true, false, false);
+    	    	
+    	    	FishyClient.updateSensorSensorData(tankID, conductivity, pHcurrent);
+    	    	FishyClient.updateFeedSensorData(tankID, 3, feedHr, feedMin);
+    	    	FishyClient.updateTemperatureSensorData(tankID, -4);
     	    	FishyClient.updateTankDetailsSensorData(tankID, "1234");
     	    	
     	    	FishyClient.updateConductivity(tankID, 7, 1, true); 
-    	    	FishyClient.updatePh(tankID2, 7, 1, true);
-    	    	FishyClient.updateUpdateMobileSettings(tankID, true, true, true, true, true, true);
+    	    	FishyClient.updatePh(tankID, 7, 1, true);
+    	    	FishyClient.updateManualCommands(tankID, false, false, false, false);
+    	    	FishyClient.updateUpdateMobileSettings(tankID, true, true, true, true, true, false);
     	    	
     	    	FishyClient.retrieveMobileXmlData(tankID, testOutputDir);
     	    	FishyClient.retrieveSensorData(tankID, testOutputDir);
@@ -126,20 +131,23 @@ public class FishyClient {
     	    	FishyClient.setLighting(tankID2, onHr, onMin, offHr, offMin, true, false);
     	    	FishyClient.setFeeding(tankID2, weekArr, hour, minute, true, false);
     	    	
-    	    	FishyClient.updateSensorSensorData(tankID2, conductivity, pHcurrent);
     	    	FishyClient.appendActionLog(tankID2, date, desc, type);
     	    	FishyClient.checkActionLogUpdated(tankID2, "2017-02-20T19:19:19+0500");
-    	    	FishyClient.updateConductivityRange(tankID2, 1, 7);
-    	    	FishyClient.updateTemperatureRange(tankID2, 1, 7);
+    	    	FishyClient.updateConductivityRange(tankID2, 7, 1);
+    	    	FishyClient.updateTemperatureRange(tankID2, 7, 1);
     	    	FishyClient.updatePhRange(tankID2, 1, 7);
-    	    	FishyClient.updatePump(tankID2, true, false, false);
-    	    	FishyClient.updateSensorSensorData(tankID2, 3, 11f);
     	    	FishyClient.updateTankDetailsMobileSettings(tankID2, "1234", 20, "blah blah", "tropical");
+    	    	FishyClient.updatePump(tankID2, true, false, false);
+    	    	
+    	    	FishyClient.updateSensorSensorData(tankID2, conductivity, pHcurrent);
+    	    	FishyClient.updateFeedSensorData(tankID2, 3, feedHr, feedMin);
+    	    	FishyClient.updateTemperatureSensorData(tankID2, -4);
     	    	FishyClient.updateTankDetailsSensorData(tankID2, "1234");
     	    	
-    	    	FishyClient.updateConductivity(tankID2, 7, 1, true);
+    	    	FishyClient.updateConductivity(tankID2, 7, 1, true); 
     	    	FishyClient.updatePh(tankID2, 7, 1, true);
-    	    	FishyClient.updateUpdateMobileSettings(tankID2, true, true, true, true, true, true);
+    	    	FishyClient.updateManualCommands(tankID2, false, false, false, false);
+    	    	FishyClient.updateUpdateMobileSettings(tankID2, true, true, true, true, true, false);
     	    	
     	    	FishyClient.retrieveMobileXmlData(tankID2, testOutputDir);
     	    	FishyClient.retrieveSensorData(tankID2, testOutputDir);
@@ -1029,12 +1037,13 @@ public class FishyClient {
 	 * @param feedHr the updated last fed hour
 	 * @param feedMin the updated last fed minute of the hour
 	 */
-	public static void updateFeedSensorData(String tankId, int feedHr, int feedMin) {
+	public static void updateFeedSensorData(String tankId, int totalFeeds, int feedHr, int feedMin) {
 		FishyConnection fishyConnection;
 		try {
 			fishyConnection = new FishyConnection();
 			try {
 				System.out.println("Modifying Sensor Feed Data...");
+				modifySensorXmlData(fishyConnection, tankId, NetworkConstants.XPATH_FEED, "totalFeeds", Integer.toString(feedHr));
 				modifySensorXmlData(fishyConnection, tankId, NetworkConstants.XPATH_FEED, "feedHr", Integer.toString(feedHr));
 				modifySensorXmlData(fishyConnection, tankId, NetworkConstants.XPATH_FEED, "feedMin", Integer.toString(feedMin));
 				System.out.println("Sensor Tank Feed modified");
@@ -1061,7 +1070,7 @@ public class FishyClient {
 			fishyConnection = new FishyConnection();
 			try {
 				System.out.println("Modifying Sensor Temperature Data...");
-				modifySensorXmlData(fishyConnection, tankId, NetworkConstants.XPATH_TEMPERATURE, "feedHr", Integer.toString(currentTemp));
+				modifySensorXmlData(fishyConnection, tankId, NetworkConstants.XPATH_TEMPERATURE, "currentTemp", Integer.toString(currentTemp));
 				System.out.println("Sensor Tank Temperature modified");
 			} catch (Exception e) {
 				System.err.println("Function used improperly or server bug; please complain to van");
@@ -1081,7 +1090,7 @@ public class FishyClient {
 	 * @param conductivity the updated conductivity value
 	 * @param pHcurrent the updated ph value
 	 */
-	public static void updateSensorSensorData(String tankId, int conductivity, Float pHcurrent) {
+	public static void updateSensorSensorData(String tankId, int conductivity, float pHcurrent) {
 		FishyConnection fishyConnection;
 		try {
 			fishyConnection = new FishyConnection();
@@ -1133,6 +1142,41 @@ public class FishyClient {
 	
 	/**
 	 * Append a list of logs to the sensor xml.
+	 * 
+	 * 	 * Example of how to use the following function:
+	 * <pre>
+	 * {@code
+	 * String[] desc = {
+	 * 		"FEEDACTIVE",
+	 * 		"TEMPRANGE",
+	 * 		"MANFEEDING",
+	 * 		"FEEDACTIVE"
+	 * };
+	 * 
+	 * String[] type = {
+	 * 		"ACT",
+	 * 		"NOT",
+	 * 		"MANACT",
+	 * 		"ACT"
+	 * };
+	 * }
+	 * 
+	 * FishyClient.appendActionLog(tankID2, weekArr, hour, minute, offMin, true, false);
+	 * </pre>
+	 * 
+	 * This will update the xml to contain the following information:
+	 * 
+	 * <pre>
+	 * {@code
+	 * <Logs>
+	 * 		<Log date="2017-02-20T19:19:19+0500" desc="FEEDACTIVE" type="ACT"/>
+	 * 		<Log date="2017-02-20T20:19:19+0500" desc="TEMPRANGE" type="NOT"/>
+	 * 		<Log date="2017-02-20T21:19:19+0500" desc="MANFEEDING" type="MANACT"/>
+	 * </Logs>
+	 * }
+	 * </pre>
+	 * 
+	 * 
 	 * @param tankId the tankId
 	 * @param date the date of the log
 	 * @param desc the desc enum
@@ -1193,6 +1237,31 @@ public class FishyClient {
 		}
 	}
 	
+	/**
+	 * Updates the manual attribute in the mobile settings xml.
+	 * @param tankId tankId the tankId
+	 * @param manualFeed true or false if changed
+	 * @param manualLight true or false if changed
+	 * @param manualDrain true or false if changed
+	 * @param manualFill true or false if changed
+	 */
+	public static void updateManualCommands(String tankId, boolean manualFeed, boolean manualLight, boolean manualDrain, boolean manualFill) {
+		FishyConnection fishyConnection;
+		try {
+			fishyConnection = new FishyConnection();
+			System.out.println("Modifying manual Data...");
+			modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_FEED, "manual", Boolean.toString(manualFeed));
+			modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_LIGHT, "manual", Boolean.toString(manualLight));
+			modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_PUMP_DETAILS, "manualDrain", Boolean.toString(manualDrain));
+			modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_PUMP_DETAILS, "manualFill", Boolean.toString(manualFill));
+			System.out.println("Manual modified");
+			fishyConnection.finish(tankId);
+		} catch (IOException e) {
+			System.err.println("Connection to server lost");
+		} catch (ClassNotFoundException e) {
+			System.err.println("Client may be out of date");
+		}
+	}
 	
 	/**
 	 * Inner class to store a connection in progress.  Every public function MUST create a FishyConnection

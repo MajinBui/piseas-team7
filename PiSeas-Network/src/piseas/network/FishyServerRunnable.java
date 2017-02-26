@@ -390,13 +390,15 @@ public class FishyServerRunnable implements Runnable {
 		if (updatedValue != null)
 			nammedAttr.setTextContent(updatedValue);
 		
-		for (String term : UPDATE_SECTIONS) {
-			if (xpathExpression.toLowerCase().contains(term.toLowerCase())) {
-				Node updateNode = (Node) xpath.evaluate(UPDATE_XPATH_EXPRESSION, document, XPathConstants.NODE);
-				NamedNodeMap updateNodeMap = updateNode.getAttributes();
-				
-				Node updatedAttr = updateNodeMap.getNamedItem(term);
-				updatedAttr.setTextContent("true");
+		if (suffix.equals(NetworkConstants.FILE_SUFFIX_MOBILE)) {
+			for (String term : UPDATE_SECTIONS) {
+				if (xpathExpression.toLowerCase().contains(term.toLowerCase())) {
+					Node updateNode = (Node) xpath.evaluate(UPDATE_XPATH_EXPRESSION, document, XPathConstants.NODE);
+					NamedNodeMap updateNodeMap = updateNode.getAttributes();
+					
+					Node updatedAttr = updateNodeMap.getNamedItem(term);
+					updatedAttr.setTextContent("true");
+				}
 			}
 		}
 		
@@ -435,18 +437,18 @@ public class FishyServerRunnable implements Runnable {
 			details.setAttribute(key, data.get(key));
 		}
 		widgetNode.appendChild(details);
-		
-		for (String term : UPDATE_SECTIONS) {
-			if (xpathExpression.toLowerCase().contains(term.toLowerCase())) {
-				Node updateNode = (Node) xpath.evaluate(UPDATE_XPATH_EXPRESSION, document, XPathConstants.NODE);
-				NamedNodeMap updateNodeMap = updateNode.getAttributes();
-				
-				
-				Node updatedAttr = updateNodeMap.getNamedItem(term);
-				updatedAttr.setTextContent("true");
+		if (suffix.equals(NetworkConstants.FILE_SUFFIX_MOBILE)) {
+			for (String term : UPDATE_SECTIONS) {
+				if (xpathExpression.toLowerCase().contains(term.toLowerCase())) {
+					Node updateNode = (Node) xpath.evaluate(UPDATE_XPATH_EXPRESSION, document, XPathConstants.NODE);
+					NamedNodeMap updateNodeMap = updateNode.getAttributes();
+					
+					
+					Node updatedAttr = updateNodeMap.getNamedItem(term);
+					updatedAttr.setTextContent("true");
+				}
 			}
 		}
-		
 		NodeList dateNode = (NodeList) xpath.evaluate(DATE_XPATH_EXPRESSION, document, XPathConstants.NODESET);
 		dateNode.item(0).setNodeValue(DATE_FORMAT.format(CALENDAR.getTime()));
 		
@@ -474,17 +476,18 @@ public class FishyServerRunnable implements Runnable {
 		while (widgetNode.hasChildNodes()) {
 			widgetNode.removeChild(widgetNode.getLastChild());
 		}
-		
-		for (String term : UPDATE_SECTIONS) {
-			if (xpathExpression.toLowerCase().contains(term.toLowerCase())) {
-				Node updateNode = (Node) xpath.evaluate(UPDATE_XPATH_EXPRESSION, document, XPathConstants.NODE);
-				NamedNodeMap updateNodeMap = updateNode.getAttributes();
-				
-				Node updatedAttr = updateNodeMap.getNamedItem(term);
-				updatedAttr.setTextContent("true");
+		if (suffix.equals(NetworkConstants.FILE_SUFFIX_MOBILE)) {
+			for (String term : UPDATE_SECTIONS) {
+				if (xpathExpression.toLowerCase().contains(term.toLowerCase())) {
+					Node updateNode = (Node) xpath.evaluate(UPDATE_XPATH_EXPRESSION, document, XPathConstants.NODE);
+					NamedNodeMap updateNodeMap = updateNode.getAttributes();
+					
+					Node updatedAttr = updateNodeMap.getNamedItem(term);
+					updatedAttr.setTextContent("true");
+				}
 			}
 		}
-		
+
 		NodeList dateNode = (NodeList) xpath.evaluate(DATE_XPATH_EXPRESSION, document, XPathConstants.NODESET);
 		dateNode.item(0).setNodeValue(DATE_FORMAT.format(CALENDAR.getTime()));
 		
