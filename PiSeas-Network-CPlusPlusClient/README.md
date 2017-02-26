@@ -16,6 +16,8 @@ Detailed guide: https://www.codeproject.com/Articles/993067/Calling-Java-from-Cp
 	- Add these lines to .bashrc in the home (~):
 		-export JAVA_HOME="/usr/lib/jvm/jdk-8-oracle-arm32-vfp-hflt"
 		-export PATH=$PATH:$JAVA_HOME/bin
+	- After adding to .bashrc for the first time, execute the above lines in the terminal as well.
+	
 ### Example compile line:
 	g++ main.cpp FishyJavaVirtualMachine.cpp -IJAVA_HOME/include -I$JAVA_HOME/include/linux -std=c++0x -L$JAVA_HOME/jre/lib/arm/server/ -ljvm
 		
