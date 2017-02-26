@@ -39,7 +39,7 @@ import org.xml.sax.SAXException;
 // TODO: set up server transaction for when the server first starts
 
 public class FishyServerRunnable implements Runnable {
-	private static final long THREAD_WAIT_TIME = 500;
+	private static final long THREAD_WAIT_TIME = 100;
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 	private static final Calendar CALENDAR = Calendar.getInstance();
 	private static final String LOG_FORMAT = "%-25s %-10s: %s\n";  // displays as the following:  <date> <tankId>: <log message>
@@ -115,7 +115,7 @@ public class FishyServerRunnable implements Runnable {
 					//  Check if a transaction for the given tankId is already in progress
 					//  Put in queue if so, other wise continue
 					if (serverState == SERVER_STATE.CONNECTED) {
-						while (!startClientServerTransaction(tankId)) {
+						while (!startClientServerTransaction(tankId, this)) {
 							printLogMessage('o', tankId, "transaction for given tankId already started;  Waiting in queue.");
 							try {
 								Thread.sleep(THREAD_WAIT_TIME);
@@ -280,21 +280,21 @@ public class FishyServerRunnable implements Runnable {
 	 * @param tankId the id of the server/client transaction
 	 * @return returns true if the server is ready to start a transaction, false otherwise
 	 */
-	private synchronized boolean startClientServerTransaction(String tankId) {
+	private static synchronized boolean startClientServerTransaction(String tankId, FishyServerRunnable obj) {
 		boolean rc = false;
 		
 		if (TANK_IDS.get(tankId) == null) { // no queue, add transaction and continue
 			Queue<FishyServerRunnable> queue = new LinkedList<FishyServerRunnable>();
-			queue.add(this);
+			queue.add(obj);
 			TANK_IDS.put(tankId, queue);
 			rc = true;
 		} else if (TANK_IDS.get(tankId).peek() == null) { // queue is empty, add transaction and continue
-			TANK_IDS.get(tankId).add(this);
+			TANK_IDS.get(tankId).add(obj);
 			rc = true;
-		} else if (TANK_IDS.get(tankId).peek() == this) { // queue next in line is the current transaction, continue
+		} else if (TANK_IDS.get(tankId).peek() == obj) { // queue next in line is the current transaction, continue
 			rc = true;
-		} else if (!TANK_IDS.get(tankId).contains(this)) { // queue does not contain the current transaction, add to queue
-			TANK_IDS.get(tankId).add(this);
+		} else if (!TANK_IDS.get(tankId).contains(obj)) { // queue does not contain the current transaction, add to queue
+			TANK_IDS.get(tankId).add(obj);
 			rc = false;
 		}
 		else { // play dead
@@ -310,7 +310,7 @@ public class FishyServerRunnable implements Runnable {
 	 * @param tankId the tankid to end the tank transaction
 	 * @return true if id has been removed
 	 */
-	private synchronized boolean endClientServerTransaction(String tankId) {
+	private static synchronized boolean endClientServerTransaction(String tankId) {
 		TANK_IDS.get(tankId).remove();
 		return true;
 	}
