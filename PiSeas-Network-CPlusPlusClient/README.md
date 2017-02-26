@@ -12,8 +12,12 @@ Detailed guide: https://www.codeproject.com/Articles/993067/Calling-Java-from-Cp
 	
 ## Linux set up
 ### Prerequisites:
-	- JRE and JDK installed run time installed
-	- Add jvm to PATH: export LD_LIBRARY_PATH=/usr/lib/jvm/default-java/jre/lib/amd64:/usr/lib/jvm/default-java/jre/lib/amd64/server
+	- JRE and JDK installed run time installed (should already be done on Rasbian)
+	- Add these lines to .bashrc in the home (~):
+		-export JAVA_HOME="/usr/lib/jvm/jdk-8-oracle-arm32-vfp-hflt"
+		-export PATH=$PATH:$JAVA_HOME/bin
+	- After adding to .bashrc for the first time, execute the above lines in the terminal as well.
+	
 ### Example compile line:
-	g++ main.cpp -I/usr/lib/jvm/java-7-openjdk-amd64/include -std=c++0x -L/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/amd64/server -ljvm
+	g++ main.cpp FishyJavaVirtualMachine.cpp -IJAVA_HOME/include -I$JAVA_HOME/include/linux -std=c++0x -L$JAVA_HOME/jre/lib/arm/server/ -ljvm
 		
