@@ -21,7 +21,7 @@ PiSeas-Network/.externalToolBuilders/
 PiSeas-Network/*.launch
 
 
-# Android Studio igonored files
+# Android Studio ignored files
 PiSeas-AndroidAPP/*.iml
 PiSeas-AndroidAPP/.gradle
 PiSeas-AndroidAPP/local.properties
