@@ -78,7 +78,7 @@ public class FishyClient {
     	};
     	
     	final int conductivity = 2;
-    	final int pHcurrent = 10;
+    	final float pHcurrent = 10f;
     	
     	Runnable test1 = new Runnable() {
     		
@@ -99,13 +99,13 @@ public class FishyClient {
     	    	FishyClient.updateTemperatureRange(tankID, 7, 1);
     	    	FishyClient.updatePhRange(tankID, 1, 7);
     	    	FishyClient.updatePump(tankID, true, false, false);
-    	    	FishyClient.updateSensorSensorData(tankID, 3, 11);
+    	    	FishyClient.updateSensorSensorData(tankID, 3, 11f);
     	    	FishyClient.updateTankDetailsMobileSettings(tankID, "1234", 20, "blah blah", "tropical");
     	    	FishyClient.updateTankDetailsSensorData(tankID, "1234");
-    	    	// current version of xml does not abide to these fuctions as of yet
-    	    	//FishyClient.updateConductivity(tankID, 7, 1, true); 
-    	    	//FishyClient.updatePh(tankID2, 7, 1, true);
-    	    	//FishyClient.updateUpdateMobileSettings(tankID, true, true, true, true, true, true);
+    	    	
+    	    	FishyClient.updateConductivity(tankID, 7, 1, true); 
+    	    	FishyClient.updatePh(tankID2, 7, 1, true);
+    	    	FishyClient.updateUpdateMobileSettings(tankID, true, true, true, true, true, true);
     	    	
     	    	FishyClient.retrieveMobileXmlData(tankID, testOutputDir);
     	    	FishyClient.retrieveSensorData(tankID, testOutputDir);
@@ -133,12 +133,13 @@ public class FishyClient {
     	    	FishyClient.updateTemperatureRange(tankID2, 1, 7);
     	    	FishyClient.updatePhRange(tankID2, 1, 7);
     	    	FishyClient.updatePump(tankID2, true, false, false);
-    	    	FishyClient.updateSensorSensorData(tankID2, 3, 11);
+    	    	FishyClient.updateSensorSensorData(tankID2, 3, 11f);
     	    	FishyClient.updateTankDetailsMobileSettings(tankID2, "1234", 20, "blah blah", "tropical");
     	    	FishyClient.updateTankDetailsSensorData(tankID2, "1234");
-    	    	//FishyClient.updateConductivity(tankID2, 7, 1, true);
-    	    	//FishyClient.updatePh(tankID2, 7, 1, true);
-    	    	//FishyClient.updateUpdateMobileSettings(tankID2, true, true, true, true, true, true);
+    	    	
+    	    	FishyClient.updateConductivity(tankID2, 7, 1, true);
+    	    	FishyClient.updatePh(tankID2, 7, 1, true);
+    	    	FishyClient.updateUpdateMobileSettings(tankID2, true, true, true, true, true, true);
     	    	
     	    	FishyClient.retrieveMobileXmlData(tankID2, testOutputDir);
     	    	FishyClient.retrieveSensorData(tankID2, testOutputDir);
@@ -515,13 +516,13 @@ public class FishyClient {
 	 * @param min the updated min range
 	 * @param max the updated max range
 	 */
-	public static void updatePhRange(String tankId, int min, int max) {
+	public static void updatePhRange(String tankId, float min, float max) {
 		FishyConnection fishyConnection;
 		try {
 			fishyConnection = new FishyConnection();
 			System.out.println("Modifying Ph range...");
-			modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_PH_DETAILS, "pHmin", Integer.toString(min));
-			modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_PH_DETAILS, "pHmax", Integer.toString(max));
+			modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_PH_DETAILS, "pHmin", Float.toString(min));
+			modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_PH_DETAILS, "pHmax", Float.toString(max));
 			System.out.println("Ph range modified");
 			fishyConnection.finish(tankId);
 		} catch (IOException e) {
@@ -539,13 +540,13 @@ public class FishyClient {
 	 * @param max the updated max range
 	 * @param auto the updated value for auto ph check
 	 */
-	public static void updatePh(String tankId, int min, int max, boolean auto) {
+	public static void updatePh(String tankId, float min, float max, boolean auto) {
 		FishyConnection fishyConnection;
 		try {
 			fishyConnection = new FishyConnection();
 			System.out.println("Modifying Ph range...");
-			modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_PH_DETAILS, "pHmin", Integer.toString(min));
-			modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_PH_DETAILS, "pHmax", Integer.toString(max));
+			modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_PH_DETAILS, "pHmin", Float.toString(min));
+			modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_PH_DETAILS, "pHmax", Float.toString(max));
 			modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_PH_DETAILS, "auto", Boolean.toString(auto));
 			System.out.println("Ph modified");
 			fishyConnection.finish(tankId);
@@ -1080,14 +1081,14 @@ public class FishyClient {
 	 * @param conductivity the updated conductivity value
 	 * @param pHcurrent the updated ph value
 	 */
-	public static void updateSensorSensorData(String tankId, int conductivity, int pHcurrent) {
+	public static void updateSensorSensorData(String tankId, int conductivity, Float pHcurrent) {
 		FishyConnection fishyConnection;
 		try {
 			fishyConnection = new FishyConnection();
 			try {
 				System.out.println("Modifying Sensor Sensor Data...");
 				modifySensorXmlData(fishyConnection, tankId, NetworkConstants.XPATH_SENSOR, "conductivity", Integer.toString(conductivity));
-				modifySensorXmlData(fishyConnection, tankId, NetworkConstants.XPATH_SENSOR, "pHcurrent", Integer.toString(pHcurrent));
+				modifySensorXmlData(fishyConnection, tankId, NetworkConstants.XPATH_SENSOR, "pHcurrent", Float.toString(pHcurrent));
 				System.out.println("Sensor Tank Temperature modified");
 			} catch (Exception e) {
 				System.err.println("Function used improperly or server bug; please complain to van");
@@ -1205,33 +1206,33 @@ public class FishyClient {
 	private static class FishyConnection {
 		public Socket clientSocket;
 		public ObjectOutputStream outToServer;
-        public ObjectInputStream inFromServer;
-        
-        /**
-         * Opens a connection to the server
-         * @throws IOException if connection is lost
-         */
-        public FishyConnection() throws IOException {
-        	InetAddress addr = InetAddress.getByName("198.27.80.59"); //"198.27.80.59" is vanchaubui.com
-    		clientSocket = new Socket(addr, 4445);
-	        outToServer = new ObjectOutputStream(clientSocket.getOutputStream());
-	        inFromServer = new ObjectInputStream(clientSocket.getInputStream());
-	        outToServer.writeObject(PASSCODE);
-        }
-        
-        /**
-         * Closes the connection to the server
-         * @param tankId the id of connection that is in queue
-         * @throws IOException if connection is lost
-         * @throws ClassNotFoundException if server or client is outdated if server or client is out of date
-         */
-        public void finish(String tankId) throws IOException, ClassNotFoundException {
-        	outToServer.writeObject(NetworkTransactionSwitch.DEVICE_END_TRANSACTION.name());
-        	outToServer.writeObject(tankId);
-        	
-        	inFromServer.readObject();
-        	clientSocket.close();
-        }
+		public ObjectInputStream inFromServer;
+
+		/**
+		 * Opens a connection to the server
+		 * @throws IOException if connection is lost
+		 */
+		public FishyConnection() throws IOException {
+			InetAddress addr = InetAddress.getByName("198.27.80.59"); //"198.27.80.59" is vanchaubui.com
+			clientSocket = new Socket(addr, 4445);
+			outToServer = new ObjectOutputStream(clientSocket.getOutputStream());
+			inFromServer = new ObjectInputStream(clientSocket.getInputStream());
+			outToServer.writeObject(PASSCODE);
+		}
+
+		/**
+		 * Closes the connection to the server
+		 * @param tankId the id of connection that is in queue
+		 * @throws IOException if connection is lost
+		 * @throws ClassNotFoundException if server or client is outdated if server or client is out of date
+		 */
+		public void finish(String tankId) throws IOException, ClassNotFoundException {
+			outToServer.writeObject(NetworkTransactionSwitch.DEVICE_END_TRANSACTION.name());
+			outToServer.writeObject(tankId);
+
+			inFromServer.readObject();
+			clientSocket.close();
+		}
 	}
 	
 	private FishyClient() {}
