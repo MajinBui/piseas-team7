@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-class FishyJavaVitualMachine {
+class FishyJavaVirtualMachine {
 private:
 	JavaVM *jvm; // Pointer to the JVM (Java Virtual Machine)
 	JNIEnv *env; // Pointer to native interface
@@ -13,8 +13,8 @@ private:
 	void setLighting(std::string tankId, int * onHr, int * onMin, int * offHr, int * offMin, bool autoLight, bool manualLight, int n); // might not be used
 	void updateTemperatureRange(std::string tankId, float min, float max); // might not be used
 public:
-	FishyJavaVitualMachine();
-	FishyJavaVitualMachine(std::string classpath);
+	FishyJavaVirtualMachine();
+	FishyJavaVirtualMachine(std::string classpath);
 	bool isJVMRunning();
 	bool isFishyClientRunning();
 	void sendMobileXmlData(std::string tankId, std::string parentPath);
@@ -30,5 +30,5 @@ public:
 	void updateTemperatureSensorData(std::string tankId, int currentTemp);
 	void updateSensorSensorData(std::string tankId, int conductivity, float pHcurrent);
 
-	~FishyJavaVitualMachine();
+	~FishyJavaVirtualMachine();
 };

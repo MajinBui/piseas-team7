@@ -1,8 +1,8 @@
-#include "FishyJavaVitualMachine.h"
+#include "FishyJavaVirtualMachine.h"
 #include <iostream>
 int main()
 {
-	FishyJavaVitualMachine vm = FishyJavaVitualMachine();
+	FishyJavaVirtualMachine vm = FishyJavaVirtualMachine();
 	std::string tankId = "QWERT";
 	std::string inputPath = "input";
 	std::string outputPath = "output";

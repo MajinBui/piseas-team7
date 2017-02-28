@@ -1,8 +1,8 @@
-#include "FishyJavaVitualMachine.h"
+#include "FishyJavaVirtualMachine.h"
 #include <iostream>
 
 
-FishyJavaVitualMachine::FishyJavaVitualMachine() {
+FishyJavaVirtualMachine::FishyJavaVirtualMachine() {
 	JavaVMInitArgs vm_args;                        // Initialization arguments
 	JavaVMOption* options = new JavaVMOption[1];   // JVM invocation options
 	options[0].optionString = (char*)"-Djava.class.path=fishyServer.jar";   // where to find java .class
@@ -32,7 +32,7 @@ FishyJavaVitualMachine::FishyJavaVitualMachine() {
 	}
 }
 
-FishyJavaVitualMachine::FishyJavaVitualMachine(std::string classpath) {
+FishyJavaVirtualMachine::FishyJavaVirtualMachine(std::string classpath) {
 	JavaVMInitArgs vm_args;                        // Initialization arguments
 	JavaVMOption* options = new JavaVMOption[1];   // JVM invocation options
 	options[0].optionString = (char*)std::string("-Djava.class.path=" + classpath).c_str();   // where to find java .class
@@ -62,11 +62,11 @@ FishyJavaVitualMachine::FishyJavaVitualMachine(std::string classpath) {
 	}
 }
 
-bool FishyJavaVitualMachine::isJVMRunning() {
+bool FishyJavaVirtualMachine::isJVMRunning() {
 	return rc_JVM == JNI_OK;
 }
 
-bool FishyJavaVitualMachine::isFishyClientRunning()
+bool FishyJavaVirtualMachine::isFishyClientRunning()
 {
 	return (fishyClient != nullptr);
 }
@@ -77,7 +77,7 @@ bool FishyJavaVitualMachine::isFishyClientRunning()
 * @param tankId the TankID of the tank
 * @param parentFilePath the parent path of the saved data
 */
-void FishyJavaVitualMachine::sendMobileXmlData(std::string tankId, std::string parentPath) {
+void FishyJavaVirtualMachine::sendMobileXmlData(std::string tankId, std::string parentPath) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
 		return;
@@ -101,7 +101,7 @@ void FishyJavaVitualMachine::sendMobileXmlData(std::string tankId, std::string p
 * @param tankId the TankID of the tank
 * @param parentFilePath the parent path of the saved data
 */
-void FishyJavaVitualMachine::sendSensorData(std::string tankId, std::string parentPath) {
+void FishyJavaVirtualMachine::sendSensorData(std::string tankId, std::string parentPath) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
 		return;
@@ -126,7 +126,7 @@ void FishyJavaVitualMachine::sendSensorData(std::string tankId, std::string pare
 * @param tankId the TankID of the tank
 * @param parentFilePath the parent path of the saved data
 */
-void FishyJavaVitualMachine::sendActionLog(std::string tankId, std::string parentPath) {
+void FishyJavaVirtualMachine::sendActionLog(std::string tankId, std::string parentPath) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
 		return;
@@ -151,7 +151,7 @@ void FishyJavaVitualMachine::sendActionLog(std::string tankId, std::string paren
 * @param tankId the TankID of the tank
 * @param parentFilePath the parent path of the saved data
 */
-void FishyJavaVitualMachine::updateTemperatureRange(std::string tankId, float min, float max) {
+void FishyJavaVirtualMachine::updateTemperatureRange(std::string tankId, float min, float max) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
 		return;
@@ -209,7 +209,7 @@ void FishyJavaVitualMachine::updateTemperatureRange(std::string tankId, float mi
 * @param manualLight bool to save
 * @param n the amount of schedules to send
 */
-void FishyJavaVitualMachine::setLighting(std::string tankId, int* onHr, int* onMin, int* offHr, int* offMin, bool autoLight, bool manualLight, int n) {
+void FishyJavaVirtualMachine::setLighting(std::string tankId, int* onHr, int* onMin, int* offHr, int* offMin, bool autoLight, bool manualLight, int n) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
 		return;
@@ -285,7 +285,7 @@ void FishyJavaVitualMachine::setLighting(std::string tankId, int* onHr, int* onM
 * @param auto set automatic feeding
 * @param manual send manual feeding
 */
-void FishyJavaVitualMachine::setFeeding(std::string tankId, bool* weekArr, int numberOfRows, int* hour, int* minute, bool autoF, bool manualF) {
+void FishyJavaVirtualMachine::setFeeding(std::string tankId, bool* weekArr, int numberOfRows, int* hour, int* minute, bool autoF, bool manualF) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
 		return;
@@ -344,7 +344,7 @@ void FishyJavaVitualMachine::setFeeding(std::string tankId, bool* weekArr, int n
 * @param manualLight bool to save
 * @param n the amount of schedules to send
 */
-void FishyJavaVitualMachine::appendActionLog(std::string tankId, std::vector<std::string> date, std::vector<std::string> desc, std::vector<std::string> type) {
+void FishyJavaVirtualMachine::appendActionLog(std::string tankId, std::vector<std::string> date, std::vector<std::string> desc, std::vector<std::string> type) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
 		return;
@@ -386,7 +386,7 @@ void FishyJavaVitualMachine::appendActionLog(std::string tankId, std::vector<std
 * @param manualDrain true or false if changed
 * @param manualFill true or false if changed
 */
-void FishyJavaVitualMachine::updateManualCommands(std::string tankId, bool manualFeed, bool manualLight, bool manualDrain, bool manualFill) {
+void FishyJavaVirtualMachine::updateManualCommands(std::string tankId, bool manualFeed, bool manualLight, bool manualDrain, bool manualFill) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
 		return;
@@ -416,7 +416,7 @@ void FishyJavaVitualMachine::updateManualCommands(std::string tankId, bool manua
 * @param pump true or false if changed
 * @param temperature true or false if changed
 */
-void FishyJavaVitualMachine::updateUpdateMobileSettings(std::string tankId, bool conductivity, bool feed, bool light, bool pH, bool pump, bool temperature) {
+void FishyJavaVirtualMachine::updateUpdateMobileSettings(std::string tankId, bool conductivity, bool feed, bool light, bool pH, bool pump, bool temperature) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
 		return;
@@ -442,7 +442,7 @@ void FishyJavaVitualMachine::updateUpdateMobileSettings(std::string tankId, bool
 * @param desc the desc enum
 * @param type the type enum
 */
-void FishyJavaVitualMachine::appendActionLog(std::string tankId, std::string date, std::string desc, std::string type) {
+void FishyJavaVirtualMachine::appendActionLog(std::string tankId, std::string date, std::string desc, std::string type) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
 		return;
@@ -467,7 +467,7 @@ void FishyJavaVitualMachine::appendActionLog(std::string tankId, std::string dat
 * @param date the date to compare
 * @return true if the dates are the same, false otherwise
 */
-bool FishyJavaVitualMachine::checkMobileSettingsUpdated(std::string tankId, std::string date) {
+bool FishyJavaVirtualMachine::checkMobileSettingsUpdated(std::string tankId, std::string date) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
 		return false;
@@ -493,7 +493,7 @@ bool FishyJavaVitualMachine::checkMobileSettingsUpdated(std::string tankId, std:
 * @param tankId the tankId
 * @param password the updated pin
 */
-void FishyJavaVitualMachine::updateTankDetailsSensorData(std::string tankId, std::string pasword) {
+void FishyJavaVirtualMachine::updateTankDetailsSensorData(std::string tankId, std::string pasword) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
 		return;
@@ -519,7 +519,7 @@ void FishyJavaVitualMachine::updateTankDetailsSensorData(std::string tankId, std
 * @param feedHr the updated last fed hour
 * @param feedMin the updated last fed minute of the hour
 */
-void FishyJavaVitualMachine::updateFeedSensorData(std::string tankId, int totalFeeds, int feedHr, int feedMin) {
+void FishyJavaVirtualMachine::updateFeedSensorData(std::string tankId, int totalFeeds, int feedHr, int feedMin) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
 		return;
@@ -544,7 +544,7 @@ void FishyJavaVitualMachine::updateFeedSensorData(std::string tankId, int totalF
 * @param tankId the tankId
 * @param currentTemp the updated temperature
 */
-void FishyJavaVitualMachine::updateTemperatureSensorData(std::string tankId, int currentTemp) {
+void FishyJavaVirtualMachine::updateTemperatureSensorData(std::string tankId, int currentTemp) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
 		return;
@@ -569,7 +569,7 @@ void FishyJavaVitualMachine::updateTemperatureSensorData(std::string tankId, int
 * @param conductivity the updated conductivity value
 * @param pHcurrent the updated ph value
 */
-void FishyJavaVitualMachine::updateSensorSensorData(std::string tankId, int conductivity, float pHcurrent) {
+void FishyJavaVirtualMachine::updateSensorSensorData(std::string tankId, int conductivity, float pHcurrent) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
 		return;
@@ -589,7 +589,7 @@ void FishyJavaVitualMachine::updateSensorSensorData(std::string tankId, int cond
 }
 
 
-FishyJavaVitualMachine::~FishyJavaVitualMachine() {
+FishyJavaVirtualMachine::~FishyJavaVirtualMachine() {
 	jvm->DestroyJavaVM();
 }
 
