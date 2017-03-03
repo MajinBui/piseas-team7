@@ -1,8 +1,13 @@
 #include "FishyJavaVirtualMachine.h"
 #include <iostream>
+#include <string>
+void printSuccess(bool rc, std::string functionName) {
+	std::cout << functionName << ": " << ((rc) ? "passed" : "failed") << std::endl;
+}
+
 int main()
 {
-	FishyJavaVirtualMachine vm = FishyJavaVirtualMachine();
+	FishyJavaVirtualMachine vm;
 	std::string tankId = "QWERT";
 	std::string inputPath = "input";
 	std::string outputPath = "output";
@@ -44,20 +49,18 @@ int main()
 	int feedHr = 12;
 	int feedMin = 30;
 
-	vm.sendMobileXmlData(tankId, inputPath);
-	vm.sendSensorData(tankId, inputPath);
-	vm.sendActionLog(tankId, inputPath);
-	vm.appendActionLog(tankId, date.at(1), desc.at(1), type.at(1));
-	vm.appendActionLog(tankId, date, desc, type);
-	vm.updateManualCommands(tankId, true, true, true, false);
-	vm.updateUpdateMobileSettings(tankId, true, false, false, false, true, true);
-	vm.updateTankDetailsSensorData(tankId, "1234");
-	vm.updateFeedSensorData(tankId, 3, feedHr, feedMin);
-	vm.updateTemperatureSensorData(tankId, -4);
-	vm.updateSensorSensorData(tankId, conductivity, pHcurrent);
-	std::cout << vm.checkMobileSettingsUpdated(tankId, date.at(1)) << std::endl;
+	printSuccess(vm.sendMobileXmlData(tankId, inputPath), "sendMobileXmlData");
+	printSuccess(vm.sendSensorData(tankId, inputPath), "sendSensorData");
+	printSuccess(vm.sendActionLog(tankId, inputPath), "sendActionLog");
+	printSuccess(vm.appendActionLog(tankId, date.at(1), desc.at(1), type.at(1)), "appendActionLog");
+	printSuccess(vm.appendActionLog(tankId, date, desc, type), "appendActionLog");
+	printSuccess(vm.updateManualCommands(tankId, true, true, true, false), "updateManualCommands");
+	printSuccess(vm.updateUpdateMobileSettings(tankId, true, false, false, false, true, true), "updateUpdateMobileSettings");
+	printSuccess(vm.updateTankDetailsSensorData(tankId, "1234"), "updateTankDetailsSensorData");
+	printSuccess(vm.updateFeedSensorData(tankId, 3, feedHr, feedMin), "updateFeedSensorData");
+	printSuccess(vm.updateTemperatureSensorData(tankId, -4), "updateTemperatureSensorData");
+	printSuccess(vm.updateSensorSensorData(tankId, conductivity, pHcurrent), "updateSensorSensorData");
+	printSuccess(vm.checkMobileSettingsUpdated(tankId, date.at(1)), "checkMobileSettingsUpdated");
 
-	//vm.setLighting(tankId, onHr, onMin, offHr, offMin, true, true, 2);
-	//vm.setFeeding(tankId, *weekArr, 2, hour, minute, true, false);
 	system("pause");
 }

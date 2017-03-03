@@ -76,14 +76,15 @@ bool FishyJavaVirtualMachine::isFishyClientRunning()
 * Client will send the sensor data with the given tankId located to the specified file path. 
 * @param tankId the TankID of the tank
 * @param parentFilePath the parent path of the saved data
+* @return true if successful, false otherwise
 */
-void FishyJavaVirtualMachine::sendMobileXmlData(std::string tankId, std::string parentPath) {
+bool FishyJavaVirtualMachine::sendMobileXmlData(std::string tankId, std::string parentPath) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
-		return;
+		return false;
 	}
 	// Find method
-	jmethodID mid = env->GetStaticMethodID(fishyClient, "sendMobileXmlData", "(Ljava/lang/String;Ljava/lang/String;)V");
+	jmethodID mid = env->GetStaticMethodID(fishyClient, "sendMobileXmlData", "(Ljava/lang/String;Ljava/lang/String;)Z");
 	if (mid == nullptr) {
 		if (env->ExceptionOccurred())
 			env->ExceptionDescribe();
@@ -91,8 +92,8 @@ void FishyJavaVirtualMachine::sendMobileXmlData(std::string tankId, std::string 
 			std::cerr << "ERROR: method void writeToPiData() not found !" << std::endl;
 	}
 	else {
-		env->CallStaticVoidMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), env->NewStringUTF((char *)parentPath.c_str()));                      // call method
-		std::cout << std::endl;
+		jboolean rc = env->CallStaticBooleanMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), env->NewStringUTF((char *)parentPath.c_str()));                      // call method
+		return (bool)rc;
 	}
 }
 
@@ -100,14 +101,15 @@ void FishyJavaVirtualMachine::sendMobileXmlData(std::string tankId, std::string 
 * Client will send the sensor data with the given tankId located to the specified file path.
 * @param tankId the TankID of the tank
 * @param parentFilePath the parent path of the saved data
+* @return true if successful, false otherwise
 */
-void FishyJavaVirtualMachine::sendSensorData(std::string tankId, std::string parentPath) {
+bool FishyJavaVirtualMachine::sendSensorData(std::string tankId, std::string parentPath) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
-		return;
+		return false;
 	}
 	// Find method
-	jmethodID mid = env->GetStaticMethodID(fishyClient, "sendSensorData", "(Ljava/lang/String;Ljava/lang/String;)V");
+	jmethodID mid = env->GetStaticMethodID(fishyClient, "sendSensorData", "(Ljava/lang/String;Ljava/lang/String;)Z");
 	if (mid == nullptr) {
 		if (env->ExceptionOccurred())
 			env->ExceptionDescribe();
@@ -115,8 +117,8 @@ void FishyJavaVirtualMachine::sendSensorData(std::string tankId, std::string par
 			std::cerr << "ERROR: method void writeToMobileData() not found !" << std::endl;
 	}
 	else {
-		env->CallStaticVoidMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), env->NewStringUTF((char *)parentPath.c_str()));                      // call method
-		std::cout << std::endl;
+		jboolean rc = env->CallStaticBooleanMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), env->NewStringUTF((char *)parentPath.c_str()));                      // call method
+		return (bool)rc;
 	}
 }
 
@@ -125,14 +127,15 @@ void FishyJavaVirtualMachine::sendSensorData(std::string tankId, std::string par
 * Client will send the action log with the given tankId located to the specified file path.
 * @param tankId the TankID of the tank
 * @param parentFilePath the parent path of the saved data
+* @return true if successful, false otherwise
 */
-void FishyJavaVirtualMachine::sendActionLog(std::string tankId, std::string parentPath) {
+bool FishyJavaVirtualMachine::sendActionLog(std::string tankId, std::string parentPath) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
-		return;
+		return false;
 	}
 	// Find method
-	jmethodID mid = env->GetStaticMethodID(fishyClient, "sendActionLog", "(Ljava/lang/String;Ljava/lang/String;)V");
+	jmethodID mid = env->GetStaticMethodID(fishyClient, "sendActionLog", "(Ljava/lang/String;Ljava/lang/String;)Z");
 	if (mid == nullptr) {
 		if (env->ExceptionOccurred())
 			env->ExceptionDescribe();
@@ -140,8 +143,8 @@ void FishyJavaVirtualMachine::sendActionLog(std::string tankId, std::string pare
 			std::cerr << "ERROR: method void sendActionLog() not found !" << std::endl;
 	}
 	else {
-		env->CallStaticVoidMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), env->NewStringUTF((char *)parentPath.c_str()));                      // call method
-		std::cout << std::endl;
+		jboolean rc = env->CallStaticBooleanMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), env->NewStringUTF((char *)parentPath.c_str()));                      // call method
+		return (bool)rc;
 	}
 }
 
@@ -150,14 +153,15 @@ void FishyJavaVirtualMachine::sendActionLog(std::string tankId, std::string pare
 * Client will send the action log with the given tankId located to the specified file path.
 * @param tankId the TankID of the tank
 * @param parentFilePath the parent path of the saved data
+* @return true if successful, false otherwise
 */
-void FishyJavaVirtualMachine::updateTemperatureRange(std::string tankId, float min, float max) {
+bool FishyJavaVirtualMachine::updateTemperatureRange(std::string tankId, float min, float max) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
-		return;
+		return false;
 	}
 	// Find method
-	jmethodID mid = env->GetStaticMethodID(fishyClient, "updateTemperatureRange", "(Ljava/lang/String;FF)V");
+	jmethodID mid = env->GetStaticMethodID(fishyClient, "updateTemperatureRange", "(Ljava/lang/String;FF)Z");
 	if (mid == nullptr) {
 		if (env->ExceptionOccurred())
 			env->ExceptionDescribe();
@@ -165,8 +169,8 @@ void FishyJavaVirtualMachine::updateTemperatureRange(std::string tankId, float m
 			std::cerr << "ERROR: method void updateTemperatureRange() not found !" << std::endl;
 	}
 	else {
-		env->CallStaticVoidMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), min, max);  // call method
-		std::cout << std::endl;
+		jboolean rc = env->CallStaticBooleanMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), min, max);  // call method
+		return (bool)rc;
 	}
 }
 
@@ -208,14 +212,15 @@ void FishyJavaVirtualMachine::updateTemperatureRange(std::string tankId, float m
 * @param autoLight bool to save
 * @param manualLight bool to save
 * @param n the amount of schedules to send
+* @return true if successful, false otherwise
 */
-void FishyJavaVirtualMachine::setLighting(std::string tankId, int* onHr, int* onMin, int* offHr, int* offMin, bool autoLight, bool manualLight, int n) {
+bool FishyJavaVirtualMachine::setLighting(std::string tankId, int* onHr, int* onMin, int* offHr, int* offMin, bool autoLight, bool manualLight, int n) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
-		return;
+		return false;
 	}
 	// Find method
-	jmethodID mid = env->GetStaticMethodID(fishyClient, "setLighting", "(Ljava/lang/String;[I[I[I[IZZ)V");
+	jmethodID mid = env->GetStaticMethodID(fishyClient, "setLighting", "(Ljava/lang/String;[I[I[I[IZZ)Z");
 	if (mid == nullptr) {
 		if (env->ExceptionOccurred())
 			env->ExceptionDescribe();
@@ -231,7 +236,7 @@ void FishyJavaVirtualMachine::setLighting(std::string tankId, int* onHr, int* on
 		jint *onMinsBody = env->GetIntArrayElements(onHours, 0);
 		jint *offHoursBody = env->GetIntArrayElements(onHours, 0);
 		jint *offMinsBody = env->GetIntArrayElements(onHours, 0);
-		for (int i = 0; i < n; i ++) {
+		for (int i = 0; i < n; i++) {
 			onHoursBody[i] = onHr[i];
 			onMinsBody[i] = onMin[i];
 			offHoursBody[i] = offHr[i];
@@ -242,8 +247,8 @@ void FishyJavaVirtualMachine::setLighting(std::string tankId, int* onHr, int* on
 		env->ReleaseIntArrayElements(offHours, offHoursBody, 0);
 		env->ReleaseIntArrayElements(offMins, offMinsBody, 0);
 
-		env->CallStaticVoidMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), onHours, onMins, offHours, offMins, autoLight, manualLight);  // call method
-		std::cout << std::endl;
+		jboolean rc = env->CallStaticBooleanMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), onHours, onMins, offHours, offMins, autoLight, manualLight);  // call method
+		return (bool)rc;
 	}
 }
 
@@ -284,14 +289,15 @@ void FishyJavaVirtualMachine::setLighting(std::string tankId, int* onHr, int* on
 * @param minute minute of the hour to feed
 * @param auto set automatic feeding
 * @param manual send manual feeding
+* @return true if successful, false otherwise
 */
-void FishyJavaVirtualMachine::setFeeding(std::string tankId, bool* weekArr, int numberOfRows, int* hour, int* minute, bool autoF, bool manualF) {
+bool FishyJavaVirtualMachine::setFeeding(std::string tankId, bool* weekArr, int numberOfRows, int* hour, int* minute, bool autoF, bool manualF) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
-		return;
+		return false;
 	}
 	// Find method
-	jmethodID mid = env->GetStaticMethodID(fishyClient, "setFeeding", "(Ljava/lang/String;[I[I[I[IZZ)V");
+	jmethodID mid = env->GetStaticMethodID(fishyClient, "setFeeding", "(Ljava/lang/String;[I[I[I[IZZ)Z");
 	if (mid == nullptr) {
 		if (env->ExceptionOccurred())
 			env->ExceptionDescribe();
@@ -299,9 +305,8 @@ void FishyJavaVirtualMachine::setFeeding(std::string tankId, bool* weekArr, int 
 			std::cerr << "ERROR: method void setFeeding() not found !" << std::endl;
 	}
 	else {
-		
-		env->CallStaticVoidMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), weekArr, hour, minute, autoF, manualF);  // call method
-		std::cout << std::endl;
+		jboolean rc = env->CallStaticBooleanMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), weekArr, hour, minute, autoF, manualF);  // call method
+		return (bool)rc;
 	}
 }
 
@@ -343,14 +348,15 @@ void FishyJavaVirtualMachine::setFeeding(std::string tankId, bool* weekArr, int 
 * @param autoLight bool to save
 * @param manualLight bool to save
 * @param n the amount of schedules to send
+* @return true if successful, false otherwise
 */
-void FishyJavaVirtualMachine::appendActionLog(std::string tankId, std::vector<std::string> date, std::vector<std::string> desc, std::vector<std::string> type) {
+bool FishyJavaVirtualMachine::appendActionLog(std::string tankId, std::vector<std::string> date, std::vector<std::string> desc, std::vector<std::string> type) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
-		return;
+		return false;
 	}
 	// Find method
-	jmethodID mid = env->GetStaticMethodID(fishyClient, "appendActionLog", "(Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/String;)V");
+	jmethodID mid = env->GetStaticMethodID(fishyClient, "appendActionLog", "(Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/String;[Ljava/lang/String;)Z");
 	if (mid == nullptr) {
 		if (env->ExceptionOccurred())
 			env->ExceptionDescribe();
@@ -373,8 +379,8 @@ void FishyJavaVirtualMachine::appendActionLog(std::string tankId, std::vector<st
 			env->SetObjectArrayElement(jTypeArr, i, env->NewStringUTF(type.at(i).c_str()));
 		}
 
-		env->CallStaticVoidMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), jDateArr, jDescArr, jTypeArr);  // call method
-		std::cout << std::endl;
+		jboolean rc = env->CallStaticBooleanMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), jDateArr, jDescArr, jTypeArr);  // call method
+		return (bool)rc;
 	}
 }
 
@@ -385,14 +391,15 @@ void FishyJavaVirtualMachine::appendActionLog(std::string tankId, std::vector<st
 * @param manualLight true or false if changed
 * @param manualDrain true or false if changed
 * @param manualFill true or false if changed
+* @return true if successful, false otherwise
 */
-void FishyJavaVirtualMachine::updateManualCommands(std::string tankId, bool manualFeed, bool manualLight, bool manualDrain, bool manualFill) {
+bool FishyJavaVirtualMachine::updateManualCommands(std::string tankId, bool manualFeed, bool manualLight, bool manualDrain, bool manualFill) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
-		return;
+		return false;
 	}
 	// Find method
-	jmethodID mid = env->GetStaticMethodID(fishyClient, "updateManualCommands", "(Ljava/lang/String;ZZZZ)V");
+	jmethodID mid = env->GetStaticMethodID(fishyClient, "updateManualCommands", "(Ljava/lang/String;ZZZZ)Z");
 	if (mid == nullptr) {
 		if (env->ExceptionOccurred())
 			env->ExceptionDescribe();
@@ -400,8 +407,8 @@ void FishyJavaVirtualMachine::updateManualCommands(std::string tankId, bool manu
 			std::cerr << "ERROR: method void updateManualCommands() not found !" << std::endl;
 	}
 	else {
-		env->CallStaticVoidMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), manualFeed, manualLight, manualDrain, manualFill);  // call method
-		std::cout << std::endl;
+		jboolean rc = env->CallStaticBooleanMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), manualFeed, manualLight, manualDrain, manualFill);  // call method
+		return (bool)rc;
 	}
 }
 
@@ -415,14 +422,15 @@ void FishyJavaVirtualMachine::updateManualCommands(std::string tankId, bool manu
 * @param pH true or false if changed
 * @param pump true or false if changed
 * @param temperature true or false if changed
+* @return true if successful, false otherwise
 */
-void FishyJavaVirtualMachine::updateUpdateMobileSettings(std::string tankId, bool conductivity, bool feed, bool light, bool pH, bool pump, bool temperature) {
+bool FishyJavaVirtualMachine::updateUpdateMobileSettings(std::string tankId, bool conductivity, bool feed, bool light, bool pH, bool pump, bool temperature) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
-		return;
+		return false;
 	}
 	// Find method
-	jmethodID mid = env->GetStaticMethodID(fishyClient, "updateUpdateMobileSettings", "(Ljava/lang/String;ZZZZZZ)V");
+	jmethodID mid = env->GetStaticMethodID(fishyClient, "updateUpdateMobileSettings", "(Ljava/lang/String;ZZZZZZ)Z");
 	if (mid == nullptr) {
 		if (env->ExceptionOccurred())
 			env->ExceptionDescribe();
@@ -430,8 +438,8 @@ void FishyJavaVirtualMachine::updateUpdateMobileSettings(std::string tankId, boo
 			std::cerr << "ERROR: method void updateUpdateMobileSettings() not found !" << std::endl;
 	}
 	else {
-		env->CallStaticVoidMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), conductivity, feed, light, pH, pump, temperature);  // call method
-		std::cout << std::endl;
+		jboolean rc = env->CallStaticBooleanMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), conductivity, feed, light, pH, pump, temperature);  // call method
+		return (bool)rc;
 	}
 }
 
@@ -441,14 +449,15 @@ void FishyJavaVirtualMachine::updateUpdateMobileSettings(std::string tankId, boo
 * @param date the date of the log
 * @param desc the desc enum
 * @param type the type enum
+* @return true if successful, false otherwise
 */
-void FishyJavaVirtualMachine::appendActionLog(std::string tankId, std::string date, std::string desc, std::string type) {
+bool FishyJavaVirtualMachine::appendActionLog(std::string tankId, std::string date, std::string desc, std::string type) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
-		return;
+		return false;
 	}
 	// Find method
-	jmethodID mid = env->GetStaticMethodID(fishyClient, "appendActionLog", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
+	jmethodID mid = env->GetStaticMethodID(fishyClient, "appendActionLog", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Z");
 	if (mid == nullptr) {
 		if (env->ExceptionOccurred())
 			env->ExceptionDescribe();
@@ -456,8 +465,8 @@ void FishyJavaVirtualMachine::appendActionLog(std::string tankId, std::string da
 			std::cerr << "ERROR: method void appendActionLog() not found !" << std::endl;
 	}
 	else {
-		env->CallStaticVoidMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), env->NewStringUTF(date.c_str()), env->NewStringUTF(desc.c_str()), env->NewStringUTF(type.c_str()));  // call method
-		std::cout << std::endl;
+		jboolean rc = env->CallStaticBooleanMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), env->NewStringUTF(date.c_str()), env->NewStringUTF(desc.c_str()), env->NewStringUTF(type.c_str()));  // call method
+		return (bool)rc;
 	}
 }
 
@@ -466,6 +475,7 @@ void FishyJavaVirtualMachine::appendActionLog(std::string tankId, std::string da
 * @param tankId the tankId
 * @param date the date to compare
 * @return true if the dates are the same, false otherwise
+* @return true if successful, false otherwise
 */
 bool FishyJavaVirtualMachine::checkMobileSettingsUpdated(std::string tankId, std::string date) {
 	if (!isFishyClientRunning()) {
@@ -482,7 +492,6 @@ bool FishyJavaVirtualMachine::checkMobileSettingsUpdated(std::string tankId, std
 	}
 	else {
 		jboolean rc = env->CallStaticBooleanMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), env->NewStringUTF(date.c_str()));  // call method
-		std::cout << std::endl;
 		return (bool)rc;
 	}
 	return false;
@@ -492,14 +501,15 @@ bool FishyJavaVirtualMachine::checkMobileSettingsUpdated(std::string tankId, std
 * Update the tank details of the sensor data xml.
 * @param tankId the tankId
 * @param password the updated pin
+* @return true if successful, false otherwise
 */
-void FishyJavaVirtualMachine::updateTankDetailsSensorData(std::string tankId, std::string pasword) {
+bool FishyJavaVirtualMachine::updateTankDetailsSensorData(std::string tankId, std::string pasword) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
-		return;
+		return false;
 	}
 	// Find method
-	jmethodID mid = env->GetStaticMethodID(fishyClient, "updateTankDetailsSensorData", "(Ljava/lang/String;Ljava/lang/String;)V");
+	jmethodID mid = env->GetStaticMethodID(fishyClient, "updateTankDetailsSensorData", "(Ljava/lang/String;Ljava/lang/String;)Z");
 	if (mid == nullptr) {
 		if (env->ExceptionOccurred())
 			env->ExceptionDescribe();
@@ -507,8 +517,8 @@ void FishyJavaVirtualMachine::updateTankDetailsSensorData(std::string tankId, st
 			std::cerr << "ERROR: method void updateTankDetailsSensorData() not found !" << std::endl;
 	}
 	else {
-		env->CallStaticVoidMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), env->NewStringUTF((char *)pasword.c_str()));  // call method
-		std::cout << std::endl;
+		jboolean rc = env->CallStaticBooleanMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), env->NewStringUTF((char *)pasword.c_str()));  // call method
+		return (bool)rc;
 	}
 }
 
@@ -518,14 +528,15 @@ void FishyJavaVirtualMachine::updateTankDetailsSensorData(std::string tankId, st
 * @param tankId the tankId
 * @param feedHr the updated last fed hour
 * @param feedMin the updated last fed minute of the hour
+* @return true if successful, false otherwise
 */
-void FishyJavaVirtualMachine::updateFeedSensorData(std::string tankId, int totalFeeds, int feedHr, int feedMin) {
+bool FishyJavaVirtualMachine::updateFeedSensorData(std::string tankId, int totalFeeds, int feedHr, int feedMin) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
-		return;
+		return false;
 	}
 	// Find method
-	jmethodID mid = env->GetStaticMethodID(fishyClient, "updateFeedSensorData", "(Ljava/lang/String;III)V");
+	jmethodID mid = env->GetStaticMethodID(fishyClient, "updateFeedSensorData", "(Ljava/lang/String;III)Z");
 	if (mid == nullptr) {
 		if (env->ExceptionOccurred())
 			env->ExceptionDescribe();
@@ -533,8 +544,8 @@ void FishyJavaVirtualMachine::updateFeedSensorData(std::string tankId, int total
 			std::cerr << "ERROR: method void updateFeedSensorData() not found !" << std::endl;
 	}
 	else {
-		env->CallStaticVoidMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), totalFeeds, feedHr, feedMin);  // call method
-		std::cout << std::endl;
+		jboolean rc = env->CallStaticBooleanMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), totalFeeds, feedHr, feedMin);  // call method
+		return (bool)rc;
 	}
 }
 
@@ -543,14 +554,15 @@ void FishyJavaVirtualMachine::updateFeedSensorData(std::string tankId, int total
 * Update the temperature data of the sensor xml.
 * @param tankId the tankId
 * @param currentTemp the updated temperature
+* @return true if successful, false otherwise
 */
-void FishyJavaVirtualMachine::updateTemperatureSensorData(std::string tankId, int currentTemp) {
+bool FishyJavaVirtualMachine::updateTemperatureSensorData(std::string tankId, int currentTemp) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
-		return;
+		return false;
 	}
 	// Find method
-	jmethodID mid = env->GetStaticMethodID(fishyClient, "updateTemperatureSensorData", "(Ljava/lang/String;I)V");
+	jmethodID mid = env->GetStaticMethodID(fishyClient, "updateTemperatureSensorData", "(Ljava/lang/String;I)Z");
 	if (mid == nullptr) {
 		if (env->ExceptionOccurred())
 			env->ExceptionDescribe();
@@ -558,8 +570,8 @@ void FishyJavaVirtualMachine::updateTemperatureSensorData(std::string tankId, in
 			std::cerr << "ERROR: method void updateTemperatureSensorData() not found !" << std::endl;
 	}
 	else {
-		env->CallStaticVoidMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), currentTemp);  // call method
-		std::cout << std::endl;
+		jboolean rc = env->CallStaticBooleanMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), currentTemp);  // call method
+		return (bool)rc;
 	}
 }
 
@@ -569,13 +581,13 @@ void FishyJavaVirtualMachine::updateTemperatureSensorData(std::string tankId, in
 * @param conductivity the updated conductivity value
 * @param pHcurrent the updated ph value
 */
-void FishyJavaVirtualMachine::updateSensorSensorData(std::string tankId, int conductivity, float pHcurrent) {
+bool FishyJavaVirtualMachine::updateSensorSensorData(std::string tankId, int conductivity, float pHcurrent) {
 	if (!isFishyClientRunning()) {
 		std::cerr << "FishyClient is not active." << std::endl;
-		return;
+		return false;
 	}
 	// Find method
-	jmethodID mid = env->GetStaticMethodID(fishyClient, "updateSensorSensorData", "(Ljava/lang/String;IF)V");
+	jmethodID mid = env->GetStaticMethodID(fishyClient, "updateSensorSensorData", "(Ljava/lang/String;IF)Z");
 	if (mid == nullptr) {
 		if (env->ExceptionOccurred())
 			env->ExceptionDescribe();
@@ -583,8 +595,8 @@ void FishyJavaVirtualMachine::updateSensorSensorData(std::string tankId, int con
 			std::cerr << "ERROR: method void updateSensorSensorData() not found !" << std::endl;
 	}
 	else {
-		env->CallStaticVoidMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), conductivity, pHcurrent);  // call method
-		std::cout << std::endl;
+		jboolean rc = env->CallStaticBooleanMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), conductivity, pHcurrent);  // call method
+		return (bool)rc;
 	}
 }
 
