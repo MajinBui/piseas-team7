@@ -2,6 +2,7 @@ package com.babol.android.xml_parse;
 
 import android.content.Context;
 import android.util.Xml;
+import android.widget.Toast;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -258,6 +259,11 @@ class XmlPullParserHandler {
         return Float.parseFloat(parseSettings("PH", "pHmax"));
     }
 
+    public boolean getSettingsPHauto(){
+        // Parse from tag "PH", attribute auto
+        return Boolean.parseBoolean(parseSettings("PH", "auto"));
+    }
+
     public float getSettingsCMin() {
         // Parse from tag "Conductivity", attribute cMin
         return Float.parseFloat(parseSettings("Conductivity", "cMin"));
@@ -266,6 +272,11 @@ class XmlPullParserHandler {
     public float getSettingsCMax() {
         // Parse from tag "Conductivity", attribute cMax
         return Float.parseFloat(parseSettings("Conductivity", "cMax"));
+    }
+
+    public boolean getSettingsConductivityauto(){
+        // Parse from tag "Conductivity", attribute auto
+        return Boolean.parseBoolean(parseSettings("Conductivity", "auto"));
     }
 
     public ArrayList<FeedSchedule> getFeedSchedules(){
@@ -396,7 +407,7 @@ class XmlPullParserHandler {
         String filepath = id + "_mobile_settings.xml";
         File newXml = new File(context.getFilesDir() + "/" + filepath);
 
-        boolean del = newXml.delete();              // TESTING ONLY, DELETES EXISTING XML IN STORAGE
+        //boolean del = newXml.delete();              // TESTING ONLY, DELETES EXISTING XML IN STORAGE
 
         // Check to see if file exists, if file does not exist, create new
         if(!newXml.isFile())
@@ -419,9 +430,9 @@ class XmlPullParserHandler {
             // get all attributes into Attr array
             NamedNodeMap allAtts = checks.getAttributes();
             // loop through all attributes, set the one that we are changing to true, all else are false
-            for (int i = 0; i<6; i++){
-                Attr attribs = (Attr)allAtts.item(i);
-                if(attribs.getNodeName().toLowerCase().equals(tag))
+            for (int i = 0; i < 6; i++) {
+                Attr attribs = (Attr) allAtts.item(i);
+                if (attribs.getNodeName().toLowerCase().equals(tag))
                     attribs.setNodeValue("true");
                 else
                     attribs.setNodeValue("false");
@@ -431,17 +442,25 @@ class XmlPullParserHandler {
             nodes = doc.getElementsByTagName(tag);
             detail = nodes.item(0);
 
-            // Get all child tags of our parent
-            details = detail.getChildNodes();
-            for(int i = 0; i < details.getLength(); i++){
-                Node item = details.item(i);
-
-                // Get all the attributes of the details tag
-                NamedNodeMap detailNodes = item.getAttributes();
-                for(int z = 0; z < detailNodes.getLength(); z++){
-                    Attr attr = (Attr) detailNodes.item(z);
-                    if(attr.getNodeName().equals(attribute))
+            if(tag.equals("Date")){
+                NamedNodeMap detailNodes = detail.getAttributes();
+                   Attr attr = (Attr) detailNodes.item(0);
+                    if (attr.getNodeName().equals(attribute))
                         attr.setNodeValue(value);
+            }
+            else {
+                // Get all child tags of our parent
+                details = detail.getChildNodes();
+                for (int i = 0; i < details.getLength(); i++) {
+                    Node item = details.item(i);
+
+                    // Get all the attributes of the details tag
+                    NamedNodeMap detailNodes = item.getAttributes();
+                    for (int z = 0; z < detailNodes.getLength(); z++) {
+                        Attr attr = (Attr) detailNodes.item(z);
+                        if (attr.getNodeName().equals(attribute))
+                            attr.setNodeValue(value);
+                    }
                 }
             }
 
@@ -457,8 +476,8 @@ class XmlPullParserHandler {
         }
     }
 
-    public void setCode(String value){
-        write("Tank", "code", value);
+    public void setID(String value){
+        write("Tank", "id", value);
     }
 
     public void setpassword(String value){
@@ -477,33 +496,214 @@ class XmlPullParserHandler {
         write("Tank", "type", value);
     }
 
+    // NEED TO GET THIS FIXED
     public void setDateSent(String value){
-        write("Date", "dateSent", value);
+        write("Date", "date", value);
     }
 
-    public void setPush(boolean value){ write("Settings", "push", String.valueOf(value)); }
+    public void setFeed(ArrayList<FeedSchedule> feed, boolean manual, boolean auto) {
+        String filepath = id + "_mobile_settings.xml";
+        File newXml = new File(context.getFilesDir() + "/" + filepath);
 
-    public void setMain(int value){
-        write("Settings", "main", String.valueOf(value));
+        // Check to see if file exists, if file does not exist, create new
+        if(!newXml.isFile())
+            createXml(filepath);
+
+        try {
+            // Modify XML using DOM
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            Document doc = docBuilder.parse(context.openFileInput(filepath));
+
+            // search for Updated tag
+            NodeList nodes = doc.getElementsByTagName("Update");
+            // get the Updated tag
+            Node detail = nodes.item(0);
+            // get the only child of Updated, detail, and place into array
+            NodeList details = detail.getChildNodes();
+            // get the single detail tag and place into Node
+            Node checks = details.item(0);
+            // get all attributes into Attr array
+            NamedNodeMap allAtts = checks.getAttributes();
+            // loop through all attributes, set feed to true while all others are false
+            for (int i = 0; i < 6; i++) {
+                Attr attribs = (Attr) allAtts.item(i);
+                if (attribs.getNodeName().toLowerCase().equals("feed"))
+                    attribs.setNodeValue("true");
+                else
+                    attribs.setNodeValue("false");
+            }
+
+            // Search for tag and insert into a node object
+            nodes = doc.getElementsByTagName("Feed");
+            detail = nodes.item(0);
+
+            // Fill in Feed tag attributes
+            NamedNodeMap detailNodes = detail.getAttributes();
+            for (int z = 0; z < detailNodes.getLength(); z++) {
+                Attr attr = (Attr) detailNodes.item(z);
+                switch(attr.getNodeName()){
+                    case "schedules":
+                        attr.setNodeValue(String.valueOf(feed.size()));
+                        break;
+                    case "manual":
+                        attr.setNodeValue(String.valueOf(manual));
+                        break;
+                    case "auto":
+                        attr.setNodeValue(String.valueOf(auto));
+                        break;
+                    default:
+                        Toast.makeText(context, "I am not suppose to be here! setFeed loop 1", Toast.LENGTH_LONG).show();
+                }
+            }
+            // fill in details
+            details = detail.getChildNodes();
+            for (int i = 0; i < details.getLength(); i++) {
+                Node item = details.item(i);
+
+                // Get all the attributes of the details tag
+                detailNodes = item.getAttributes();
+                for (int z = 0; z < detailNodes.getLength(); z++) {
+                    Attr attr = (Attr) detailNodes.item(z);
+                    switch(attr.getNodeName()){
+                        case "hr":
+                            attr.setNodeValue(String.valueOf(feed.get(i).getHour()));
+                            break;
+                        case "min":
+                            attr.setNodeValue(String.valueOf(feed.get(i).getMin()));
+                            break;
+                        case "Mon":
+                            attr.setNodeValue(String.valueOf(feed.get(i).getWeek(0)));
+                            break;
+                        case "Tue":
+                            attr.setNodeValue(String.valueOf(feed.get(i).getWeek(1)));
+                            break;
+                        case "Wed":
+                            attr.setNodeValue(String.valueOf(feed.get(i).getWeek(2)));
+                            break;
+                        case "Thu":
+                            attr.setNodeValue(String.valueOf(feed.get(i).getWeek(3)));
+                            break;
+                        case "Fri":
+                            attr.setNodeValue(String.valueOf(feed.get(i).getWeek(4)));
+                            break;
+                        case "Sat":
+                            attr.setNodeValue(String.valueOf(feed.get(i).getWeek(5)));
+                            break;
+                        case "Sun":
+                            attr.setNodeValue(String.valueOf(feed.get(i).getWeek(6)));
+                            break;
+                        default:
+                            Toast.makeText(context, "I am not suppose to be here! setFeed loop 2", Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+
+            // Save all changes
+            TransformerFactory tranceFactory = TransformerFactory.newInstance();
+            Transformer trance = tranceFactory.newTransformer();
+            DOMSource source = new DOMSource(doc);
+            StreamResult result = new StreamResult(context.openFileOutput(filepath, Context.MODE_PRIVATE));  // context.MODE_PRIVATE
+            trance.transform(source, result);
+
+        } catch (ParserConfigurationException | SAXException | TransformerException | IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void setFeed(boolean value, int id){
-        write("Feed", "feed", String.valueOf(value));
-    }
+    public void setLight(ArrayList<LightSchedule> light, boolean manual, boolean auto) {
+        String filepath = id + "_mobile_settings.xml";
+        File newXml = new File(context.getFilesDir() + "/" + filepath);
 
-    public void setAutoFeed(boolean value){
-        write("Feed", "autoFeed", String.valueOf(value));
-    }
+        // Check to see if file exists, if file does not exist, create new
+        if(!newXml.isFile())
+            createXml(filepath);
 
-//    FeedSchedule  - need to implement
-//    LightSchedule - need to implement
+        try {
+            // Modify XML using DOM
+            DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+            Document doc = docBuilder.parse(context.openFileInput(filepath));
 
-    public void setLight(boolean value){
-        write("Light", "light", String.valueOf(value));
-    }
+            // search for Updated tag
+            NodeList nodes = doc.getElementsByTagName("Update");
+            // get the Updated tag
+            Node detail = nodes.item(0);
+            // get the only child of Updated, detail, and place into array
+            NodeList details = detail.getChildNodes();
+            // get the single detail tag and place into Node
+            Node checks = details.item(0);
+            // get all attributes into Attr array
+            NamedNodeMap allAtts = checks.getAttributes();
+            // loop through all attributes, set feed to true while all others are false
+            for (int i = 0; i < 6; i++) {
+                Attr attribs = (Attr) allAtts.item(i);
+                if (attribs.getNodeName().toLowerCase().equals("feed"))
+                    attribs.setNodeValue("true");
+                else
+                    attribs.setNodeValue("false");
+            }
 
-    public void setAutoLight(boolean value){
-        write("Light", "autoLight", String.valueOf(value));
+            // Search for tag and insert into a node object
+            nodes = doc.getElementsByTagName("Light");
+            detail = nodes.item(0);
+
+            // Fill in Feed tag attributes
+            NamedNodeMap detailNodes = detail.getAttributes();
+            for (int z = 0; z < detailNodes.getLength(); z++) {
+                Attr attr = (Attr) detailNodes.item(z);
+                switch(attr.getNodeName()){
+                    case "schedules":
+                        attr.setNodeValue(String.valueOf(light.size()));
+                        break;
+                    case "manual":
+                        attr.setNodeValue(String.valueOf(manual));
+                        break;
+                    case "auto":
+                        attr.setNodeValue(String.valueOf(auto));
+                        break;
+                    default:
+                        Toast.makeText(context, "I am not suppose to be here! setLight loop 1", Toast.LENGTH_LONG).show();
+                }
+            }
+            // fill in details
+            details = detail.getChildNodes();
+            for (int i = 0; i < details.getLength(); i++) {
+                Node item = details.item(i);
+
+                // Get all the attributes of the details tag
+                detailNodes = item.getAttributes();
+                for (int z = 0; z < detailNodes.getLength(); z++) {
+                    Attr attr = (Attr) detailNodes.item(z);
+                    switch(attr.getNodeName()){
+                        case "onHr":
+                            attr.setNodeValue(String.valueOf(light.get(i).getOnHour()));
+                            break;
+                        case "onMin":
+                            attr.setNodeValue(String.valueOf(light.get(i).getOnHour()));
+                            break;
+                        case "offHr":
+                            attr.setNodeValue(String.valueOf(light.get(i).getOffHour()));
+                            break;
+                        case "offMin":
+                            attr.setNodeValue(String.valueOf(light.get(i).getOffMin()));
+                            break;
+                        default:
+                            Toast.makeText(context, "I am not suppose to be here! setLight loop 2", Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+
+            // Save all changes
+            TransformerFactory tranceFactory = TransformerFactory.newInstance();
+            Transformer trance = tranceFactory.newTransformer();
+            DOMSource source = new DOMSource(doc);
+            StreamResult result = new StreamResult(context.openFileOutput(filepath, Context.MODE_PRIVATE));  // context.MODE_PRIVATE
+            trance.transform(source, result);
+
+        } catch (ParserConfigurationException | SAXException | TransformerException | IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setTempMin(int value){
@@ -514,20 +714,21 @@ class XmlPullParserHandler {
         write("Temperature", "max", String.valueOf(value));
     }
 
+    // Keeping or no? ------------------------------------------------------------------------------------------------------------
     public void setAutoTemp(boolean value){
-        write("Temperature", "autoTemp", String.valueOf(value));
+        write("Temperature", "auto", String.valueOf(value));
     }
 
     public void setDrain(boolean value){
-        write("Pump", "drain", String.valueOf(value));
+        write("Pump", "manualDrain", String.valueOf(value));
     }
 
     public void setFill(boolean value){
-        write("Pump", "fill", String.valueOf(value));
+        write("Pump", "manualFill", String.valueOf(value));
     }
 
     public void setAutoWaterChange(boolean value){
-        write("Pump", "autoWaterChange", String.valueOf(value));
+        write("Pump", "auto", String.valueOf(value));
     }
 
     public void setPHMin(float value){
@@ -538,12 +739,20 @@ class XmlPullParserHandler {
         write("Sensor", "pHmax", String.valueOf(value));
     }
 
+    public void setAutoPH(boolean value){
+        write("PH", "auto", String.valueOf(value));
+    }
+
     public void setCMin(float value){
-        write("Conductivity", "cmin", String.valueOf(value));
+        write("Conductivity", "cMin", String.valueOf(value));
     }
 
     public void setCMax(float value){
-        write("Conductivity", "cmax", String.valueOf(value));
+        write("Conductivity", "cMax", String.valueOf(value));
+    }
+
+    public void setAutoConductivity(boolean value){
+        write("Conductivity", "auto", String.valueOf(value));
     }
 
     // Create new xml file with default values incase there is no #_mobile_settings.xml
@@ -704,6 +913,7 @@ class XmlPullParserHandler {
             xmlSerializer.startTag("", "details");
             xmlSerializer.attribute("", "pHmin", pHMin);
             xmlSerializer.attribute("", "pHmax", pHMax);
+            xmlSerializer.attribute("", "auto", "true");
             xmlSerializer.endTag("", "details");
             xmlSerializer.endTag("", "PH");
 
@@ -712,6 +922,7 @@ class XmlPullParserHandler {
             xmlSerializer.startTag("", "details");
             xmlSerializer.attribute("", "cMin", cMin);
             xmlSerializer.attribute("", "cMax", cMax);
+            xmlSerializer.attribute("", "auto", "true");
             xmlSerializer.endTag("", "details");
             xmlSerializer.endTag("", "Conductivity");
 

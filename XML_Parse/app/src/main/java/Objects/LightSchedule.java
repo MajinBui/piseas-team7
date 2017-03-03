@@ -2,6 +2,9 @@ package Objects;
 
 /**
  * Created by mmbab on 2/8/2017.
+ *
+ * LightSchedule - Light Schedule object, contains the Hour/min on and off
+ *
  */
 
 public class LightSchedule {

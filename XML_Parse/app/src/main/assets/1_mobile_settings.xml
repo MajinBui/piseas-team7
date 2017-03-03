@@ -27,9 +27,9 @@
     <details manualDrain="true" manualFill="true" auto="true"/>
   </Pump>
   <PH>
-    <details pHmin="1" pHmax="9"/>
+    <details pHmin="1" pHmax="9" auto="true"/>
   </PH>
   <Conductivity>
-    <details cMin="1.5" cMax="7.5"/>
+    <details cMin="1.5" cMax="7.5" auto="true"/>
   </Conductivity>
 </Piseas>

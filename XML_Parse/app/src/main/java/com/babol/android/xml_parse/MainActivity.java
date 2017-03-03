@@ -1,6 +1,7 @@
 package com.babol.android.xml_parse;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import android.os.Bundle;
@@ -26,11 +27,9 @@ public class MainActivity extends Activity {
     public void onData(View view) throws IOException{
         TextView tv_code = (TextView) findViewById(R.id.tv_id);
         TextView tv_password = (TextView) findViewById(R.id.tv_password);
-        TextView tv_date_sent = (TextView) findViewById(R.id.tv_date_sent);
         TextView tv_total_feeds = (TextView) findViewById(R.id.tv_total_feeds);
         TextView tv_feed_time = (TextView) findViewById(R.id.tv_feed_time);
         TextView tv_current_temp = (TextView) findViewById(R.id.tv_current_temp);
-        TextView tv_ph = (TextView) findViewById(R.id.tv_ph);
         TextView tv_conductivity = (TextView) findViewById(R.id.tv_conductivity);
         TextView tv_codeMobile = (TextView) findViewById(R.id.tv_mobilecode);
 
@@ -74,7 +73,14 @@ public class MainActivity extends Activity {
         ArrayList<LightSchedule> lights = parser.getLightSchedules();
 
 
+        String idid = parser.getSettingsID();
+        TextView tv_test = (TextView) findViewById(R.id.tv_ph);
+        tv_test.setText(idid);
+
+
+
         String ddd = ds.toString();
+        String dis = piDate.getFullDate();
         String timez = piDate.toString();
         int asd = 8;
         asd++;
@@ -89,7 +95,20 @@ public class MainActivity extends Activity {
 
         // Parser test
         XmlPullParserHandler parser = new XmlPullParserHandler(this, tank_id);
-        parser.setCode(et_code.getText().toString());
+        parser.setID(et_code.getText().toString());
+
+        piDate piz = new piDate("2017-02-20T19:19:19+0500");
+        parser.setDateSent(piz.getFullDate());
+
+        FeedSchedule f1 = new FeedSchedule(05, 45);
+        FeedSchedule f2 = new FeedSchedule(14, 15);
+        FeedSchedule f3 = new FeedSchedule(18, 30);
+        ArrayList<FeedSchedule> ffs = new ArrayList<FeedSchedule>();
+        ffs.add(f1);
+        ffs.add(f2);
+        ffs.add(f3);
+        parser.setFeed(ffs, true, true);
+
     }
 
     public void onLogs(View view) throws IOException{
