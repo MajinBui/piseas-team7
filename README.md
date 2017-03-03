@@ -28,7 +28,7 @@ A major change from the original requirements document is the connection process
 
 
 ## Already Done
-* ~~XML parser for phone side~~  
+* ~~XML parser for phone side~~
 * ~~XML format done~~  
 
 * ~~Plan and layout for hardware components, such as relay and sensors~~
@@ -36,10 +36,10 @@ A major change from the original requirements document is the connection process
 
 * ~~Created merged app project file, all app updates to be added here: [PiSeas APP](./PiSeas-AndroidAPP)~~  
 
-* ~~Server set up to receive and send XML data~~  
-* ~~Server is multi-threaded~~  
-* ~~Programming Pi side (relay, light and fan)~~  
-* ~~Programming Pi side (self regulation logic, light and fan)~~  
-* ~~Programming Pi side (temperature sensor)~~  
+* ~~Server set up to receive and send XML data~~
+* ~~Server is multi-threaded~~
+* ~~Programming Pi side (relay, light and fan)~~
+* ~~Programming Pi side (self regulation logic, light and fan)~~
+* ~~Programming Pi side (temperature sensor)~~
 
 * ~~Wrap FishyClient into C++ wrapper~~  
