@@ -55,9 +55,9 @@ public class MainActivity extends Activity {
         String piDesc = parser.getSettingsDescription();
         Boolean piType = parser.getSettingsType();
         piDate piDate = parser.getSettingsDate();
-        boolean piFeed = parser.getSettingsFeed();
+        boolean piFeed = parser.getSettingsManualFeed();
         boolean piAutoFeed = parser.getSettingsAutoFeed();
-        boolean getPiLight = parser.getSettingsLight();
+        boolean getPiLight = parser.getSettingsManualLight();
         boolean piAutoLight = parser.getSettingsAutoLight();
         float piMin = parser.getSettingsMinTemp();
         float piMax = parser.getSettingsMaxTemp();

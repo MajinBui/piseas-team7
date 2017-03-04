@@ -204,7 +204,7 @@ class XmlPullParserHandler {
         return new piDate(parseSettings("Date", "date"));
     }
 
-    public boolean getSettingsFeed(){
+    public boolean getSettingsManualFeed(){
         // Parse from tag "Feed", attribute manual feed
         return Boolean.parseBoolean(parseSettings("Feed", "manual"));
     }
@@ -214,7 +214,7 @@ class XmlPullParserHandler {
         return Boolean.parseBoolean(parseSettings("Feed", "auto"));
     }
 
-    public boolean getSettingsLight(){
+    public boolean getSettingsManualLight(){
         // Parse from tag "Light", attribute manual light
         return Boolean.parseBoolean(parseSettings("Light", "manual"));
     }
@@ -259,7 +259,7 @@ class XmlPullParserHandler {
         return Float.parseFloat(parseSettings("PH", "pHmax"));
     }
 
-    public boolean getSettingsPHauto(){
+    public boolean getSettingsPHAuto(){
         // Parse from tag "PH", attribute auto
         return Boolean.parseBoolean(parseSettings("PH", "auto"));
     }
@@ -274,7 +274,7 @@ class XmlPullParserHandler {
         return Float.parseFloat(parseSettings("Conductivity", "cMax"));
     }
 
-    public boolean getSettingsConductivityauto(){
+    public boolean getSettingsCAuto(){
         // Parse from tag "Conductivity", attribute auto
         return Boolean.parseBoolean(parseSettings("Conductivity", "auto"));
     }
@@ -492,11 +492,10 @@ class XmlPullParserHandler {
         write("Tank", "description", value);
     }
 
-    public void setType(String value){
-        write("Tank", "type", value);
+    public void setType(Boolean value){
+        write("Tank", "type", String.valueOf(value));
     }
 
-    // NEED TO GET THIS FIXED
     public void setDateSent(String value){
         write("Date", "date", value);
     }
@@ -706,11 +705,11 @@ class XmlPullParserHandler {
         }
     }
 
-    public void setTempMin(int value){
+    public void setMinTemp(int value){
         write("Temperature", "min", String.valueOf(value));
     }
 
-    public void setTempMax(int value){
+    public void setMaxTemp(int value){
         write("Temperature", "max", String.valueOf(value));
     }
 
