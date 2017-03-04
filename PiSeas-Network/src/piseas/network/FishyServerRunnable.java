@@ -40,6 +40,7 @@ import org.xml.sax.SAXException;
 
 public class FishyServerRunnable implements Runnable {
 	private static final long THREAD_WAIT_TIME = 100;
+	private static final long THREAD_KILL_TIME = 10000;
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 	private static final Calendar CALENDAR = Calendar.getInstance();
 	private static final String LOG_FORMAT = "%-25s %-10s: %s\n";  // displays as the following:  <date> <tankId>: <log message>
@@ -54,6 +55,7 @@ public class FishyServerRunnable implements Runnable {
 	private Socket clientSocket;
 	private SERVER_STATE serverState;
 	private Transformer transformer;
+	public float lifeTime;
 
 	/**
 	 * Creates a thread to handle a server transaction.  Takes a client socket to recieve and send data.
@@ -62,7 +64,7 @@ public class FishyServerRunnable implements Runnable {
 	public FishyServerRunnable( Socket clientSocket ) {
 		this.clientSocket = clientSocket;
 		serverState = SERVER_STATE.PROCESS_LOGIN;
-		
+		lifeTime = 0;
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		try {
 			transformer = transformerFactory.newTransformer();
@@ -118,6 +120,7 @@ public class FishyServerRunnable implements Runnable {
 						while (!startClientServerTransaction(tankId, this)) {
 							printLogMessage('o', tankId, "transaction for given tankId already started;  Waiting in queue.");
 							try {
+								lifeTime += THREAD_WAIT_TIME;
 								Thread.sleep(THREAD_WAIT_TIME);
 							} catch (InterruptedException e) {
 								printLogMessage('e', tankId, "unable to sleep thread");
@@ -298,6 +301,9 @@ public class FishyServerRunnable implements Runnable {
 			rc = false;
 		}
 		else { // play dead
+			if (TANK_IDS.get(tankId).peek().lifeTime > THREAD_KILL_TIME) {
+				TANK_IDS.get(tankId).remove();				
+			}
 			rc = false;
 		}
 		// otherwise it exists
@@ -311,7 +317,8 @@ public class FishyServerRunnable implements Runnable {
 	 * @return true if id has been removed
 	 */
 	private static synchronized boolean endClientServerTransaction(String tankId) {
-		TANK_IDS.get(tankId).remove();
+		if (!TANK_IDS.get(tankId).isEmpty())
+			TANK_IDS.get(tankId).remove();
 		return true;
 	}
 	
