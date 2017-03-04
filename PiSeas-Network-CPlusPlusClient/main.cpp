@@ -70,7 +70,7 @@ int main()
 #ifdef _WIN32
 	system("pause");
 #else
-	system("read -n1 -r -p 'Press any key to continue...' key");
+	system("read -r -p 'Press any key to continue...' key");
 #endif
 	
 }
