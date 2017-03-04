@@ -20,6 +20,9 @@ public:
 	bool sendMobileXmlData(std::string tankId, std::string parentPath);
 	bool sendSensorData(std::string tankId, std::string parentPath);
 	bool sendActionLog(std::string tankId, std::string parentPath);
+	bool retrieveMobileXmlData(std::string tankId, std::string parentPath);
+	bool retrieveSensorData(std::string tankId, std::string parentPath);
+	bool retrieveActionLog(std::string tankId, std::string parentPath);
 	bool appendActionLog(std::string tankId, std::vector<std::string> date, std::vector<std::string> desc, std::vector<std::string> type);
 	bool updateManualCommands(std::string tankId, bool manualFeed, bool manualLight, bool manualDrain, bool manualFill);
 	bool updateUpdateMobileSettings(std::string tankId, bool conductivity, bool feed, bool light, bool pH, bool pump, bool temperature);

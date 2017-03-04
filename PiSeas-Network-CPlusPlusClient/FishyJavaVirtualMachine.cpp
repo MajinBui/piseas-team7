@@ -148,6 +148,66 @@ bool FishyJavaVirtualMachine::sendActionLog(std::string tankId, std::string pare
 	}
 }
 
+bool FishyJavaVirtualMachine::retrieveMobileXmlData(std::string tankId, std::string parentPath)
+{
+	if (!isFishyClientRunning()) {
+		std::cerr << "FishyClient is not active." << std::endl;
+		return false;
+	}
+	// Find method
+	jmethodID mid = env->GetStaticMethodID(fishyClient, "retrieveMobileXmlData", "(Ljava/lang/String;Ljava/lang/String;)Z");
+	if (mid == nullptr) {
+		if (env->ExceptionOccurred())
+			env->ExceptionDescribe();
+		else
+			std::cerr << "ERROR: method void retrieveMobileXmlData() not found !" << std::endl;
+	}
+	else {
+		jboolean rc = env->CallStaticBooleanMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), env->NewStringUTF((char *)parentPath.c_str()));                      // call method
+		return (bool)rc;
+	}
+}
+
+bool FishyJavaVirtualMachine::retrieveSensorData(std::string tankId, std::string parentPath)
+{
+	if (!isFishyClientRunning()) {
+		std::cerr << "FishyClient is not active." << std::endl;
+		return false;
+	}
+	// Find method
+	jmethodID mid = env->GetStaticMethodID(fishyClient, "retrieveSensorData", "(Ljava/lang/String;Ljava/lang/String;)Z");
+	if (mid == nullptr) {
+		if (env->ExceptionOccurred())
+			env->ExceptionDescribe();
+		else
+			std::cerr << "ERROR: method void retrieveSensorData() not found !" << std::endl;
+	}
+	else {
+		jboolean rc = env->CallStaticBooleanMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), env->NewStringUTF((char *)parentPath.c_str()));                      // call method
+		return (bool)rc;
+	}
+}
+
+bool FishyJavaVirtualMachine::retrieveActionLog(std::string tankId, std::string parentPath)
+{
+	if (!isFishyClientRunning()) {
+		std::cerr << "FishyClient is not active." << std::endl;
+		return false;
+	}
+	// Find method
+	jmethodID mid = env->GetStaticMethodID(fishyClient, "retrieveActionLog", "(Ljava/lang/String;Ljava/lang/String;)Z");
+	if (mid == nullptr) {
+		if (env->ExceptionOccurred())
+			env->ExceptionDescribe();
+		else
+			std::cerr << "ERROR: method void retrieveActionLog() not found !" << std::endl;
+	}
+	else {
+		jboolean rc = env->CallStaticBooleanMethod(fishyClient, mid, env->NewStringUTF((char *)tankId.c_str()), env->NewStringUTF((char *)parentPath.c_str()));                      // call method
+		return (bool)rc;
+	}
+}
+
 
 /**
 * Client will send the action log with the given tankId located to the specified file path.

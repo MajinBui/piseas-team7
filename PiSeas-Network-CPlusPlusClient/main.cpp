@@ -52,6 +52,7 @@ int main()
 	printSuccess(vm.sendMobileXmlData(tankId, inputPath), "sendMobileXmlData");
 	printSuccess(vm.sendSensorData(tankId, inputPath), "sendSensorData");
 	printSuccess(vm.sendActionLog(tankId, inputPath), "sendActionLog");
+
 	printSuccess(vm.appendActionLog(tankId, date.at(1), desc.at(1), type.at(1)), "appendActionLog");
 	printSuccess(vm.appendActionLog(tankId, date, desc, type), "appendActionLog");
 	printSuccess(vm.updateManualCommands(tankId, true, true, true, false), "updateManualCommands");
@@ -62,5 +63,14 @@ int main()
 	printSuccess(vm.updateSensorSensorData(tankId, conductivity, pHcurrent), "updateSensorSensorData");
 	printSuccess(vm.checkMobileSettingsUpdated(tankId, date.at(1)), "checkMobileSettingsUpdated");
 
+	printSuccess(vm.retrieveMobileXmlData(tankId, outputPath), "retrieveMobileXmlData");
+	printSuccess(vm.retrieveSensorData(tankId, outputPath), "retrieveSensorData");
+	printSuccess(vm.retrieveActionLog(tankId, outputPath), "retrieveActionLog");
+
+#ifdef _WIN32
 	system("pause");
+#else
+	system("read -n1 -r -p 'Press any key to continue...' key");
+#endif
+	
 }
