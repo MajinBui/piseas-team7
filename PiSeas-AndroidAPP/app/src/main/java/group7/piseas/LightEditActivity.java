@@ -64,6 +64,7 @@ public class LightEditActivity extends Activity{
         pickerMinOff.setWrapSelectorWheel(true);
 
         pickerHrOff.setValue(1);
+        hourOff = 1;
 
         pickerHrOn.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
             @Override
@@ -123,23 +124,53 @@ public class LightEditActivity extends Activity{
     }
 
     private boolean checkData(){
-        lightSchedule = new LightSchedule(hourOn, hourOff, minOn, minOff);
-        schedule.add(lightSchedule);
-
-        if(hourOn < hourOff || (hourOn == hourOff && minOn > minOff)){
-            Toast.makeText(this, "Off time must be after on time", Toast.LENGTH_LONG).show();
+//        lightSchedule = new LightSchedule(hourOn, hourOff, minOn, minOff);
+//        schedule.add(lightSchedule);
+//
+//        if(hourOn < hourOff || (hourOn == hourOff && minOn > minOff)){
+//            Toast.makeText(this, "Off time must be after on time", Toast.LENGTH_LONG).show();
+        int max = 2400, on = hourOn * 100 + minOn,
+        off = hourOff * 100 + minOff;
+        boolean fail = false;
+        if(on == off){
+            Toast.makeText(this, "On and off times must not be the same", Toast.LENGTH_LONG).show();
             return false;
         }
 
         for(LightSchedule l : schedule){
-            if((hourOn >= l.getOnHour() && hourOn <= l.getOffHour()) ||
-                    (hourOff >= l.getOnHour() && hourOff <= l.getOffHour()) ||
-                    (hourOn <= l.getOnHour() && hourOff >= l.getOffHour())
-                    ){
-                Toast.makeText(this, "Schedule times must not overlap", Toast.LENGTH_LONG).show();
-                return false;
+//            if((hourOn >= l.getOnHour() && hourOn <= l.getOffHour()) ||
+//                    (hourOff >= l.getOnHour() && hourOff <= l.getOffHour()) ||
+//                    (hourOn <= l.getOnHour() && hourOff >= l.getOffHour())
+//                    ){
+//                Toast.makeText(this, "Schedule times must not overlap", Toast.LENGTH_LONG).show();
+//                return false;
+            if(on < off){
+                if(l.getTimeOnCompare() < l.getTimeOffCompare()){
+                    if(off < l.getTimeOnCompare() || on > l.getTimeOffCompare())
+                        ;
+                    else
+                    fail = true;
+                    }
+                else{
+                    if(on < l.getTimeOffCompare() || off > l.getTimeOnCompare())
+                        fail = true;
+                    }
+                }
+            else{
+                if((on <= l.getTimeOffCompare() || on <= l.getTimeOnCompare() ||
+                        off >= l.getTimeOffCompare() || off >= l.getTimeOnCompare())
+                        && l.getTimeOffCompare() > l.getTimeOnCompare())
+                    fail = true;
             }
         }
+
+        if (fail){
+            Toast.makeText(this, "Schedule times must not overlap", Toast.LENGTH_LONG).show();
+            return false;
+            }
+
+                lightSchedule = new LightSchedule(hourOn, hourOff, minOn, minOff);
+        schedule.add(lightSchedule);
         return true;
     }
 
@@ -170,7 +201,7 @@ public class LightEditActivity extends Activity{
         cleaningLady.put(light, "-");
 
         FishyClient.writeToServerData(tankID, cleaningLady);
-        Toast.makeText(this, "Cleaning lady is done!", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Cleaning is done!", Toast.LENGTH_LONG).show();
     }
 }
 

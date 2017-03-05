@@ -34,6 +34,10 @@ public class FeedSchedule {
         return min;
     }
 
+    public int getTimeCompare(){
+        return hour * 100 + min;
+    }
+
     public String getTime(){
         String padding = "00";
         String temp = Integer.toString(min);

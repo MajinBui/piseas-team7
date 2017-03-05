@@ -70,9 +70,11 @@
         android:layout_width="match_parent"
         android:layout_height="fill_parent">
         <ListView
-            android:id="@+id/list_schedule"
+            android:id="@+id/list_schedule_light"
             android:layout_width="match_parent"
-            android:layout_height="fill_parent"/>
+            android:layout_height="fill_parent"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="10dp"/>
 
         <ImageView
             android:id="@+id/imgAdd"

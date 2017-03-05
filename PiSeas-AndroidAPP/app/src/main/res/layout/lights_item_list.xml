@@ -6,16 +6,17 @@
     android:paddingLeft="20dp"
     android:paddingRight="20dp"
     android:paddingTop="10dp"
+    android:paddingBottom="10dp"
     android:layout_margin="20dp"
     android:background="@color/scheduleBlue">
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textSize="38sp"
-        android:layout_weight="1"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:textSize="22sp"
+        android:layout_weight="2"
+        android:paddingStart="5dp"
+        android:paddingEnd="10dp"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
         android:gravity="center_vertical"
@@ -23,38 +24,25 @@
         android:text="@string/timeon"/>
 
     <TextView
-        android:id="@+id/txtTimeOn"
+        android:id="@+id/txtTime"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textSize="38sp"
-        android:layout_weight="1"
+        android:textSize="36sp"
+        android:layout_weight="5"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
-        android:gravity="center_vertical"
-        android:textColor="@color/lightBlue"/>
-
-    <TextView
-        android:id="@+id/txtTimeOff"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textSize="38sp"
-        android:layout_weight="1"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
-        android:gravity="center_vertical"
+        android:gravity="center_vertical|center_horizontal"
         android:textColor="@color/lightBlue"/>
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textSize="38sp"
-        android:layout_weight="1"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
+        android:textSize="22sp"
+        android:layout_weight="2"
+        android:paddingStart="10dp"
+        android:paddingEnd="5dp"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
         android:gravity="center_vertical"

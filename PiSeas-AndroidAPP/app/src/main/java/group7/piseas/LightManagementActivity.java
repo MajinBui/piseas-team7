@@ -8,8 +8,17 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 
+import android.widget.ListView;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import java.util.HashMap;
 
+import group7.piseas.Adapters.LightAdapter;
+import group7.piseas.Objects.LightSchedule;
+import group7.piseas.Server.FishyClient;
 import static group7.piseas.R.id.autoLight;
 
 
@@ -17,6 +26,8 @@ public class LightManagementActivity extends AppCompatActivity {
     private final String tankID = "Matt";
     private Switch auto;
     private Switch manual;
+    private List<LightSchedule> lights;
+    private ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +35,8 @@ public class LightManagementActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_light_managment);
+
+        populateList();
 
         auto = (Switch) findViewById(R.id.autoLight);
         manual = (Switch) findViewById(R.id.manLight);
@@ -41,25 +54,40 @@ public class LightManagementActivity extends AppCompatActivity {
         startActivity(i);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        populateList();
+    }
 
-    public void getData() {
-//        HashMap<String, String> retrieveList = FishyClient.retrieveServerData(tankID);
-//
-//        if (!retrieveList.get(light).equals("-")) {
-//            String[] separate = retrieveList.get(light).split(divider);
-//            for (String aSeparate : separate) {
-//                int hOn, mOn, hOff, mOff;
-//                String temp = aSeparate.replace(" - ", ":");
-//                String[] times = temp.split(":");
-//                hOn = Integer.parseInt(times[0]);
-//                mOn = Integer.parseInt(times[1]);
-//                hOff = Integer.parseInt(times[2]);
-//                mOff = Integer.parseInt(times[3]);
-//                LightSchedule dayLight = new LightSchedule(hOn, hOff, mOn, mOff);
-//                schedule.add(dayLight);
-//            }
-//        }
+    private void populateList(){
+        lights = new ArrayList<LightSchedule>();
+        getData();
 
+        listView = (ListView) findViewById(R.id.list_schedule_light);
 
+        LightAdapter adapter = new LightAdapter(this, R.layout.lights_item_list, lights);
+        listView.setAdapter(adapter);
+    }
+
+    private void getData() {
+        HashMap<String, String> retrieveList = FishyClient.retrieveServerData(tankID);
+        String divider = "<br/>";
+        String light = "Lights";
+
+        if (!retrieveList.get(light).equals("-")) {
+            String[] separate = retrieveList.get(light).split(divider);
+            for (String aSeparate : separate) {
+                int hOn, mOn, hOff, mOff;
+                String temp = aSeparate.replace(" - ", ":");
+                String[] times = temp.split(":");
+                hOn = Integer.parseInt(times[0]);
+                mOn = Integer.parseInt(times[1]);
+                hOff = Integer.parseInt(times[2]);
+                mOff = Integer.parseInt(times[3]);
+                LightSchedule dayLight = new LightSchedule(hOn, hOff, mOn, mOff);
+                lights.add(dayLight);
+                }
+            }
     }
 }
