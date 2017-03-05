@@ -5,7 +5,7 @@
   </Update>
   <Date date="2017-02-20T19:19:19+0500"/>
   <Tank>
-    <details id="xyz789" password="helloworld" size="20" description="my fishy home" type="true"/>
+    <details id="xyz789" name="tank" password="helloworld" size="20" description="my fishy home" type="true"/>
   </Tank>
   <Feed schedules="3" manual="false" auto="true" >
     <details hr="13" min="50" Mon="true" Tue="false" Wed="true" Thu="true" Fri="true" Sat="false" Sun="false"/>
