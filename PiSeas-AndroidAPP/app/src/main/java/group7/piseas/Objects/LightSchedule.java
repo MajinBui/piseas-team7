@@ -1,7 +1,9 @@
 package group7.piseas.Objects;
 
 /**
- * Created by mmbab on 12/5/2016.
+ * Created by mmbab on 2/8/2017.
+ *
+ * LightSchedule - Light Schedule object, contains the Hour/min on and off
  *
  */
 
@@ -30,6 +32,10 @@ public class LightSchedule {
     public int getOffMin(){
         return offMin;
     }
+
+    public int getTimeOnCompare(){return onHour * 100 + onMin;}
+
+    public int getTimeOffCompare(){return offHour * 100 + offMin;}
 
     public String getOnTime(){
         String padding = "00";

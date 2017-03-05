@@ -1,25 +1,16 @@
 package group7.piseas.Adapters;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 
-import java.util.HashMap;
 import java.util.List;
 
 import group7.piseas.Objects.LogItem;
-import group7.piseas.Objects.Tank;
 import group7.piseas.R;
-import group7.piseas.Server.FishyClient;
-import group7.piseas.TankListActivity;
 
 /**
  * Created by Salli on 2017-02-22.

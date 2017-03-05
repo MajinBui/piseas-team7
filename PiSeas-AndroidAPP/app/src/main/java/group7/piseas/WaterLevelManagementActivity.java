@@ -8,12 +8,16 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import group7.piseas.Helpers.XmlPullParserHandler;
+import group7.piseas.Objects.Pump;
+import group7.piseas.Objects.Tank;
 
 public class WaterLevelManagementActivity extends AppCompatActivity {
     private Switch drain;
     private Switch fill;
     private Switch auto;
-    private XmlPullParserHandler parser = new XmlPullParserHandler(this, "1");
+    private Tank tank;
+    private Pump pump;
+    private int index;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,20 +67,21 @@ public class WaterLevelManagementActivity extends AppCompatActivity {
                 }
             }
         });
+        tank = new Tank(getApplicationContext(), TankListActivity.tankList.get(getIntent().getIntExtra("id", -1)).getId());
+        pump = tank.getPump();
     }
 
     private void loadXmlData() {
-
-        fill.setChecked(parser.getSettingsFill());
-        auto.setChecked(parser.getSettingsAutoWaterChange());
-        drain.setChecked(parser.getSettingsDrain());
-        Log.d("activity; load", "fill" + " : " + parser.getSettingsFill());
+        fill.setChecked(pump.isManualFill());
+        auto.setChecked(pump.isAuto());
+        drain.setChecked(pump.isManualDrain());
     }
 
     private void saveXmlData() {
-        parser.setFill(fill.isChecked());
-        parser.setAutoWaterChange(auto.isChecked());
-        parser.setDrain(drain.isChecked());
+        pump.setAuto(fill.isChecked());
+        pump.setManualDrain(auto.isChecked());
+        pump.setManualFill(drain.isChecked());
+        tank.updatePump();
 
         Log.d("activity; save", "fill" + " : " + fill.isChecked());
     }

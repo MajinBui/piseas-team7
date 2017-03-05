@@ -17,7 +17,8 @@ import android.widget.Toast;
 import java.util.HashMap;
 
 import group7.piseas.Objects.Tank;
-import group7.piseas.Server.FishyClient;
+import piseas.network.FishyClient;
+//import group7.piseas.Server.FishyClient;
 
 public class TankManagementActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 
@@ -68,6 +69,7 @@ public class TankManagementActivity extends AppCompatActivity implements Adapter
                         returnIntent.putExtra("type", fishType);
                         returnIntent.putExtra("size", tankSize);
                         returnIntent.putExtra("desc", desc);
+                        Log.i("Tank Management", String.format("$1"));
                         setResult(Activity.RESULT_OK, returnIntent);
                         finish();
                     }
@@ -106,10 +108,11 @@ public class TankManagementActivity extends AppCompatActivity implements Adapter
             nameEdit.setText(TankListActivity.tankList.get(index).getName());
             descEdit.setText(TankListActivity.tankList.get(index).getDesc());
             spinner.setSelection(TankListActivity.tankList.get(index).getType());
-            spinner2.setSelection(TankListActivity.tankList.get(index).getSize());
+            spinner2.setSelection((int)TankListActivity.tankList.get(index).getSize());
         }
         else {//checks server, would need the id for this, add to intent
             Log.i("TankMangement", "Load from server for " + tankCode);
+            /*  Legacy
             HashMap<String, String> dataList = FishyClient.retrieveServerData(tankCode+"");
             if (!dataList.get("name").isEmpty())
                 name = dataList.get("name");
@@ -119,6 +122,17 @@ public class TankManagementActivity extends AppCompatActivity implements Adapter
                 fishType = Integer.parseInt(dataList.get("type"));
             if (!dataList.get("size").isEmpty())
                 tankSize = Integer.parseInt(dataList.get("size"));
+            */
+
+//            FishyClient.retrieveServerData(tankCode+"");
+//            if (!dataList.get("name").isEmpty())
+//                name = ""; // name not saved in xml
+//            if (!dataList.get("desc").isEmpty())
+//                desc = dataList.get("desc");
+//            if (!dataList.get("type").isEmpty())
+//                fishType = Integer.parseInt(dataList.get("type"));
+//            if (!dataList.get("size").isEmpty())
+//                tankSize = Integer.parseInt(dataList.get("size"));
 
             nameEdit.setText(name);
             descEdit.setText(desc);
@@ -148,7 +162,9 @@ public class TankManagementActivity extends AppCompatActivity implements Adapter
         dataList.put("type", fishType+"");
         dataList.put("size", tankSize+"");
         dataList.put("desc", desc);
-        FishyClient.writeToServerData(TankListActivity.tankList.get(i).getId()+"", dataList);
+        TankListActivity.tankList.get(i).updateTankDetails();
+        //FishyClient.writeToServerData(TankListActivity.tankList.get(i).getId()+"", dataList);
+
     }
 
     @Override

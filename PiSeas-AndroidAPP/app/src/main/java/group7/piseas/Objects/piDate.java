@@ -8,6 +8,7 @@ import java.util.Date;
  */
 
 public class piDate {
+    private Calendar cal = Calendar.getInstance();
     private String date;
     private int year;
     private int month;
@@ -15,11 +16,13 @@ public class piDate {
     private int hour;
     private int min;
     private int sec;
+    private int timeZoneHr;        // need to implement
+    private int timeZoneMin;
+    char c;
 
     // Create Date object using current time
     public piDate(){
         Date date = new Date();
-        Calendar cal = Calendar.getInstance();
         cal.setTime(date);
 
         year = cal.get(Calendar.YEAR);
@@ -37,74 +40,73 @@ public class piDate {
     }
 
     private void parseData(){
+        cal = Calendar.getInstance();
+
         // Retrieve date
-        year = Integer.parseInt(date.substring(0, date.indexOf("-")));
+        cal.set(Calendar.YEAR, Integer.parseInt(date.substring(0, date.indexOf("-"))));
+
         int i = date.indexOf("-") + 1;
-        month = Integer.parseInt(date.substring(i, i+2));
+        cal.set(Calendar.MONTH, Integer.parseInt(date.substring(i, i+2)));
         i+=3;
-        day = Integer.parseInt(date.substring(i, i+2));
+        cal.set(Calendar.DAY_OF_MONTH, Integer.parseInt(date.substring(i, i+2)));
 
         // Retrieve time
         i = date.indexOf("T") + 1;
-        int hour = Integer.parseInt(date.substring(i, i+2));
+        cal.set(Calendar.HOUR, Integer.parseInt(date.substring(i, i+2)));
         i+=3;
-        int min = Integer.parseInt(date.substring(i, i+2));
+        cal.set(Calendar.MINUTE, Integer.parseInt(date.substring(i, i+2)));
         i+=3;
-        int sec = Integer.parseInt(date.substring(i, i+2));
+        cal.set(Calendar.SECOND, Integer.parseInt(date.substring(i, i+2)));
 
         // Retrieve the time zone
         String zone = date.substring(date.length() - 5, date.length());
-        char c = zone.charAt(0);            // + → subtract time, - → add time
-        int zoneHr = Integer.parseInt(zone.substring(1, 3));
-        int zoneMin = Integer.parseInt(zone.substring(3, 5));
+        c = zone.charAt(0);            // + → subtract time, - → add time
+        timeZoneHr = Integer.parseInt(zone.substring(1, 3));
+        timeZoneMin = Integer.parseInt(zone.substring(3, 5));
 
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.MINUTE, min);
-        cal.set(Calendar.HOUR_OF_DAY, hour);
-        cal.set(Calendar.DAY_OF_MONTH, day);
-        cal.set(Calendar.MONTH, month);
-        cal.set(Calendar.YEAR, year);
-
-        cal.add(Calendar.MINUTE, ((c=='-') ? zoneMin : zoneMin * -1));
-        cal.add(Calendar.HOUR_OF_DAY, ((c=='-') ?  zoneHr : zoneHr * -1));
-
-//        cal.add(Calendar.MINUTE, 10);
-//        cal.add(Calendar.HOUR, 1);
-
-
-        year = cal.get(Calendar.YEAR);
-        month = cal.get(Calendar.MONTH);
-        day = cal.get(Calendar.DAY_OF_MONTH);
-        hour = cal.get(Calendar.HOUR_OF_DAY);
-        min = cal.get(Calendar.MINUTE);
+        cal.add(Calendar.MINUTE, ((c=='-') ? timeZoneMin : timeZoneMin * -1));
+        cal.add(Calendar.HOUR_OF_DAY, ((c=='-') ?  timeZoneHr : timeZoneHr * -1));
     }
 
     public int getYear(){
-        return year;
+        return cal.get(Calendar.YEAR);
     }
 
     public int getMonth(){
-        return month;
+        return cal.get(Calendar.MONTH);
     }
 
     public int getDay(){
-        return day;
+        return cal.get(Calendar.DAY_OF_MONTH);
     }
 
     public int getHour(){
-        return hour;
+        return cal.get(Calendar.HOUR_OF_DAY);
     }
 
     public int getMin(){
-        return min;
+        return cal.get(Calendar.MINUTE);
     }
 
     public int getSec(){
-        return sec;
+        return cal.get(Calendar.SECOND);
+    }
+
+    public String getFullDate(){
+        Calendar tempCal = cal;
+
+        tempCal.add(Calendar.MINUTE, ((c=='-') ? timeZoneMin : timeZoneMin * -1));
+        tempCal.add(Calendar.HOUR_OF_DAY, ((c=='-') ?  timeZoneHr : timeZoneHr * -1));
+
+        return String.format("%04d", tempCal.get(Calendar.YEAR)) + "-" + String.format("%02d", tempCal.get(Calendar.MONTH))
+                + "-" + String.format("%02d", tempCal.get(Calendar.DAY_OF_MONTH)) + "T" + String.format("%02d", tempCal.get(Calendar.HOUR_OF_DAY))
+                + ":" + String.format("%02d", tempCal.get(Calendar.MINUTE)) + ":" + String.format("%02d", tempCal.get(Calendar.SECOND))
+                + c + String.format("%02d", timeZoneHr) + String.format("%02d", timeZoneMin);
     }
 
     public String toString(){
-        return year + "-" + month + "-" + day + " " + hour + ":" + min + ":" + sec;
+        return String.format("%04d", cal.get(Calendar.YEAR)) + "-" + String.format("%02d", cal.get(Calendar.MONTH))
+                + "-" + String.format("%02d", cal.get(Calendar.DAY_OF_MONTH)) + " " + String.format("%02d", cal.get(Calendar.HOUR_OF_DAY))
+                + ":" + String.format("%02d", cal.get(Calendar.MINUTE)) + ":" + String.format("%02d", cal.get(Calendar.SECOND));
     }
-
 }

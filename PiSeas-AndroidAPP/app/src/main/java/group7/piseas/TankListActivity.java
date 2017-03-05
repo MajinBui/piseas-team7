@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,7 +23,7 @@ import java.util.List;
 
 import group7.piseas.Adapters.TankAdapter;
 import group7.piseas.Objects.Tank;
-import group7.piseas.Server.FishyClient;
+import piseas.network.FishyClient;
 
 public class TankListActivity extends AppCompatActivity {
 
@@ -61,6 +62,7 @@ public class TankListActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
         load();
     }
 
@@ -85,6 +87,7 @@ public class TankListActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
+            // TODO: Will need to setup again
             case R.id.serverSetup:
                 Log.i("LISTACTIVITY", "SERVER SET UP");
                 HashMap<String, String> dataList = new HashMap<String, String>();
@@ -94,7 +97,7 @@ public class TankListActivity extends AppCompatActivity {
                 dataList.put("type", 0+"");
                 dataList.put("size", 0+"");
                 dataList.put("desc", "");
-                FishyClient.writeToServerData("801", dataList);
+                //FishyClient.sendMobileXmlData("QWERT", this.getFilesDir().getAbsolutePath());
 
                 dataList.put("tankId", "802");
                 dataList.put("pw", "208");
@@ -102,7 +105,7 @@ public class TankListActivity extends AppCompatActivity {
                 dataList.put("type", 1+"");
                 dataList.put("size", 2+"");
                 dataList.put("desc", "Just keep swimming");
-                FishyClient.writeToServerData("802", dataList);
+                //FishyClient.sendMobileXmlData("QWER", this.getFilesDir().getAbsolutePath());
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -115,16 +118,28 @@ public class TankListActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = getSharedPreferences("piseas", Context.MODE_PRIVATE).edit();
         editor.clear();
         editor.putInt("listSize", tankList.size());
+        Log.i("TANKLIST", "size: " + tankList.size());
         for (int i = 0; i<tankList.size();i++){
-            editor.putInt("code"+i, tankList.get(i).getId());
+            editor.putString("code"+i, tankList.get(i).getId());
+            Log.i("TANKLIST", "code: " + "code"+i + " - " + tankList.get(i).getId());
         }
         editor.commit();
         super.onStop();
     }
 
     private void load(){
+
         Log.i("TANKLIST", "LOAD");
         SharedPreferences sharedPref = getSharedPreferences("piseas", MODE_PRIVATE);
+        // clear old shared preferences if old version
+        try {
+            String tankCode = sharedPref.getString("code"+0, "0");
+        } catch (ClassCastException e) {
+            SharedPreferences prefs = getSharedPreferences("piseas", MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.clear();
+            editor.commit();
+        }
         int size = sharedPref.getInt("listSize", 0);
         Log.i("TANKLIST", "LOAD size " + size);
 
@@ -135,22 +150,22 @@ public class TankListActivity extends AppCompatActivity {
         int tankSize = 0;
 
         for (int i=0;i<size; i++){
-            int tankCode = sharedPref.getInt("code"+i, 0);
+            String tankCode = sharedPref.getString("code"+i, "0");
             Log.i("TANKLIST", "LOAD Tank Code" + tankCode);
             try {
-                HashMap<String, String> dataList = FishyClient.retrieveServerData(tankCode + "");
+                /*FishyClient.retrieveServerData(tankCode + "");
                 if (!dataList.get("pw").isEmpty())
                     pw = Integer.parseInt(dataList.get("pw"));
                 if (!dataList.get("name").isEmpty())
-                    name = dataList.get("name");
+                    name = "";  //TODO: xml does not save name
                 if (!dataList.get("desc").isEmpty())
                     desc = dataList.get("desc");
                 if (!dataList.get("type").isEmpty())
                     type = Integer.parseInt(dataList.get("type"));
                 if (!dataList.get("size").isEmpty())
-                    tankSize = Integer.parseInt(dataList.get("size"));
+                    tankSize = Integer.parseInt(dataList.get("size"));*/
                 Log.i("TANKLIST", "LOAD ADD TANK " + tankCode + ", "+ pw + ", "+ name + ", "+ type + ", "+ size+ ", "+desc);
-                tankList.add(new Tank(tankCode, pw ,name, type, tankSize, desc));
+                tankList.add(new Tank(getApplicationContext(), tankCode));
             } catch (NullPointerException e) {
                 Toast.makeText(this, "No internet connection available!", Toast.LENGTH_LONG).show();
             }

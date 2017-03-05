@@ -20,8 +20,8 @@ public class TankTimer implements Runnable{
 
     }
     public TankTimer(Context context, TextView temperatureTextView, TextView pHTextView) {
-        temperature = new Temperature(context, temperatureTextView);
-        pH = new PH(context, pHTextView);
+        //temperature = new Temperature(context, temperatureTextView);
+        //pH = new PH(context, pHTextView);
     }
     public void run() {
         HashMap<String, String> dataList = FishyClient.retrieveServerData("VAN");

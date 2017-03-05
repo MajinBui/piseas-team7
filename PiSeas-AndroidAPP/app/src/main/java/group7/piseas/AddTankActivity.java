@@ -14,7 +14,8 @@ import android.widget.Toast;
 import java.util.HashMap;
 
 import group7.piseas.Objects.Tank;
-import group7.piseas.Server.FishyClient;
+import piseas.network.FishyClient;
+//import group7.piseas.Server.FishyClient;
 
 public class AddTankActivity extends AppCompatActivity {
     int REQUEST_CODE = 7;
@@ -38,7 +39,7 @@ public class AddTankActivity extends AppCompatActivity {
                 if (validate(strings)){
                     Intent intent = (new Intent(getBaseContext(),TankManagementActivity.class));
                     intent.putExtra("id", -1);
-                    intent.putExtra("code", Integer.parseInt(strings[0]));
+                    intent.putExtra("code", strings[0]);
                     startActivityForResult(intent, REQUEST_CODE);
                 }
             }
@@ -57,17 +58,12 @@ public class AddTankActivity extends AppCompatActivity {
                 int tankSize  = data.getIntExtra("size", 0);
                 String name = data.getStringExtra("name");
                 String desc = data.getStringExtra("desc");
-                TankListActivity.tankList.add(
-                        new Tank(Integer.parseInt(strings[0]),
-                                Integer.parseInt(strings[1]),
-                                name, fishType, tankSize, desc));
+                Tank tank = new Tank(getApplicationContext(), strings[0],
+                        strings[1],
+                        name, fishType, tankSize, desc);
+                TankListActivity.tankList.add(tank);
                 Log.i("AddTank", "NEW TANK ADDED" + TankListActivity.tankList.size());
-                HashMap<String, String> dataList =new HashMap<String, String>();
-                dataList.put("name", name);
-                dataList.put("type", fishType+"");
-                dataList.put("size", tankSize+"");
-                dataList.put("desc", desc);
-                FishyClient.writeToServerData(strings[0], dataList);
+                tank.updateTankDetails();
             }
         }
         finish();
@@ -75,36 +71,34 @@ public class AddTankActivity extends AppCompatActivity {
 
     private boolean validate(String[] strings){
         Log.i("AddTank", "Validate: " + strings[0].toString() + strings[1].toString());
-        if (onlyNums(strings[0])) { // check for digits and blanks
-                if(onlyNums(strings[1])){
+        //if (onlyNums(strings[0])) { // check for digits and blanks
+            //if(onlyNums(strings[1])){
                 for (Tank tank: TankListActivity.tankList){ //check for repeat
-                    if (Integer.parseInt(strings[0]) == tank.getId()){
+                    if (strings[0].equals(tank.getId())){
                         Toast.makeText(getBaseContext(),
                                 "The tank code you provided is already added. Please try again!",
                                 Toast.LENGTH_LONG).show();
                         return false;
                     }
                 }
-                HashMap<String, String> dataList = FishyClient.retrieveServerData(strings[0]);
-                if (dataList.get("pw") != null)
-                    if (dataList.get("pw").equals(strings[1]))
+                if (FishyClient.checkMobileXmlPassword(strings[0], strings[1]))
                         return true;
 
                 Toast.makeText(getBaseContext(),
                         "The tank code and password you provided does not match existing records. Please try again!",
                         Toast.LENGTH_LONG).show();
                 return false;
-            }
+            /*}
             else
                 Toast.makeText(getBaseContext(),
                         "Must enter password, can only contain digits. Please try again!",
                     Toast.LENGTH_LONG).show();
-            return false;
-        }
-        Toast.makeText(getBaseContext(),
+            return false;*/
+        //}
+        /*Toast.makeText(getBaseContext(),
                 "Must enter tank code, can only contain digits. Please try again!",
                 Toast.LENGTH_LONG).show();
-        return false;
+        return false;*/
     }
 
     private boolean onlyNums(String str) {
