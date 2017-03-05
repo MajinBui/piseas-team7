@@ -107,7 +107,7 @@ public class FishyClient {
 				printSuccess(FishyClient.updateConductivityRange(tankID, 7, 1), "updateConductivityRange");
 				printSuccess(FishyClient.updateTemperatureRange(tankID, 7, 1), "updateTemperatureRange");
 				printSuccess(FishyClient.updatePhRange(tankID, 1, 7), "updatePhRange");
-				printSuccess(FishyClient.updateTankDetailsMobileSettings(tankID, "1234", 20, "blah blah", true), "updateTankDetailsMobileSettings");
+				printSuccess(FishyClient.updateTankDetailsMobileSettings(tankID, "tank", "1234", 20, "blah blah", true), "updateTankDetailsMobileSettings");
 				printSuccess(FishyClient.updatePump(tankID, true, false, false), "updatePump");
 
 				printSuccess(FishyClient.updateSensorSensorData(tankID, conductivity, pHcurrent), "updateSensorSensorData");
@@ -148,7 +148,7 @@ public class FishyClient {
 				printSuccess(FishyClient.updateConductivityRange(tankID2, 7, 1), "updateConductivityRange");
 				printSuccess(FishyClient.updateTemperatureRange(tankID2, 7, 1), "updateTemperatureRange");
 				printSuccess(FishyClient.updatePhRange(tankID2, 1, 7), "updatePhRange");
-				printSuccess(FishyClient.updateTankDetailsMobileSettings(tankID2, "1234", 20, "blah blah", true), "updateTankDetailsMobileSettings");
+				printSuccess(FishyClient.updateTankDetailsMobileSettings(tankID2, "tank", "1234", 20, "blah blah", true), "updateTankDetailsMobileSettings");
 				printSuccess(FishyClient.updatePump(tankID2, true, false, false), "updatePump");
 
 				printSuccess(FishyClient.updateSensorSensorData(tankID2, conductivity, pHcurrent), "updateSensorSensorData");
@@ -713,19 +713,20 @@ public class FishyClient {
 	/**
 	 * Updates the tank destails of the server
 	 * @param tankId the TankID of the tank; Cannot be updated
+	 * @param name the Name of the tank
 	 * @param password the updated password/pin for the tank; null if no change
 	 * @param size the size of the tank
 	 * @param description descripton of the tank
 	 * @param type the type of tank; tropical, fresh
 	 * @return true if successful, false otherwise
 	 */
-	public static boolean updateTankDetailsMobileSettings(String tankId, String password, float size, String description, boolean type) {
+	public static boolean updateTankDetailsMobileSettings(String tankId, String name, String password, float size, String description, boolean type) {
 		FishyConnection fishyConnection;
 		boolean rc = true;
 		try {
 			fishyConnection = new FishyConnection();
 			try {
-				modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_TANK_DETAILS, "id", tankId);
+				modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_TANK_DETAILS, "name", name);
 				if (password == null) {
 					modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_TANK_DETAILS, "password", password);
 				}
@@ -1474,6 +1475,7 @@ public class FishyClient {
 		{  
 			builder = factory.newDocumentBuilder();  
 			Document document = builder.parse( new InputSource( new StringReader( xmlString ) ) );
+			document.getDocumentElement().normalize();
 			
 			return document;
 		} catch (Exception e) {  
