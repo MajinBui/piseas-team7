@@ -157,7 +157,7 @@ public class TankListActivity extends AppCompatActivity {
                 if (!dataList.get("pw").isEmpty())
                     pw = Integer.parseInt(dataList.get("pw"));
                 if (!dataList.get("name").isEmpty())
-                    name = "";  //TODO: xml does not save name
+                    name = "";
                 if (!dataList.get("desc").isEmpty())
                     desc = dataList.get("desc");
                 if (!dataList.get("type").isEmpty())

@@ -1,6 +1,7 @@
 package group7.piseas.Objects;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Parcelable;
 
 import group7.piseas.Helpers.XmlPullParserHandler;
@@ -46,11 +47,11 @@ public class Tank implements Runnable {
         this.context = context;
         this.id = id;
         this.pw = piSeasXmlHandler.getSettingsPassword();
-        this.name = ""; // TODO: xml must save name
+        this.name = piSeasXmlHandler.getSettingsName();
         this.type = (piSeasXmlHandler.getSettingsType()? 1 : 0); //TODO: change?  is it supposed to be boolean?
         this.size = piSeasXmlHandler.getSettingsSize();
         this.desc = piSeasXmlHandler.getSettingsDescription();
-        this.pump = new Pump(piSeasXmlHandler);
+        this.pump = new Pump(piSeasXmlHandler, context);
     }
 
     public String getId() {
@@ -96,8 +97,7 @@ public class Tank implements Runnable {
 
     public void updatePump() {
         pump.saveXmlData(piSeasXmlHandler);
-        FishyClient.updatePump(id, pump.isManualDrain(), pump.isManualFill(), pump.isAuto());
-        FishyClient.retrieveMobileXmlData(id, context.getFilesDir().getAbsolutePath());
+        new UpdatePumpTask().execute();
     }
     @Override
     public void run() {
@@ -105,7 +105,22 @@ public class Tank implements Runnable {
     }
 
     public void updateTankDetails() {
-        FishyClient.updateTankDetailsMobileSettings(id, pw, size, desc, (type == 1));
+        new UpdateTankDetailsTask().execute();
+    }
+    private class UpdatePumpTask extends AsyncTask<Void, Void, Integer> {
+        protected Integer doInBackground(Void ... voids) {
+            FishyClient.updatePump(id, pump.isManualDrain(), pump.isManualFill(), pump.isAuto());
+            FishyClient.retrieveMobileXmlData(id, context.getFilesDir().getAbsolutePath());
+            return Integer.parseInt("1");
+        }
+    }
+
+    private class UpdateTankDetailsTask extends AsyncTask<Void, Void, Integer> {
+        protected Integer doInBackground(Void ... voids) {
+            FishyClient.updateTankDetailsMobileSettings(id, name, pw, size, desc, (type == 1));
+            FishyClient.retrieveMobileXmlData(id, context.getFilesDir().getAbsolutePath());
+            return Integer.parseInt("1");
+        }
     }
 
 }

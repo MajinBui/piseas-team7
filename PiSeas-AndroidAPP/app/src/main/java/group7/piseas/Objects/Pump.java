@@ -1,8 +1,11 @@
 package group7.piseas.Objects;
 
 import android.content.Context;
+import android.os.AsyncTask;
 
 import group7.piseas.Helpers.XmlPullParserHandler;
+import piseas.network.FishyClient;
+
 /**
  * Created by Van on 2017-03-04.
  */
@@ -12,11 +15,12 @@ public class Pump {
     private boolean manualFill;
     private boolean manualDrain;
 
-    public Pump(XmlPullParserHandler piSeasXmlHandler) {
-        loadXmlData(piSeasXmlHandler);
+    public Pump(XmlPullParserHandler piSeasXmlHandler , Context context) {
+        loadXmlData(piSeasXmlHandler, context);
     }
 
-    public void loadXmlData(XmlPullParserHandler piSeasXmlHandler) {
+    public void loadXmlData(XmlPullParserHandler piSeasXmlHandler, Context context) {
+        FishyClient.retrieveMobileXmlData(piSeasXmlHandler.getTankIdParser(), context.getFilesDir().getAbsolutePath());
         auto = piSeasXmlHandler.getSettingsAutoWaterChange();
         manualDrain = piSeasXmlHandler.getSettingsDrain();
         manualFill = piSeasXmlHandler.getSettingsFill();
@@ -51,4 +55,5 @@ public class Pump {
     public boolean isManualDrain() {
         return manualDrain;
     }
+
 }

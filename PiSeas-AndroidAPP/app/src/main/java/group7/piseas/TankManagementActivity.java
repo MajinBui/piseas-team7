@@ -157,14 +157,7 @@ public class TankManagementActivity extends AppCompatActivity implements Adapter
         TankListActivity.tankList.get(i).setType(tankSize);
         TankListActivity.tankList.get(i).setSize(tankSize);
         TankListActivity.tankList.get(i).setDesc(desc);
-        HashMap<String, String> dataList = new HashMap<String, String>();
-        dataList.put("name", name);
-        dataList.put("type", fishType+"");
-        dataList.put("size", tankSize+"");
-        dataList.put("desc", desc);
         TankListActivity.tankList.get(i).updateTankDetails();
-        //FishyClient.writeToServerData(TankListActivity.tankList.get(i).getId()+"", dataList);
-
     }
 
     @Override
