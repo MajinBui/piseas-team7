@@ -2,21 +2,17 @@
   <Update>
     <details conductivity="true" feed="false" light="false" pH="false" pump="true" temperature="true"/>
   </Update>
-  <Date date="2017-03-03T18:38:12-0500"/>
+  <Date date="2017-03-04T18:20:21-0500"/>
   <Tank>
     <details description="my fishy home" id="xyz789" password="helloworld" size="20" type="true"/>
   </Tank>
-  <Feed auto="true" manual="true" schedules="3">
-    <details Fri="true" Mon="true" Sat="false" Sun="false" Thu="true" Tue="false" Wed="true" hr="13" min="50"/>
-    <details Fri="false" Mon="false" Sat="false" Sun="false" Thu="true" Tue="true" Wed="false" hr="07" min="30"/>
-    <details Fri="false" Mon="false" Sat="true" Sun="false" Thu="false" Tue="false" Wed="false" hr="21" min="45"/>
-  </Feed>
+  <Feed auto="true" manual="true" schedules="3"/>
   <Light auto="true" manual="true" schedules="2">
-    <details offHr="12" offMin="30" onHr="09" onMin="00"/>
-    <details offHr="18" offMin="30" onHr="13" onMin="00"/>
+    <details offHr="12" offMin="30" onHr="12" onMin="12"/>
+  <details offHr="18" offMin="30" onHr="30" onMin="0"/>
   </Light>
   <Temperature>
-    <details max="22.0" min="16.0"/>
+    <details max="22.0" min="21.0"/>
   </Temperature>
   <Pump>
     <details auto="true" manualDrain="true" manualFill="false"/>
