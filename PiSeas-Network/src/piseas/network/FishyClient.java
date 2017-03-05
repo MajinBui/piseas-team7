@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.text.DateFormat;
@@ -16,6 +18,7 @@ import java.util.HashMap;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -23,6 +26,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
@@ -103,7 +107,7 @@ public class FishyClient {
 				printSuccess(FishyClient.updateConductivityRange(tankID, 7, 1), "updateConductivityRange");
 				printSuccess(FishyClient.updateTemperatureRange(tankID, 7, 1), "updateTemperatureRange");
 				printSuccess(FishyClient.updatePhRange(tankID, 1, 7), "updatePhRange");
-				printSuccess(FishyClient.updateTankDetailsMobileSettings(tankID, "1234", 20, "blah blah", "tropical"), "updateTankDetailsMobileSettings");
+				printSuccess(FishyClient.updateTankDetailsMobileSettings(tankID, "1234", 20, "blah blah", true), "updateTankDetailsMobileSettings");
 				printSuccess(FishyClient.updatePump(tankID, true, false, false), "updatePump");
 
 				printSuccess(FishyClient.updateSensorSensorData(tankID, conductivity, pHcurrent), "updateSensorSensorData");
@@ -119,6 +123,8 @@ public class FishyClient {
 				printSuccess(FishyClient.retrieveMobileXmlData(tankID, testOutputDir), "retrieveMobileXmlData");
 				printSuccess(FishyClient.retrieveSensorData(tankID, testOutputDir), "retrieveSensorData");
 				printSuccess(FishyClient.retrieveActionLog(tankID, testOutputDir), "retrieveActionLog");
+				printSuccess(FishyClient.checkMobileXmlPassword(tankID, "1234"), "checkMobileXmlPassword");
+				
 			}
 
 		};
@@ -142,7 +148,7 @@ public class FishyClient {
 				printSuccess(FishyClient.updateConductivityRange(tankID2, 7, 1), "updateConductivityRange");
 				printSuccess(FishyClient.updateTemperatureRange(tankID2, 7, 1), "updateTemperatureRange");
 				printSuccess(FishyClient.updatePhRange(tankID2, 1, 7), "updatePhRange");
-				printSuccess(FishyClient.updateTankDetailsMobileSettings(tankID2, "1234", 20, "blah blah", "tropical"), "updateTankDetailsMobileSettings");
+				printSuccess(FishyClient.updateTankDetailsMobileSettings(tankID2, "1234", 20, "blah blah", true), "updateTankDetailsMobileSettings");
 				printSuccess(FishyClient.updatePump(tankID2, true, false, false), "updatePump");
 
 				printSuccess(FishyClient.updateSensorSensorData(tankID2, conductivity, pHcurrent), "updateSensorSensorData");
@@ -158,6 +164,7 @@ public class FishyClient {
 				printSuccess(FishyClient.retrieveMobileXmlData(tankID2, testOutputDir), "retrieveMobileXmlData");
 				printSuccess(FishyClient.retrieveSensorData(tankID2, testOutputDir), "retrieveSensorData");
 				printSuccess(FishyClient.retrieveActionLog(tankID2, testOutputDir), "retrieveActionLog");
+				printSuccess(FishyClient.checkMobileXmlPassword(tankID2, "1234"), "checkMobileXmlPassword");
 			}
 
 		};
@@ -200,8 +207,9 @@ public class FishyClient {
 	private static void retrieveServerData(FishyConnection connection, String tankId, String transactionToPerform, String parentFilePath, String suffix) throws IOException, ClassNotFoundException, TransformerException {
 		connection.outToServer.writeObject(transactionToPerform);
 		connection.outToServer.writeObject(tankId);
-
-		Document document = (Document) connection.inFromServer.readObject();
+		
+		String stringXml = (String) connection.inFromServer.readObject();
+		Document document = stringToDoc(stringXml);
 
 		String XMLFilePath = String.format("%s/%s%s.xml", parentFilePath, tankId, suffix);
 
@@ -241,6 +249,8 @@ public class FishyClient {
 			System.err.println("Connection to server lost");
 		} catch (ClassNotFoundException e) {
 			rc = false;
+			e.getMessage();
+			e.printStackTrace();
 			System.err.println("Client may be out of date");
 		}
 		return rc;
@@ -327,7 +337,7 @@ public class FishyClient {
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document doc = dBuilder.parse(file);
 
-		connection.outToServer.writeObject(doc);
+		connection.outToServer.writeObject(docToString(doc));
 		connection.inFromServer.readObject();
 
 	}
@@ -703,23 +713,25 @@ public class FishyClient {
 	/**
 	 * Updates the tank destails of the server
 	 * @param tankId the TankID of the tank; Cannot be updated
-	 * @param password the updated password/pin for the tank
+	 * @param password the updated password/pin for the tank; null if no change
 	 * @param size the size of the tank
 	 * @param description descripton of the tank
 	 * @param type the type of tank; tropical, fresh
 	 * @return true if successful, false otherwise
 	 */
-	public static boolean updateTankDetailsMobileSettings(String tankId, String password, int size, String description, String type) {
+	public static boolean updateTankDetailsMobileSettings(String tankId, String password, float size, String description, boolean type) {
 		FishyConnection fishyConnection;
 		boolean rc = true;
 		try {
 			fishyConnection = new FishyConnection();
 			try {
 				modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_TANK_DETAILS, "id", tankId);
-				modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_TANK_DETAILS, "password", password);
-				modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_TANK_DETAILS, "size", Integer.toString(size));
+				if (password == null) {
+					modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_TANK_DETAILS, "password", password);
+				}
+				modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_TANK_DETAILS, "size", Float.toString(size));
 				modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_TANK_DETAILS, "description", description);
-				modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_TANK_DETAILS, "type", type);
+				modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_TANK_DETAILS, "type", Boolean.toString(type));
 			} catch (Exception e) {
 				rc = false;
 				System.err.println("Function used improperly or server bug; please complain to van");
@@ -974,7 +986,7 @@ public class FishyClient {
 	 * @throws IOException if connection interruped 
 	 * @throws ClassNotFoundException if server or client is outdated if server or client is outdated 
 	 */
-	private static String retrieveDataDate(FishyConnection connection, String tankId, String transactionToPerform) throws IOException, ClassNotFoundException {
+	private static String retrieveStringData(FishyConnection connection, String tankId, String transactionToPerform) throws IOException, ClassNotFoundException {
 
 		connection.outToServer.writeObject(transactionToPerform);
 		connection.outToServer.writeObject(tankId);
@@ -999,7 +1011,7 @@ public class FishyClient {
 			fishyConnection = new FishyConnection();
 			String fileDate = "";
 			try {
-				fileDate = retrieveDataDate(fishyConnection, tankId, NetworkTransactionSwitch.DEVICE_CHECK_DATE_MOBILE_SETTINGS.name());
+				fileDate = retrieveStringData(fishyConnection, tankId, NetworkTransactionSwitch.DEVICE_CHECK_DATE_MOBILE_SETTINGS.name());
 			} catch (Exception e) {
 				System.err.println("Function used improperly or server bug; please complain to van");
 			}
@@ -1030,7 +1042,7 @@ public class FishyClient {
 			fishyConnection = new FishyConnection();
 			String fileDate = "";
 			try {
-				fileDate = retrieveDataDate(fishyConnection, tankId, NetworkTransactionSwitch.DEVICE_CHECK_DATE_MOBILE_SETTINGS.name());
+				fileDate = retrieveStringData(fishyConnection, tankId, NetworkTransactionSwitch.DEVICE_CHECK_DATE_MOBILE_SETTINGS.name());
 			} catch (Exception e) {
 				System.err.println("Function used improperly or server bug; please complain to van");
 			}
@@ -1059,7 +1071,7 @@ public class FishyClient {
 			fishyConnection = new FishyConnection();
 			String fileDate = "";
 			try {
-				fileDate = retrieveDataDate(fishyConnection, tankId, NetworkTransactionSwitch.DEVICE_CHECK_DATE_SENSOR_DATA.name());
+				fileDate = retrieveStringData(fishyConnection, tankId, NetworkTransactionSwitch.DEVICE_CHECK_DATE_SENSOR_DATA.name());
 			} catch (Exception e) {
 				System.err.println("Function used improperly or server bug; please complain to van");
 			}
@@ -1075,8 +1087,38 @@ public class FishyClient {
 
 		return false;
 	}
+	
+	
+	/**
+	 * Compares the given password to the password the server has on the mobile settings xml.
+	 * @param tankId the tankId
+	 * @param password the password to compare
+	 * @return true if file has been updated, false otherwise
+	 */
+	public static boolean checkMobileXmlPassword(String tankId, String password) {
+		FishyConnection fishyConnection;
+		try {
+			fishyConnection = new FishyConnection();
+			String serverPassword = "";
+			try {
+				serverPassword = retrieveStringData(fishyConnection, tankId, NetworkTransactionSwitch.DEVICE_CHECK_PASSWORD_MOBILE_SETTINGS.name());
+			} catch (Exception e) {
+				System.err.println("Function used improperly or server bug; please complain to van");
+			}
 
+			fishyConnection.finish(tankId);
 
+			return !serverPassword.equals(password);
+		} catch (IOException e) {
+			System.err.println("Connection to server lost");
+		} catch (ClassNotFoundException e) {
+			System.err.println("Client may be out of date");
+		}
+
+		return false;
+	}
+	
+	
 	/**
 	 * Compares the given date to the date the server has on the action log xml.
 	 * @param tankId the tankId
@@ -1090,7 +1132,7 @@ public class FishyClient {
 			fishyConnection = new FishyConnection();
 			String fileDate = "";
 			try {
-				fileDate = retrieveDataDate(fishyConnection, tankId, NetworkTransactionSwitch.DEVICE_CHECK_DATE_ACTION_LOG.name());
+				fileDate = retrieveStringData(fishyConnection, tankId, NetworkTransactionSwitch.DEVICE_CHECK_DATE_ACTION_LOG.name());
 			} catch (Exception e) {
 				System.err.println("Function used improperly or server bug; please complain to van");
 			}
@@ -1407,6 +1449,38 @@ public class FishyClient {
 		}
 		return rc;
 	}
+	
+	public static String docToString(Document doc) {
+	    try {
+	        StringWriter sw = new StringWriter();
+	        TransformerFactory tf = TransformerFactory.newInstance();
+	        Transformer transformer = tf.newTransformer();
+	        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+	        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+	        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+	        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+
+	        transformer.transform(new DOMSource(doc), new StreamResult(sw));
+	        return sw.toString();
+	    } catch (Exception ex) {
+	        throw new RuntimeException("Error converting to String", ex);
+	    }
+	}
+
+	public static Document stringToDoc(String xmlString) {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();  
+		DocumentBuilder builder;  
+		try  
+		{  
+			builder = factory.newDocumentBuilder();  
+			Document document = builder.parse( new InputSource( new StringReader( xmlString ) ) );
+			
+			return document;
+		} catch (Exception e) {  
+			e.printStackTrace();  
+		}
+		return null;
+	}
 
 	/**
 	 * Inner class to store a connection in progress.  Every public function MUST create a FishyConnection
@@ -1448,6 +1522,7 @@ public class FishyClient {
 			clientSocket.close();
 		}
 	}
-
+	
+	
 	private FishyClient() {}
 }

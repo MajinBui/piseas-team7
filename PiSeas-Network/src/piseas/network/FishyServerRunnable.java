@@ -1,10 +1,13 @@
 package piseas.network;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -35,6 +38,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 // TODO: set up server transaction for when the server first starts
 
@@ -58,7 +62,7 @@ public class FishyServerRunnable implements Runnable {
 	public float lifeTime;
 
 	/**
-	 * Creates a thread to handle a server transaction.  Takes a client socket to recieve and send data.
+	 * Creates a thread to handle a server transaction.  Takes a client socket to receive and send data.
 	 * @param clientSocket
 	 */
 	public FishyServerRunnable( Socket clientSocket ) {
@@ -132,18 +136,18 @@ public class FishyServerRunnable implements Runnable {
 					if (transactionToPerform.equals(NetworkTransactionSwitch.SERVER_RETRIEVE_MOBILE_SETTINGS.name())) {
 						
 						printLogMessage('o', tankId, "preparing to receive mobile data");
-						recieveXMLDataFromClient(tankId, NetworkConstants.FILE_SUFFIX_MOBILE);
-						printLogMessage('o', tankId, "mobile data recieved");
+						receiveXMLDataFromClient(tankId, NetworkConstants.FILE_SUFFIX_MOBILE);
+						printLogMessage('o', tankId, "mobile data received");
 
 					} else if (transactionToPerform.equals(NetworkTransactionSwitch.SERVER_RETRIEVE_SENSOR_DATA.name())) {
 						printLogMessage('o', tankId, "preparing to receive sensor data");
-						recieveXMLDataFromClient(tankId, NetworkConstants.FILE_SUFFIX_SENSOR);
-						printLogMessage('o', tankId, "sensor data recieved");
+						receiveXMLDataFromClient(tankId, NetworkConstants.FILE_SUFFIX_SENSOR);
+						printLogMessage('o', tankId, "sensor data received");
 						
 					} else if (transactionToPerform.equals(NetworkTransactionSwitch.SERVER_RETRIEVE_ACTION_LOG.name())) {
 						
 						printLogMessage('o', tankId, "preparing to receive log data");
-						recieveXMLDataFromClient(tankId, NetworkConstants.FILE_SUFFIX_LOG);
+						receiveXMLDataFromClient(tankId, NetworkConstants.FILE_SUFFIX_LOG);
 						printLogMessage('o', tankId, "log data sent");
 
 					} else if (transactionToPerform.equals(NetworkTransactionSwitch.DEVICE_RETRIEVE_MOBILE_SETTINGS.name())) {
@@ -222,6 +226,10 @@ public class FishyServerRunnable implements Runnable {
 						outToClient.writeObject("FIN");
 						serverState = SERVER_STATE.ENDED;
 						printLogMessage('o', tankId, "connection closed");
+					} else if (transactionToPerform.equals(NetworkTransactionSwitch.DEVICE_CHECK_PASSWORD_MOBILE_SETTINGS.name())) {
+						printLogMessage('o', tankId, "preparing to return last modified date of action log");
+						getFilePassword(tankId, NetworkConstants.FILE_SUFFIX_MOBILE);
+						printLogMessage('o', tankId, "date returned of action log");
 					}
 				}
 			}		
@@ -327,7 +335,7 @@ public class FishyServerRunnable implements Runnable {
 	 * @throws IOException thrown if server connection ends prematurely
 	 * @throws SAXException parser unable to read xml
 	 * @throws ParserConfigurationException parser unable to read xml
-	 * @throws ClassNotFoundException if object recieved by stream is of an unknown type
+	 * @throws ClassNotFoundException if object received by stream is of an unknown type
 	 * 
 	 * @param suffix the file to build the file path for
 	 */
@@ -341,26 +349,27 @@ public class FishyServerRunnable implements Runnable {
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
 		Document document = dBuilder.parse(file);
-
-		outToClient.writeObject(document); // send xml
-		inFromClient.readObject();  // recieve empty string
+		String out = docToString(document);
+		outToClient.writeObject(out); // send xml
+		inFromClient.readObject();  // receive empty string
 	}
 	
 	/**
-	 * Helper function to choose and recieve a specified xml from the client with the given suffix
+	 * Helper function to choose and receive a specified xml from the client with the given suffix
 	 * @param suffix
-	 * @throws ClassNotFoundException if object recieved by stream is of an unknown type
+	 * @throws ClassNotFoundException if object received by stream is of an unknown type
 	 * @throws IOException thrown if server connection ends prematurely
 	 * @throws TransformerConfigurationException parser unable to write xml
 	 * @throws TransformerException parser unable to write xml
 	 * @throws XPathExpressionException xml does not have the correct xml
 	 */
-	private void recieveXMLDataFromClient(String tankId, String suffix) throws	ClassNotFoundException,
+	private void receiveXMLDataFromClient(String tankId, String suffix) throws	ClassNotFoundException,
 																				IOException,
 																				TransformerConfigurationException,
 																				TransformerException, XPathExpressionException {
 		serverState = SERVER_STATE.CONNECTED_WRITING;
-		Document document = (Document) inFromClient.readObject();
+		String xmlString = (String) inFromClient.readObject();
+		Document document = stringToDoc(xmlString);
 		PrintWriter writer = new PrintWriter(buildFilePath(tankId, suffix), "UTF-8");
 		StreamResult result = new StreamResult(writer);
 		
@@ -533,6 +542,35 @@ public class FishyServerRunnable implements Runnable {
 		
 	}
 	
+	
+	/**
+	 * Return the last modified date of the chosen file
+	 * @param tankId
+	 * @param suffix
+	 * @throws XPathExpressionException
+	 * @throws ParserConfigurationException
+	 * @throws SAXException
+	 * @throws IOException
+	 */
+	private void getFilePassword(String tankId, String suffix) throws XPathExpressionException, ParserConfigurationException, SAXException, IOException {
+		serverState = SERVER_STATE.CONNECTED_READING;
+		try {
+			File file = new File(buildFilePath(tankId, suffix));
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document document = dBuilder.parse(file);
+			
+			XPath xpath = XPathFactory.newInstance().newXPath();
+			NodeList dateNode = (NodeList) xpath.evaluate(DATE_XPATH_EXPRESSION, document, XPathConstants.NODESET);
+			
+			outToClient.writeObject(dateNode.item(0).getNodeValue());
+		} catch (FileNotFoundException e){
+			outToClient.writeObject("FAILED; BAD PASSWORD");
+		}
+		outToClient.writeObject("");
+		
+		
+	}
 	/**
 	 * Builds a file path for the given suffix.
 	 * @param suffix the file to build the file path for
@@ -542,6 +580,38 @@ public class FishyServerRunnable implements Runnable {
 		return String.format(NetworkConstants.FILE_LOCATION_FORMAT, NetworkConstants.FILE_LOCATION_SERVER, tankId, suffix, NetworkConstants.FILE_EXTENSION);
 	}
 	
+	private static String docToString(Document doc) {
+	    try {
+	        StringWriter sw = new StringWriter();
+	        TransformerFactory tf = TransformerFactory.newInstance();
+	        Transformer transformer = tf.newTransformer();
+	        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+	        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+	        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+	        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+
+	        transformer.transform(new DOMSource(doc), new StreamResult(sw));
+	        return sw.toString();
+	    } catch (Exception ex) {
+	        throw new RuntimeException("Error converting to String", ex);
+	    }
+	}
+
+	private static Document stringToDoc(String xmlString) {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();  
+		DocumentBuilder builder;  
+		try  
+		{  
+			builder = factory.newDocumentBuilder();  
+			Document document = builder.parse( new InputSource( new StringReader( xmlString ) ) );
+			
+			return document;
+		} catch (Exception e) {  
+			e.printStackTrace();  
+		}
+		return null;
+	}
+
 	
 	/**
 	 * Helper function to print server log messages
@@ -560,6 +630,8 @@ public class FishyServerRunnable implements Runnable {
 			System.out.printf(LOG_FORMAT, timeNow, tankId, message);
 		}
 	}
+	
+	
 	
 	
 	public static void main(String args[]) {
