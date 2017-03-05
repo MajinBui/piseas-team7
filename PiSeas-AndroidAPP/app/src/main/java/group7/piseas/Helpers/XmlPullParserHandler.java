@@ -32,6 +32,11 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpression;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import group7.piseas.Objects.FeedSchedule;
 import group7.piseas.Objects.LightSchedule;
@@ -183,6 +188,11 @@ public class XmlPullParserHandler {
     public String getSettingsID(){
         // Parse from tag "Tank", attribute id
         return parseSettings("Tank", "id");
+    }
+
+    public String getSettingsName() {
+        // Parse from tag "Tank", attribute name
+        return parseSettings("Tank", "name");
     }
 
     public String getSettingsPassword(){
@@ -439,6 +449,19 @@ public class XmlPullParserHandler {
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
             Document doc = docBuilder.parse(context.openFileInput(filepath));
 
+            // This segment of code clears all indents of the xml file
+            // Required since the xml used by the server side preserves indents
+            XPathFactory xpathFactory = XPathFactory.newInstance();
+            XPathExpression xpathExp = xpathFactory.newXPath().compile(
+                    "//text()[normalize-space(.) = '']");
+            NodeList emptyTextNodes = (NodeList)
+                    xpathExp.evaluate(doc, XPathConstants.NODESET);
+
+            // Remove each empty text node from document.
+            for (int i = 0; i < emptyTextNodes.getLength(); i++) {
+                Node emptyTextNode = emptyTextNodes.item(i);
+                emptyTextNode.getParentNode().removeChild(emptyTextNode);
+            }
             // search for Updated tag
             NodeList nodes = doc.getElementsByTagName("Update");
             // get the Updated tag
@@ -450,6 +473,8 @@ public class XmlPullParserHandler {
             // get all attributes into Attr array
             NamedNodeMap allAtts = checks.getAttributes();
             // loop through all attributes, set the one that we are changing to true, all else are false
+
+
             for (int i = 0; i < 6; i++) {
                 Attr attribs = (Attr) allAtts.item(i);
                 if (attribs.getNodeName().toLowerCase().equals(tag))
@@ -499,6 +524,8 @@ public class XmlPullParserHandler {
             e.printStackTrace();
         } catch ( TransformerException e) {
             e.printStackTrace();
+        } catch (XPathExpressionException e) {
+            e.printStackTrace();
         }
     }
 
@@ -506,7 +533,9 @@ public class XmlPullParserHandler {
         write("Tank", "id", value);
     }
 
-    public void setpassword(String value){
+    public void setName(String value) { write("Tank", "name", value); }
+
+    public void setPassword(String value){
         write("Tank", "password", value);
     }
 
@@ -539,6 +568,13 @@ public class XmlPullParserHandler {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
             Document doc = docBuilder.parse(context.openFileInput(filepath));
+            // This segment of code clears all indents of the xml file
+            // Required since the xml used by the server side preserves indents
+            XPathFactory xpathFactory = XPathFactory.newInstance();
+            XPathExpression xpathExp = xpathFactory.newXPath().compile(
+                    "//text()[normalize-space(.) = '']");
+            NodeList emptyTextNodes = (NodeList)
+                    xpathExp.evaluate(doc, XPathConstants.NODESET);
 
             // search for Updated tag
             NodeList nodes = doc.getElementsByTagName("Update");
@@ -625,6 +661,8 @@ public class XmlPullParserHandler {
             e.printStackTrace();
         } catch ( TransformerException e) {
             e.printStackTrace();
+        } catch (XPathExpressionException e) {
+            e.printStackTrace();
         }
     }
 
@@ -641,6 +679,14 @@ public class XmlPullParserHandler {
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
             Document doc = docBuilder.parse(context.openFileInput(filepath));
+
+            // This segment of code clears all indents of the xml file
+            // Required since the xml used by the server side preserves indents
+            XPathFactory xpathFactory = XPathFactory.newInstance();
+            XPathExpression xpathExp = xpathFactory.newXPath().compile(
+                    "//text()[normalize-space(.) = '']");
+            NodeList emptyTextNodes = (NodeList)
+                    xpathExp.evaluate(doc, XPathConstants.NODESET);
 
             // search for Updated tag
             NodeList nodes = doc.getElementsByTagName("Update");
@@ -716,6 +762,8 @@ public class XmlPullParserHandler {
         } catch ( SAXException e) {
             e.printStackTrace();
         } catch ( TransformerException e) {
+            e.printStackTrace();
+        } catch (XPathExpressionException e) {
             e.printStackTrace();
         }
     }
@@ -832,6 +880,7 @@ public class XmlPullParserHandler {
             xmlSerializer.startTag("", "Tank");
             xmlSerializer.startTag("", "details");
             xmlSerializer.attribute("", "id", code);
+            xmlSerializer.attribute("", "name", code);
             xmlSerializer.attribute("", "password", password);
             xmlSerializer.attribute("", "size", size);
             xmlSerializer.attribute("", "description", description);

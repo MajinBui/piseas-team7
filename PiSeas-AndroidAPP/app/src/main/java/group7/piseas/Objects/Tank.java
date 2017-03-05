@@ -43,6 +43,7 @@ public class Tank implements Runnable {
         android.util.Log.d("parse: ", context.getFilesDir().getAbsolutePath());
         FishyClient.retrieveMobileXmlData(id, context.getFilesDir().getAbsolutePath());
         this.piSeasXmlHandler = new XmlPullParserHandler(context, id);
+        this.context = context;
         this.id = id;
         this.pw = piSeasXmlHandler.getSettingsPassword();
         this.name = ""; // TODO: xml must save name
