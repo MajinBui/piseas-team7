@@ -46,7 +46,6 @@ public class FishyServerRunnable implements Runnable {
 	private static final long THREAD_WAIT_TIME = 100;
 	private static final long THREAD_KILL_TIME = 10000;
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-	private static final Calendar CALENDAR = Calendar.getInstance();
 	private static final String LOG_FORMAT = "%-25s %-10s: %s\n";  // displays as the following:  <date> <tankId>: <log message>
 	private static final String PASSCODE = "xBE3GnsotxlFSwb9sg7t";
 	private static final String DATE_XPATH_EXPRESSION = "/Piseas/Date/@date";
@@ -377,7 +376,7 @@ public class FishyServerRunnable implements Runnable {
 		
 		XPath xpath = XPathFactory.newInstance().newXPath();
 		NodeList dateNode = (NodeList) xpath.evaluate(DATE_XPATH_EXPRESSION, document, XPathConstants.NODESET);
-		dateNode.item(0).setNodeValue(DATE_FORMAT.format(CALENDAR.getTime()));
+		dateNode.item(0).setNodeValue(DATE_FORMAT.format(Calendar.getInstance().getTime()));
 		
 		DOMSource source = new DOMSource(document);
 		transformer.transform(source, result);
@@ -421,7 +420,7 @@ public class FishyServerRunnable implements Runnable {
 		}
 		
 		NodeList dateNode = (NodeList) xpath.evaluate(DATE_XPATH_EXPRESSION, document, XPathConstants.NODESET);
-		dateNode.item(0).setNodeValue(DATE_FORMAT.format(CALENDAR.getTime()));
+		dateNode.item(0).setNodeValue(DATE_FORMAT.format(Calendar.getInstance().getTime()));
 		
 		DOMSource source = new DOMSource(document);
 		StreamResult result = new StreamResult(file);
@@ -468,7 +467,7 @@ public class FishyServerRunnable implements Runnable {
 			}
 		}
 		NodeList dateNode = (NodeList) xpath.evaluate(DATE_XPATH_EXPRESSION, document, XPathConstants.NODESET);
-		dateNode.item(0).setNodeValue(DATE_FORMAT.format(CALENDAR.getTime()));
+		dateNode.item(0).setNodeValue(DATE_FORMAT.format(Calendar.getInstance().getTime()));
 		
 		DOMSource source = new DOMSource(document);
 		StreamResult result = new StreamResult(file);
@@ -507,7 +506,7 @@ public class FishyServerRunnable implements Runnable {
 		}
 
 		NodeList dateNode = (NodeList) xpath.evaluate(DATE_XPATH_EXPRESSION, document, XPathConstants.NODESET);
-		dateNode.item(0).setNodeValue(DATE_FORMAT.format(CALENDAR.getTime()));
+		dateNode.item(0).setNodeValue(DATE_FORMAT.format(Calendar.getInstance().getTime()));
 		
 		DOMSource source = new DOMSource(document);
 		StreamResult result = new StreamResult(file);
@@ -625,7 +624,7 @@ public class FishyServerRunnable implements Runnable {
 		if (tankId == null || tankId.equals(""))
 			tankId = "<noId>";
 
-		String timeNow = DATE_FORMAT.format(CALENDAR.getTime());
+		String timeNow = DATE_FORMAT.format(Calendar.getInstance().getTime());
 		if (output == 'e') {
 			System.err.printf(LOG_FORMAT, timeNow, tankId, message);
 		} else {
