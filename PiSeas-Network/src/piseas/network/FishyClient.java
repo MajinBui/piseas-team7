@@ -1109,7 +1109,7 @@ public class FishyClient {
 
 			fishyConnection.finish(tankId);
 
-			return !serverPassword.equals(password);
+			return serverPassword.equals(password);
 		} catch (IOException e) {
 			System.err.println("Connection to server lost");
 		} catch (ClassNotFoundException e) {

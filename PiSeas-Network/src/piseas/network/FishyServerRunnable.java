@@ -115,6 +115,8 @@ public class FishyServerRunnable implements Runnable {
 						serverState = SERVER_STATE.ENDED;
 					}
 				} else if (serverState != SERVER_STATE.PROCESS_LOGIN) {
+					// Read timeout
+					this.clientSocket.setSoTimeout((int)THREAD_KILL_TIME);					
 					//	Receive which use case to fulfil
 					String transactionToPerform = (String) inFromClient.readObject();
 					tankId = (String) inFromClient.readObject();
