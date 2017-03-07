@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -66,6 +67,7 @@ public class TankMainPageActivity extends AppCompatActivity {
     }
     public void onTankInfoClick(View view){
         Intent i = new Intent(this, TankManagementActivity.class);
+        Log.d("TankMain", "open management");
         i.putExtra("id", index);
         startActivity(i);
     }

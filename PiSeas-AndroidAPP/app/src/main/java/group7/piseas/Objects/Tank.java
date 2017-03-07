@@ -3,6 +3,8 @@ package group7.piseas.Objects;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Parcelable;
+import android.util.Log;
+import android.widget.Toast;
 
 import group7.piseas.Helpers.XmlPullParserHandler;
 import piseas.network.FishyClient;
@@ -20,20 +22,34 @@ public class Tank implements Runnable {
     private int type;
     private float size;
     private String desc;
+
     private XmlPullParserHandler piSeasXmlHandler;
     private PH pH;
     private Pump pump;
 
+    /**
+     * Constructor for newly added tanks.
+     * @param context
+     * @param id
+     * @param pw
+     * @param name
+     * @param type
+     * @param size
+     * @param desc
+     */
     public Tank(Context context, String id, String pw, String name, int type, int size, String desc){
-        this.context = context;
         FishyClient.retrieveMobileXmlData(id, context.getFilesDir().getAbsolutePath());
+        this.context = context;
+        this.piSeasXmlHandler = new XmlPullParserHandler(context, id);
+
         this.id = id;
         this.pw = pw;
         this.name = name;
         this.type = type;
         this.size = size;
         this.desc = desc;
-        this.piSeasXmlHandler = new XmlPullParserHandler(context, id);
+
+        this.pump = new Pump(this);
     }
 
     /**
@@ -41,17 +57,18 @@ public class Tank implements Runnable {
      * @param context
      */
     public Tank(Context context, String id) {
-        android.util.Log.d("parse: ", context.getFilesDir().getAbsolutePath());
         FishyClient.retrieveMobileXmlData(id, context.getFilesDir().getAbsolutePath());
-        this.piSeasXmlHandler = new XmlPullParserHandler(context, id);
         this.context = context;
+        this.piSeasXmlHandler = new XmlPullParserHandler(context, id);
+
         this.id = id;
         this.pw = piSeasXmlHandler.getSettingsPassword();
         this.name = piSeasXmlHandler.getSettingsName();
-        this.type = (piSeasXmlHandler.getSettingsType()? 1 : 0); //TODO: change?  is it supposed to be boolean?
+        this.type = (piSeasXmlHandler.getSettingsType()? 1 : 0); //TODO: Boolean type
         this.size = piSeasXmlHandler.getSettingsSize();
         this.desc = piSeasXmlHandler.getSettingsDescription();
-        this.pump = new Pump(piSeasXmlHandler, context);
+
+        this.pump = new Pump(this);
     }
 
     public String getId() {
@@ -90,37 +107,47 @@ public class Tank implements Runnable {
         this.type = type;
     }
 
-
+    // References to the tank are available everywhere(tanklist), but the associated pump isn't
+    // Updating specific data should be tasked to the class itself
     public Pump getPump() {
         return this.pump;
     }
 
+    //
     public void updatePump() {
-        pump.saveXmlData(piSeasXmlHandler);
-        new UpdatePumpTask().execute();
+        pump.sendPumpSettingsToServer();
     }
+
+    // Not used yet
     @Override
     public void run() {
         FishyClient.retrieveMobileXmlData(id, context.getFilesDir().getAbsolutePath());
+        // Retrieve sensor data
     }
 
-    public void updateTankDetails() {
+    public void sendTankDetailsToServer() {
         new UpdateTankDetailsTask().execute();
     }
-    private class UpdatePumpTask extends AsyncTask<Void, Void, Integer> {
-        protected Integer doInBackground(Void ... voids) {
-            FishyClient.updatePump(id, pump.isManualDrain(), pump.isManualFill(), pump.isAuto());
-            FishyClient.retrieveMobileXmlData(id, context.getFilesDir().getAbsolutePath());
-            return Integer.parseInt("1");
+
+    // Asyc tasks used to seamlessly update the xml info without the user feel like they are waiting.
+    private class UpdateTankDetailsTask extends AsyncTask<Void, Void, Boolean> {
+        // Do in background
+        protected Boolean doInBackground(Void ... voids) {
+          return FishyClient.updateTankDetailsMobileSettings(id, name, pw, size, desc, (type == 1));
+        }
+        // Report error if no connection
+        protected void onPostExecute(Boolean result) {
+            if (!result)
+                Toast.makeText(context, "No internet connection;  Unable to update!", Toast.LENGTH_LONG).show();
         }
     }
 
-    private class UpdateTankDetailsTask extends AsyncTask<Void, Void, Integer> {
-        protected Integer doInBackground(Void ... voids) {
-            FishyClient.updateTankDetailsMobileSettings(id, name, pw, size, desc, (type == 1));
-            FishyClient.retrieveMobileXmlData(id, context.getFilesDir().getAbsolutePath());
-            return Integer.parseInt("1");
-        }
+
+    public XmlPullParserHandler getPiSeasXmlHandler() {
+        return piSeasXmlHandler;
     }
 
+    public Context getContext() {
+        return context;
+    }
 }

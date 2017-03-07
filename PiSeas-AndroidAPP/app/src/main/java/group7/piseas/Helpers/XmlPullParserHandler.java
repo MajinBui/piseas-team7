@@ -1007,4 +1007,8 @@ public class XmlPullParserHandler {
     public String getTankIdParser() {
         return id;
     }
+
+    public Context getContext() {
+        return context;
+    }
 }

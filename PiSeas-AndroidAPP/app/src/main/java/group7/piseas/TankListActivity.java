@@ -18,12 +18,10 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import group7.piseas.Adapters.TankAdapter;
 import group7.piseas.Objects.Tank;
-import piseas.network.FishyClient;
 
 public class TankListActivity extends AppCompatActivity {
 
@@ -90,22 +88,7 @@ public class TankListActivity extends AppCompatActivity {
             // TODO: Will need to setup again
             case R.id.serverSetup:
                 Log.i("LISTACTIVITY", "SERVER SET UP");
-                HashMap<String, String> dataList = new HashMap<String, String>();
-                dataList.put("tankId", "801");
-                dataList.put("pw", "108");
-                dataList.put("name", "");
-                dataList.put("type", 0+"");
-                dataList.put("size", 0+"");
-                dataList.put("desc", "");
-                //FishyClient.sendMobileXmlData("QWERT", this.getFilesDir().getAbsolutePath());
-
-                dataList.put("tankId", "802");
-                dataList.put("pw", "208");
-                dataList.put("name", "TESTER WITH DATA");
-                dataList.put("type", 1+"");
-                dataList.put("size", 2+"");
-                dataList.put("desc", "Just keep swimming");
-                //FishyClient.sendMobileXmlData("QWER", this.getFilesDir().getAbsolutePath());
+                Toast.makeText(this, "No more easy setup :(.  Use http://vanchaubui.com/fish_tanks/QWERT_mobile_settings.xml", Toast.LENGTH_LONG).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -153,17 +136,6 @@ public class TankListActivity extends AppCompatActivity {
             String tankCode = sharedPref.getString("code"+i, "0");
             Log.i("TANKLIST", "LOAD Tank Code" + tankCode);
             try {
-                /*FishyClient.retrieveServerData(tankCode + "");
-                if (!dataList.get("pw").isEmpty())
-                    pw = Integer.parseInt(dataList.get("pw"));
-                if (!dataList.get("name").isEmpty())
-                    name = "";
-                if (!dataList.get("desc").isEmpty())
-                    desc = dataList.get("desc");
-                if (!dataList.get("type").isEmpty())
-                    type = Integer.parseInt(dataList.get("type"));
-                if (!dataList.get("size").isEmpty())
-                    tankSize = Integer.parseInt(dataList.get("size"));*/
                 Log.i("TANKLIST", "LOAD ADD TANK " + tankCode + ", "+ pw + ", "+ name + ", "+ type + ", "+ size+ ", "+desc);
                 tankList.add(new Tank(getApplicationContext(), tankCode));
             } catch (NullPointerException e) {

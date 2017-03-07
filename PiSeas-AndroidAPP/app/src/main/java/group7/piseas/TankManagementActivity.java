@@ -1,5 +1,6 @@
 package group7.piseas;
 
+import group7.piseas.Adapters.SpinnerAdapter;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.StrictMode;
@@ -8,17 +9,16 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.List;
 
 import group7.piseas.Objects.Tank;
-import piseas.network.FishyClient;
-//import group7.piseas.Server.FishyClient;
+
 
 public class TankManagementActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 
@@ -36,10 +36,11 @@ public class TankManagementActivity extends AppCompatActivity implements Adapter
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tank_management);
 
         index = getIntent().getIntExtra("id", -100);
@@ -90,16 +91,18 @@ public class TankManagementActivity extends AppCompatActivity implements Adapter
         });
 
         spinner = (Spinner) findViewById(R.id.fishEditer);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.fish_size, android.R.layout.simple_spinner_item);
+
+        List<CharSequence> fishSizes = Arrays.asList((CharSequence[]) getResources().getStringArray(R.array.fish_size));
+        SpinnerAdapter adapter = new SpinnerAdapter(this, android.R.layout.simple_spinner_item, fishSizes);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(this);
 
         spinner2 = (Spinner) findViewById(R.id.sizeEditer);
-        ArrayAdapter<CharSequence> adapter2 = ArrayAdapter.createFromResource(this,
-                R.array.tank_size, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        List<CharSequence> tankSizes = Arrays.asList((CharSequence[]) getResources().getStringArray(R.array.tank_size));
+        SpinnerAdapter adapter2 = new SpinnerAdapter(this, android.R.layout.simple_spinner_item, tankSizes);
+        adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner2.setAdapter(adapter2);
         spinner2.setOnItemSelectedListener(this);
 
@@ -123,7 +126,7 @@ public class TankManagementActivity extends AppCompatActivity implements Adapter
             if (!dataList.get("size").isEmpty())
                 tankSize = Integer.parseInt(dataList.get("size"));
             */
-
+            //TODO: what was this for?
 //            FishyClient.retrieveServerData(tankCode+"");
 //            if (!dataList.get("name").isEmpty())
 //                name = ""; // name not saved in xml
@@ -154,10 +157,10 @@ public class TankManagementActivity extends AppCompatActivity implements Adapter
     private void update(int i){
         Log.i("Tank Management", "Update");
         TankListActivity.tankList.get(i).setName(name);
-        TankListActivity.tankList.get(i).setType(tankSize);
+        TankListActivity.tankList.get(i).setType(fishType);
         TankListActivity.tankList.get(i).setSize(tankSize);
         TankListActivity.tankList.get(i).setDesc(desc);
-        TankListActivity.tankList.get(i).updateTankDetails();
+        TankListActivity.tankList.get(i).sendTankDetailsToServer();
     }
 
     @Override

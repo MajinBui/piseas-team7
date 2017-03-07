@@ -63,7 +63,7 @@ public class AddTankActivity extends AppCompatActivity {
                         name, fishType, tankSize, desc);
                 TankListActivity.tankList.add(tank);
                 Log.i("AddTank", "NEW TANK ADDED" + TankListActivity.tankList.size());
-                tank.updateTankDetails();
+                tank.sendTankDetailsToServer();
             }
         }
         finish();
@@ -71,6 +71,8 @@ public class AddTankActivity extends AppCompatActivity {
 
     private boolean validate(String[] strings){
         Log.i("AddTank", "Validate: " + strings[0].toString() + strings[1].toString());
+        // id can be letters and numbers
+        // password can apparently be strings
         //if (onlyNums(strings[0])) { // check for digits and blanks
             //if(onlyNums(strings[1])){
                 for (Tank tank: TankListActivity.tankList){ //check for repeat
