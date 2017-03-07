@@ -2,8 +2,6 @@ package group7.piseas.Objects;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.os.Parcelable;
-import android.util.Log;
 import android.widget.Toast;
 
 import group7.piseas.Helpers.XmlPullParserHandler;
@@ -30,9 +28,9 @@ public class Tank implements Runnable {
     /**
      * Constructor for newly added tanks.
      * @param context
-     * @param id
-     * @param pw
-     * @param name
+     * @param id the id of the tank, should never be changed afterwords
+     * @param pw the password of the tank
+     * @param name the name of the tank
      * @param type
      * @param size
      * @param desc
@@ -53,7 +51,8 @@ public class Tank implements Runnable {
     }
 
     /**
-     * Constructor used to create values only based off of xml data.
+     * Constructor used to create values only based off of xml data.  Useful when you don't need to
+     * reinitialize data.
      * @param context
      */
     public Tank(Context context, String id) {
@@ -64,11 +63,19 @@ public class Tank implements Runnable {
         this.id = id;
         this.pw = piSeasXmlHandler.getSettingsPassword();
         this.name = piSeasXmlHandler.getSettingsName();
-        this.type = (piSeasXmlHandler.getSettingsType()? 1 : 0); //TODO: Boolean type
+        this.type = (piSeasXmlHandler.getSettingsType()? 1 : 0); //TODO: Boolean type; Should it stay or should it go? *Song plays in background*
         this.size = piSeasXmlHandler.getSettingsSize();
         this.desc = piSeasXmlHandler.getSettingsDescription();
 
         this.pump = new Pump(this);
+    }
+
+    /**
+     * Pull all current mobile settings from the server.
+     * @return success
+     */
+    public boolean retrieveMobileSettingsFromServer() {
+        return FishyClient.retrieveMobileXmlData(id, context.getFilesDir().getAbsolutePath());
     }
 
     public String getId() {
@@ -107,13 +114,18 @@ public class Tank implements Runnable {
         this.type = type;
     }
 
+    public XmlPullParserHandler getPiSeasXmlHandler() {
+        return piSeasXmlHandler;
+    }
+
+    public Context getContext() { return context; }
+
     // References to the tank are available everywhere(tanklist), but the associated pump isn't
     // Updating specific data should be tasked to the class itself
     public Pump getPump() {
         return this.pump;
     }
 
-    //
     public void updatePump() {
         pump.sendPumpSettingsToServer();
     }
@@ -140,14 +152,5 @@ public class Tank implements Runnable {
             if (!result)
                 Toast.makeText(context, "No internet connection;  Unable to update!", Toast.LENGTH_LONG).show();
         }
-    }
-
-
-    public XmlPullParserHandler getPiSeasXmlHandler() {
-        return piSeasXmlHandler;
-    }
-
-    public Context getContext() {
-        return context;
     }
 }

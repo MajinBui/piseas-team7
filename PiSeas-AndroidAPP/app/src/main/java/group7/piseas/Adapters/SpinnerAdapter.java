@@ -8,8 +8,9 @@ import java.util.List;
 
 /**
  * Created by Van on 2017-03-07.
- * Created to 'fix' the strange index out of bounds bug.  And by 'fix', I mean I still don't
- * understand why in tarnation this thing goes out of bounds.
+ * Created to 'fix' the strange index out of bounds bug.  Bug was caused by:
+ * 1.  Outdated android libraries
+ * 2.  Requirement to use an extended array adapter as the default spinner implementation accesses the same list causing outofbounds
  */
 
 public class SpinnerAdapter extends ArrayAdapter<CharSequence> {
@@ -30,10 +31,6 @@ public class SpinnerAdapter extends ArrayAdapter<CharSequence> {
 
     @Override
     public CharSequence getItem(final int position) {
-        // Stops the over extending of arrays
-        if (position >= items.size()) {
-            return this.items.get(items.size()-1);
-        }
         return this.items.get(position);
     }
 

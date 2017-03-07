@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import group7.piseas.Helpers.TankTimer;
 
-//com.sun.org.apache.xerces.internal.dom.DeferredDocumentImpl
 public class TankMainPageActivity extends AppCompatActivity {
     static int index;
 
@@ -59,6 +58,7 @@ public class TankMainPageActivity extends AppCompatActivity {
     public void onWaterFlowClick(View view){
         Intent i = new Intent(this, WaterLevelManagementActivity.class);
         i.putExtra("id", index);
+        // TODO:  call tank.retrieveMobileSettingsFromServer() here to pull from server first
         startActivity(i);
     }
     public void onTemperatureClick(View view){

@@ -9,8 +9,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import group7.piseas.Helpers.XmlPullParserHandler;
-
 public class WaterAnalysisManagementActivity extends AppCompatActivity {
     NumberPicker lowPH;
     NumberPicker highPH;
@@ -33,12 +31,10 @@ public class WaterAnalysisManagementActivity extends AppCompatActivity {
         autoCon = (Switch) findViewById(R.id.enableCCheck);
         autoPH = (Switch) findViewById(R.id.enablePH);
 
-        XmlPullParserHandler parser = new XmlPullParserHandler(this, "1");
-
         lowPH.setMinValue(0);
         lowPH.setMaxValue(14);
         lowPH.setWrapSelectorWheel(false);
-        lowPH.setValue((int)parser.getSettingsPHMin());
+        lowPH.setValue(0);
 
         highPH.setMinValue(0);
         highPH.setMaxValue(14);

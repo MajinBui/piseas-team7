@@ -1,11 +1,8 @@
 package group7.piseas.Objects;
 
-import android.content.Context;
 import android.os.AsyncTask;
-import android.view.ContextThemeWrapper;
 import android.widget.Toast;
 
-import group7.piseas.Helpers.XmlPullParserHandler;
 import piseas.network.FishyClient;
 
 /**
@@ -19,19 +16,22 @@ public class Pump {
     private Tank tank;
 
     public Pump(Tank tank) {
-        this.tank = tank;
+        this.tank = tank;  // Reference to main to keep Id and keep the same XMLParser
         loadLocalXmlData();
     }
 
-    // Load all local data
+    /**
+     * Load from local xml.   Should be called before a view that requires the data is loaded.
+     */
     public void loadLocalXmlData() {
-        FishyClient.retrieveMobileXmlData(tank.getId(), tank.getContext().getFilesDir().getAbsolutePath());
         auto = tank.getPiSeasXmlHandler().getSettingsAutoWaterChange();
         manualDrain = tank.getPiSeasXmlHandler().getSettingsDrain();
         manualFill = tank.getPiSeasXmlHandler().getSettingsFill();
     }
 
-    // Save to server
+    /**
+     * Send the current PumpSettings to the server based on the values set in the OBJECT, not the xml
+     */
     public void sendPumpSettingsToServer() {
         new UpdatePumpTask().execute();
     }
@@ -47,6 +47,9 @@ public class Pump {
                 Toast.makeText(tank.getContext(), "No internet connection;  Unable to pump details!", Toast.LENGTH_LONG).show();
         }
     }
+
+    // Setters must set the object attribute and modify the xml locally
+
     public void setAuto(boolean auto) {
         this.auto = auto;
         tank.getPiSeasXmlHandler().setAutoWaterChange(auto);
@@ -62,6 +65,7 @@ public class Pump {
         tank.getPiSeasXmlHandler().setDrain(manualDrain);
     }
 
+    // Getters
     public boolean isAuto() {
         return auto;
     }

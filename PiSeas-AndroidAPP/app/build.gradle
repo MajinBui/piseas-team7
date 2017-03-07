@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "24.0.2"
+    buildToolsVersion '25.0.0'
     defaultConfig {
         applicationId "group7.piseas"
         minSdkVersion 19
@@ -31,5 +31,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.0.0'
     compile 'com.android.support:design:25.0.0'
     testCompile 'junit:junit:4.12'
-    compile files('C:/Users/Van/workspace/Team07Repo/PiSeas-AndroidAPP/libs/fishyServer.jar')
+    compile rootProject.files('libs/fishyServer.jar')
 }
