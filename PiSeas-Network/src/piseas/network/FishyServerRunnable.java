@@ -563,7 +563,7 @@ public class FishyServerRunnable implements Runnable {
 			Document document = dBuilder.parse(file);
 			
 			XPath xpath = XPathFactory.newInstance().newXPath();
-			NodeList dateNode = (NodeList) xpath.evaluate(DATE_XPATH_EXPRESSION, document, XPathConstants.NODESET);
+			NodeList dateNode = (NodeList) xpath.evaluate(NetworkConstants.XPATH_PASSWORD, document, XPathConstants.NODESET);
 			
 			outToClient.writeObject(dateNode.item(0).getNodeValue());
 		} catch (FileNotFoundException e){

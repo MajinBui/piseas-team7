@@ -15,6 +15,7 @@ public class NetworkConstants {
 	
 	public static final String FILE_LOCATION_FORMAT = "%s%s%s%s";
 	
+	public static final String XPATH_PASSWORD = "/Piseas/Tank/details/@password";
 	public static final String XPATH_TANK = "/Piseas/Tank";
 	public static final String XPATH_TANK_DETAILS = "/Piseas/Tank/details";
 	public static final String XPATH_TEMPERATURE = "/Piseas/Temperature";
