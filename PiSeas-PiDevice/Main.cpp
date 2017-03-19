@@ -23,7 +23,8 @@ void printTime(LightSchedule &ls) {
 			<< it->getTime().tm_hour << ":"
 			<< it->getTime().tm_min << ":"
 			<< it->getTime().tm_sec << " State = "
-			<< it->getState() << std::endl;
+			<< it->getState() << " Manual = "
+			<< ls.getManual() << std::endl;
 		it++;
 	}
 
@@ -55,8 +56,8 @@ void updateTemperature(TempData &td) {
 }
 
 void updateData(Tank &t){
-		updateLight(t.getLightSchedule());
-		updateTemperature(t.getTemperatureData());
+	updateLight(t.getLightSchedule());
+	updateTemperature(t.getTemperatureData());
 }
 
 int main() {
@@ -67,11 +68,15 @@ int main() {
 		updateData(t);
 
 		std::thread lightThread;
-		std::thread temperatureThread(&TempData::regulate, t.getTemperatureData(), false);
-
+		std::thread temperatureThread(&TempData::regulate, t.getTemperatureData());
+		
 		if(t.getLightSchedule().getAutoRegulate()){
-			lightThread = std::thread(&LightSchedule::regulate, std::ref(t.getLightSchedule().getSchedule()), false);
+			lightThread = std::thread(&LightSchedule::regulate, t.getLightSchedule().getSchedule());
 		}
+		else {
+			LightSchedule::toggleLight(t.getLightSchedule().getManual());
+		}
+		
 		if(t.getLightSchedule().getAutoRegulate()){
 			lightThread.join();
 		}

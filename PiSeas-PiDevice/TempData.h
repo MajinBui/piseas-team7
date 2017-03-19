@@ -13,6 +13,8 @@ public:
 	float getMax();
 	bool getAutoRegulate();
 	static float getTemp();
-	static void regulate(TempData, bool);
+	static void regulate(TempData);
+	static void toggleFan(bool);
+	static void toggleHeater(bool);
 };
 #endif

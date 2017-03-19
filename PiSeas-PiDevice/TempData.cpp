@@ -11,8 +11,8 @@ TempData::TempData() {
 	pinMode(FAN_PIN, OUTPUT);
 	pinMode(HEATER_PIN, OUTPUT);
 	
-	digitalWrite(FAN_PIN, LOW);
-	digitalWrite(HEATER_PIN, LOW);
+	TempData::toggleFan(false);
+	TempData::toggleHeater(false);
 }
 TempData::TempData(float min, float max, bool autoReg){
 	tempeSettings.setData(min, max, autoReg);
@@ -54,22 +54,31 @@ float TempData::getTemp(){
 	
 	return temperature;
 }
-void TempData::regulate(TempData tempData, bool manual){
+
+void TempData::regulate(TempData tempData){
 	
 	float curTemp = TempData::getTemp();
 	
 	if(curTemp > tempData.getMax()){
-		digitalWrite(FAN_PIN, HIGH);
+		TempData::toggleFan(true);
 	}
 	else if(curTemp <= tempData.getMax() && curTemp >= tempData.getMin()){
-		digitalWrite(FAN_PIN, LOW);
-		digitalWrite(HEATER_PIN, LOW);
+		TempData::toggleFan(false);
+		TempData::toggleHeater(false);
 	}
 	else if(curTemp < tempData.getMin()){
-		digitalWrite(HEATER_PIN, HIGH);
+		TempData::toggleHeater(true);
 	}
 	std::cout << std::fixed << std::setprecision(2)
 	<< "Cur Temp = " << TempData::getTemp() << "°C" << std::endl;
 	
+}
+
+void TempData::toggleFan(bool state){
+	digitalWrite(FAN_PIN, state);
+}
+
+void TempData::toggleHeater(bool state){
+	digitalWrite(HEATER_PIN, state);
 }
 
