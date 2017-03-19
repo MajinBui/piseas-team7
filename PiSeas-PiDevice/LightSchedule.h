@@ -11,11 +11,13 @@ class LightSchedule{
 public:
 	LightSchedule();
 	LightSchedule(std::list<LightAction>, bool);
-	std::list<LightAction> getSchedule();
+	std::list<LightAction>& getSchedule();
 	void setSchedule(std::list<LightAction>, bool);
-	void addLightAction(tm, bool);
-	void setAutoRegulate(bool);
 	bool getAutoRegulate();
-	static void regulate(std::list<LightAction>, bool);
+	void setAutoRegulate(bool);
+	void addLightAction(tm, bool);
+	void updateLightAction(LightAction, LightAction);
+	void removeLightAction(LightAction);
+	static void regulate(std::list<LightAction>&, bool);
 };
 #endif

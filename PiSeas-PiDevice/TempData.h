@@ -6,7 +6,7 @@ class TempData {
 	DataRange tempeSettings;
 	
 public:
-	TempData() {}
+	TempData();
 	TempData(float, float, bool);
 	void setTempData(float, float, bool);
 	float getMin();

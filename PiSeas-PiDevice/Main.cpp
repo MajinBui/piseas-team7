@@ -44,12 +44,6 @@ void setup(){
 	
 	system("sudo modprobe w1-gpio");
 	system("sudo modprobe w1-therm");
-	
-	pinMode(LIGHT_PIN, OUTPUT);
-	pinMode(FAN_PIN, OUTPUT);
-	
-	digitalWrite(LIGHT_PIN, LOW);
-	digitalWrite(FAN_PIN, LOW);
 }
 
 void updateLight(LightSchedule &ls) {
@@ -66,8 +60,8 @@ void updateData(Tank &t){
 }
 
 int main() {
-	Tank t;
 	setup();
+	Tank t;
 
 	for(;;){
 		updateData(t);
@@ -76,7 +70,7 @@ int main() {
 		std::thread temperatureThread(&TempData::regulate, t.getTemperatureData(), false);
 
 		if(t.getLightSchedule().getAutoRegulate()){
-			lightThread = std::thread(&LightSchedule::regulate, t.getLightSchedule().getSchedule(), false);
+			lightThread = std::thread(&LightSchedule::regulate, std::ref(t.getLightSchedule().getSchedule()), false);
 		}
 		if(t.getLightSchedule().getAutoRegulate()){
 			lightThread.join();

@@ -7,6 +7,13 @@
 #include <iomanip>
 #include <iostream>
 
+TempData::TempData() {
+	pinMode(FAN_PIN, OUTPUT);
+	pinMode(HEATER_PIN, OUTPUT);
+	
+	digitalWrite(FAN_PIN, LOW);
+	digitalWrite(HEATER_PIN, LOW);
+}
 TempData::TempData(float min, float max, bool autoReg){
 	tempeSettings.setData(min, max, autoReg);
 }
@@ -56,9 +63,10 @@ void TempData::regulate(TempData tempData, bool manual){
 	}
 	else if(curTemp <= tempData.getMax() && curTemp >= tempData.getMin()){
 		digitalWrite(FAN_PIN, LOW);
+		digitalWrite(HEATER_PIN, LOW);
 	}
 	else if(curTemp < tempData.getMin()){
-	
+		digitalWrite(HEATER_PIN, HIGH);
 	}
 	std::cout << std::fixed << std::setprecision(2)
 	<< "Cur Temp = " << TempData::getTemp() << "°C" << std::endl;
