@@ -26,6 +26,7 @@ public class AddTankActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
 
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_add_tank);
         final EditText edit1 = (EditText) findViewById(R.id.codeEditer);
         final EditText edit2 = (EditText) findViewById(R.id.passwordEditer);
@@ -103,12 +104,12 @@ public class AddTankActivity extends AppCompatActivity {
         return false;*/
     }
 
-    private boolean onlyNums(String str) {
+    /*private boolean onlyNums(String str) {
         try {
             Long.parseLong(str);
             return true;
         } catch (NumberFormatException ex) {
             return false;
         }
-    }
+    }*/
 }

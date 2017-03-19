@@ -63,13 +63,15 @@ public class XmlPullParserHandler {
     private String parseSensor(String TAG_NAME, String attribute){
         String code = "-";
         try{
-            is = context.getAssets().open(id + "_sensor_data.xml");
+            File file = new File(context.getFilesDir() + "/" + id + "_sensor_data.xml");
+
+            FileInputStream fis = new FileInputStream(file);
+
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
             XmlPullParser parser = factory.newPullParser();
 
-            is.reset();
-            parser.setInput(is, null);
+            parser.setInput(fis, null);
 
             int event;
 
@@ -79,14 +81,15 @@ public class XmlPullParserHandler {
                     if (TAG_NAME.equals(tag)) {
                         //code = parser.getAttributeName(0);
                         code = parser.getAttributeValue(null, attribute);
-                        is.close();
+                        fis.close();
                         return code;
                     }
                 }
             }
-            is.close();
-        } catch (XmlPullParserException e) {e.printStackTrace();}
-        catch ( IOException e ) {
+            fis.close();
+        } catch (XmlPullParserException e) {
+            e.printStackTrace();
+        } catch ( IOException e) {
             e.printStackTrace();
         }
 

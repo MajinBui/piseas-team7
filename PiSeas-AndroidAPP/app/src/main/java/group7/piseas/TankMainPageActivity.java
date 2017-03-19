@@ -7,12 +7,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import group7.piseas.Helpers.TankTimer;
+import piseas.network.FishyClient;
 
 public class TankMainPageActivity extends AppCompatActivity {
     static int index;
-
     TextView temperatureTextView;
     TextView pHTextView;
     private long UPDATE_VALUE_DELAY = 10000;
@@ -31,6 +32,7 @@ public class TankMainPageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tank_main_page);
         index = getIntent().getIntExtra("id", -1);
         TextView tv = (TextView) findViewById(R.id.tankName);
+
         try {
             tv.setText("Tank: " + TankListActivity.tankList.get(index).getName());
         } catch (IndexOutOfBoundsException e) {
@@ -40,6 +42,7 @@ public class TankMainPageActivity extends AppCompatActivity {
         temperatureTextView = (TextView) findViewById(R.id.temperatureValueTextView);
         pHTextView = (TextView) findViewById(R.id.pHValueTextView);
         handler.postDelayed(runnable, UPDATE_VALUE_DELAY);
+        updatePage();
     }
 
     public void onFeedingClick(View view){
@@ -92,5 +95,18 @@ public class TankMainPageActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         handler.postDelayed(runnable, UPDATE_VALUE_DELAY);
+    }
+
+    protected void updatePage(){
+        if (index != -1){
+            FishyClient.retrieveSensorData(TankListActivity.tankList.get(index).getId(), getFilesDir().getAbsolutePath().toString());
+            temperatureTextView.setText(String.valueOf(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSensorCurrentTemp()) +
+                "\u00b0C");
+            pHTextView.setText(String.valueOf(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSensorPH()));
+        }
+        else
+        Toast.makeText(getBaseContext(),
+                "Error while updating page",
+                Toast.LENGTH_LONG).show();
     }
 }
