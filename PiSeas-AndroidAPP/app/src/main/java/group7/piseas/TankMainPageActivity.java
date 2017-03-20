@@ -47,11 +47,14 @@ public class TankMainPageActivity extends AppCompatActivity {
 
     public void onFeedingClick(View view){
         Intent i = new Intent(this, FeedingManagementActivity.class);
+        i.putExtra("id", index);
         startActivity(i);
     }
-    public void onLightingClick(View view){
+    public void onLightingClick(View view) {
         Intent i = new Intent(this, LightManagementActivity.class);
-        startActivity(i);}
+        i.putExtra("id", index);
+        startActivity(i);
+    }
 
     public void onWaterAnalysisClick(View view){
         Intent i = new Intent(this, WaterAnalysisManagementActivity.class);
@@ -66,6 +69,7 @@ public class TankMainPageActivity extends AppCompatActivity {
     }
     public void onTemperatureClick(View view){
         Intent i = new Intent(this, TemperatureManagementActivity.class);
+        i.putExtra("id", index);
         startActivity(i);
     }
     public void onTankInfoClick(View view){

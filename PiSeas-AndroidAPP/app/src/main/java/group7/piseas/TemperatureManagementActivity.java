@@ -99,6 +99,7 @@ public class TemperatureManagementActivity extends AppCompatActivity {
                 }
             });
             aD.show();
+            validateAuto();
         }
         else{
             Toast.makeText( this, "There is no temperature range to remove.", Toast.LENGTH_LONG ).show();

@@ -18,8 +18,8 @@ public class FeedSchedule {
         min = mn;
     }
 
-    public void setWeek(int day){
-        week[day] = true;
+    public void setWeek(int day, boolean set){
+        week[day] = set;
     }
 
     public boolean getWeek(int day){

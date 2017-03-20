@@ -9,6 +9,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import piseas.network.FishyClient;
+
 public class WaterAnalysisManagementActivity extends AppCompatActivity {
     NumberPicker lowPH;
     NumberPicker highPH;
@@ -16,6 +18,7 @@ public class WaterAnalysisManagementActivity extends AppCompatActivity {
     NumberPicker highCon;
     Switch autoPH;
     Switch autoCon;
+    int index;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,6 +26,7 @@ public class WaterAnalysisManagementActivity extends AppCompatActivity {
         int index = getIntent().getIntExtra("id", -1);
         TextView tv = (TextView) findViewById(R.id.tankName);
         tv.setText("Tank: " + TankListActivity.tankList.get(index).getName());
+        index = getIntent().getIntExtra("id", -1);
 
         lowPH = (NumberPicker) findViewById(R.id.pHMinInput);
         highPH = (NumberPicker) findViewById(R.id.pHMaxInput);
@@ -51,15 +55,17 @@ public class WaterAnalysisManagementActivity extends AppCompatActivity {
         highCon.setWrapSelectorWheel(false);
         highCon.setValue(0);
 
+        populatePage();
+
     }
 
     public void validateAuto(){
         //validation for automation
-        if(lowCon.getValue() >= highCon.getValue()){
+        if(lowCon.getValue() > highCon.getValue()){
             autoCon.setOnClickListener(new CompoundButton.OnClickListener(){
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getBaseContext(), "Can not enable, create schedule first",
+                    Toast.makeText(getBaseContext(), "Can not enable, configure settings first",
                             Toast.LENGTH_LONG).show();
                     autoCon.setChecked(false);
                 }
@@ -72,11 +78,11 @@ public class WaterAnalysisManagementActivity extends AppCompatActivity {
                 }
             });
 
-        if(lowPH.getValue() >= highPH.getValue()){
+        if(lowPH.getValue() > highPH.getValue()){
             autoPH.setOnClickListener(new CompoundButton.OnClickListener(){
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getBaseContext(), "Can not enable, create schedule first",
+                    Toast.makeText(getBaseContext(), "Can not enable, configure settings first",
                             Toast.LENGTH_LONG).show();
                     autoPH.setChecked(false);
                 }
@@ -96,7 +102,13 @@ public class WaterAnalysisManagementActivity extends AppCompatActivity {
                     Toast.LENGTH_LONG).show();
         } else {//add server call
             validateAuto();
+            //TODO : write to server
             finish();
         }
+    }
+
+    public void populatePage(){
+        FishyClient.retrieveMobileXmlData(TankListActivity.tankList.get(index).getId(), getFilesDir().getAbsolutePath().toString());
+
     }
 }

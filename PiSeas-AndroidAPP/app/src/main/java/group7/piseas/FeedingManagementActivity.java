@@ -5,6 +5,8 @@ import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ListView;
@@ -17,26 +19,31 @@ import java.util.List;
 
 import group7.piseas.Adapters.FeedingAdapter;
 import group7.piseas.Objects.FeedSchedule;
-import group7.piseas.Server.FishyClient;
+import piseas.network.FishyClient;
 
 public class FeedingManagementActivity extends AppCompatActivity {
     private List<FeedSchedule> feeds;
     private ListView listView;
     private final String tankID = "Matt";
     Switch autoFeed;
+    private int index;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feeding_management);
         autoFeed = (Switch) findViewById(R.id.autoLight);
+        index = getIntent().getIntExtra("id", -1);
 
         populateList();
+        validateAuto();
     }
 
-    public void onManualFeed(View view){
+    public void onManualFeed(View view){  //TODO: add manual validation
         Toast.makeText(this, "Fish are fed manually", Toast.LENGTH_LONG).show();
     }
 
@@ -48,16 +55,16 @@ public class FeedingManagementActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         Log.i("ONRESUME", "");
-        populateList();
         super.onResume();
+        populateList();
+        validateAuto();
     }
 
     private void populateList(){
-        feeds = new ArrayList<FeedSchedule>();
-
-        getData();
+        feeds =  getData();
 
         listView = (ListView) findViewById(R.id.list_schedule);
+        //TODO: add delete option with context menu
 
         FeedingAdapter adapter = new FeedingAdapter(this, R.layout.days_list_items, feeds);
 
@@ -65,11 +72,14 @@ public class FeedingManagementActivity extends AppCompatActivity {
         validateAuto();
     }
 
-    public void getData(){
-        String[] days = new String[]{"Sunday", "Monday", "Tuesday",
+    public ArrayList<FeedSchedule> getData(){
+       /* String[] days = new String[]{"Sunday", "Monday", "Tuesday",
                 "Wednesday", "Thursday", "Friday", "Saturday"};
-        String divider = "<br/>";
+        String divider = "<br/>";*/
 
+        FishyClient.retrieveMobileXmlData(TankListActivity.tankList.get(index).getId(), getFilesDir().getAbsolutePath().toString());
+        return TankListActivity.tankList.get(index).getPiSeasXmlHandler().getFeedSchedules();
+        /*
         HashMap<String, String> retrieveList = FishyClient.retrieveServerData(tankID);
 
         for(int i=0; i<7; i++){
@@ -94,12 +104,12 @@ public class FeedingManagementActivity extends AppCompatActivity {
                     }
                 }
             }
-        }
+        }*/
     }
 
     public void validateAuto(){
         //validation for automation
-        if(feeds.isEmpty()){
+        if(feeds == null ||feeds.isEmpty()){
             autoFeed.setOnClickListener(new CompoundButton.OnClickListener(){
                 @Override
                 public void onClick(View v) {
@@ -119,7 +129,7 @@ public class FeedingManagementActivity extends AppCompatActivity {
 
     @Override
     protected void onRestart() {
-        validateAuto();
         super.onRestart();
+        populateList();
     }
 }

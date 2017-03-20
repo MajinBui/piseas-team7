@@ -9,17 +9,17 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import java.util.HashMap;
-
 import group7.piseas.Adapters.LightAdapter;
 import group7.piseas.Objects.LightSchedule;
-import group7.piseas.Server.FishyClient;
-import static group7.piseas.R.id.autoLight;
+//import group7.piseas.Server.FishyClient;
+import piseas.network.FishyClient;
+
 
 
 public class LightManagementActivity extends AppCompatActivity {
@@ -28,6 +28,7 @@ public class LightManagementActivity extends AppCompatActivity {
     private Switch manual;
     private List<LightSchedule> lights;
     private ListView listView;
+    private int index;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +36,7 @@ public class LightManagementActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_light_managment);
+        index = getIntent().getIntExtra("id", -1);
 
         populateList();
 
@@ -47,6 +49,8 @@ public class LightManagementActivity extends AppCompatActivity {
                     auto.setChecked(false);
             }
         });
+
+        validateAuto();
     }
 
     public void addSchedule(View view) {
@@ -71,7 +75,7 @@ public class LightManagementActivity extends AppCompatActivity {
     }
 
     private void getData() {
-        HashMap<String, String> retrieveList = FishyClient.retrieveServerData(tankID);
+        /*HashMap<String, String> retrieveList = FishyClient.retrieveServerData(tankID);
         String divider = "<br/>";
         String light = "Lights";
 
@@ -88,6 +92,32 @@ public class LightManagementActivity extends AppCompatActivity {
                 LightSchedule dayLight = new LightSchedule(hOn, hOff, mOn, mOff);
                 lights.add(dayLight);
                 }
-            }
+            }*/
+    }
+    public void validateAuto(){
+        //validation for automation
+        if(lights == null ||lights.isEmpty()){
+            auto.setOnClickListener(new CompoundButton.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getBaseContext(), "Can not enable, create schedule first",
+                            Toast.LENGTH_LONG).show();
+                    auto.setChecked(false);
+                }
+            });
+        }
+        else
+            auto.setOnClickListener(new CompoundButton.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                }
+            });
+           auto.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton manual, boolean isChecked) {
+                    if (isChecked)
+                        manual.setChecked(false);
+                }
+            });
+
     }
 }
