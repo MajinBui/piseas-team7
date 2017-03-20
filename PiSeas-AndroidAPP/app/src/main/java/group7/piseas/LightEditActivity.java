@@ -205,4 +205,3 @@ public class LightEditActivity extends Activity{
     }
 }
 
-//http://vanchaubui.com/fish_tanks/Matt.html

@@ -8,6 +8,7 @@ import android.os.StrictMode;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
@@ -17,7 +18,7 @@ import android.widget.Toast;
 import java.util.HashMap;
 
 import group7.piseas.Helpers.TankTimer;
-import group7.piseas.Server.FishyClient;
+import piseas.network.FishyClient;
 
 public class TemperatureManagementActivity extends AppCompatActivity {
     private String minTemp;
@@ -25,7 +26,7 @@ public class TemperatureManagementActivity extends AppCompatActivity {
     private TextView minTempTable;
     private TextView maxTempTable;
     Switch auto;
-
+    int index;
     private TextView curTempTV;
     private long UPDATE_VALUE_DELAY = 10000;
     Handler handler = new Handler();
@@ -44,27 +45,27 @@ public class TemperatureManagementActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_temperature_management);
+        index = getIntent().getIntExtra("id", -1);
 
         minTempTable = (TextView) findViewById(R.id.minTempValTV);
         maxTempTable = (TextView) findViewById(R.id.maxTempValTV);
         auto = (Switch) findViewById(R.id.enableTempRegSW);
-
         curTempTV = (TextView)findViewById(R.id.curTempTV);
+
         handler.postDelayed(runnable, UPDATE_VALUE_DELAY);
+
         fillTable();
     }
 
     public void onUpdateTempClick(View view){
         Intent i = new Intent(this, TemperatureUpdateActivity.class);
+        i.putExtra("id", index);
         startActivity(i);
     }
     public void onRemoveTemperatureRangeClick(View view){
-        SharedPreferences sharedPref = getSharedPreferences("piseas", MODE_PRIVATE);
-        String min = sharedPref.getString("Min Temp", "").toString();
-
-        if(!min.equals("")){
+        if( TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsMinTemp()!= 0){
             AlertDialog aD = new AlertDialog.Builder(this).create();
-            aD.setTitle("Save this temperature range?\n" + "Min : " + minTemp + " Max : " + maxTemp);
+            aD.setTitle("Remove temperature range?\n" + "Min : " + minTemp + " Max : " + maxTemp);
             aD.setButton(AlertDialog.BUTTON_NEUTRAL, "Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
@@ -73,23 +74,15 @@ public class TemperatureManagementActivity extends AppCompatActivity {
                     if(s.isChecked())
                         s.setChecked(false);
 
-                    String tankID = "Mike";
-                    SharedPreferences.Editor sharedPrefEdit = getSharedPreferences("piseas",
-                            MODE_PRIVATE).edit();
+                    TankListActivity.tankList.get(index).getPiSeasXmlHandler().setMaxTemp(0);
+                    TankListActivity.tankList.get(index).getPiSeasXmlHandler().setMinTemp(0);
+                    TankListActivity.tankList.get(index).getPiSeasXmlHandler().setAutoTemp(false);
 
-                    HashMap<String, String> dataList = new HashMap<String, String>();
-                    dataList.put("Min Temp", "");
-                    dataList.put("Max Temp", "");
-                    FishyClient.writeToServerData(tankID, dataList);
-
-                    minTempTable.setText("");
-                    maxTempTable.setText("");
-
-                    sharedPrefEdit.putString("Min Temp", "");
-                    sharedPrefEdit.putString("Max Temp", "");
-                    sharedPrefEdit.apply();
+                    minTempTable.setText("0.0");
+                    maxTempTable.setText("0.0");
 
                     dialogInterface.dismiss();
+                    update();
                 }
             });
             aD.setButton(AlertDialog.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener(){
@@ -106,13 +99,17 @@ public class TemperatureManagementActivity extends AppCompatActivity {
         }
     }
     public void fillTable(){
-        SharedPreferences sharedPref = getSharedPreferences("piseas", MODE_PRIVATE);
 
-        minTemp = sharedPref.getString("Min Temp", "").toString();
-        maxTemp = sharedPref.getString("Max Temp", "").toString();
+        FishyClient.retrieveMobileXmlData(TankListActivity.tankList.get(index).getId(), getFilesDir().getAbsolutePath().toString());
+        minTemp =  String.valueOf(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsMinTemp());
+        maxTemp =  String.valueOf(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsMaxTemp());
+
+        //auto.setChecked(TankListActivity.tankList.get(index).getPiSeasXmlHandler().);
+        //TODO: get auto temperature function missing from parser
 
         minTempTable.setText(minTemp);
         maxTempTable.setText(maxTemp);
+        curTempTV.setText(String.valueOf(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSensorCurrentTemp()));
 
         validateAuto();
     }
@@ -121,6 +118,7 @@ public class TemperatureManagementActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         handler.removeCallbacks(runnable);
+        update();
     }
 
     @Override
@@ -140,7 +138,7 @@ public class TemperatureManagementActivity extends AppCompatActivity {
 
     public void validateAuto(){
         //validation for automation
-        if(minTempTable.getText() == "" || maxTempTable.getText() == "" ){
+        if(minTempTable.getText() == "0.0" && maxTempTable.getText() == "0.0" ){
             auto.setOnClickListener(new CompoundButton.OnClickListener(){
                 @Override
                 public void onClick(View v) {
@@ -150,11 +148,28 @@ public class TemperatureManagementActivity extends AppCompatActivity {
                 }
             });
         }
-        else auto.setOnClickListener(new CompoundButton.OnClickListener(){
-            @Override
-            public void onClick(View v) {
+        else {
+            auto.setOnClickListener(new CompoundButton.OnClickListener(){
+                @Override
+                public void onClick(View v) {
 
-            }
-        });
+                }
+            });
+            auto.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton manual, boolean isChecked) {
+                    if (isChecked){
+                        TankListActivity.tankList.get(index).getPiSeasXmlHandler().setAutoTemp(true);
+                    }
+                    else {
+                        TankListActivity.tankList.get(index).getPiSeasXmlHandler().setAutoTemp(false);
+                    }
+                }
+            });
+
+        }
+    }
+
+    public void update(){
+        FishyClient.sendMobileXmlData(TankListActivity.tankList.get(index).getId(), getFilesDir().getAbsolutePath().toString());
     }
 }

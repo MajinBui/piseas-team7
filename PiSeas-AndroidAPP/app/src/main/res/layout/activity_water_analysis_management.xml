@@ -195,6 +195,7 @@
             android:text="WC Level : "
             android:layout_weight="1"
             android:textAlignment="center"
+            android:id="@+id/conDisplay"
             />
     </LinearLayout>
 

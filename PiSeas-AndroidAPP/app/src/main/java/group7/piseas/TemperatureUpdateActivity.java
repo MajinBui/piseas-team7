@@ -10,9 +10,7 @@ import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import java.util.HashMap;
-
-import group7.piseas.Server.FishyClient;
+import piseas.network.FishyClient;
 
 /**
  * Created by Mike on 11/27/2016.
@@ -31,6 +29,7 @@ public class TemperatureUpdateActivity extends AppCompatActivity {
     private static String tankID = "Mike";
     private TextView minTempTable;
     private TextView maxTempTable;
+    int index;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +38,7 @@ public class TemperatureUpdateActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_temperature_update);
-
+        index = getIntent().getIntExtra("id", -1);
         minTempTable = (TextView) findViewById(R.id.minTempValTV);
         maxTempTable = (TextView) findViewById(R.id.maxTempValTV);
 
@@ -118,19 +117,14 @@ public class TemperatureUpdateActivity extends AppCompatActivity {
                 SharedPreferences.Editor sharedPrefEdit = getSharedPreferences("piseas",
                         MODE_PRIVATE).edit();
 
-                HashMap<String, String> dataList = new HashMap<String, String>();
-                dataList.put("Min Temp", String.valueOf(minTemp) + "°C");
-                dataList.put("Max Temp", String.valueOf(maxTemp) + "°C");
-                FishyClient.writeToServerData(tankID, dataList);
-
-                sharedPrefEdit.putString("Min Temp", String.valueOf(minTemp) + "°C");
-                sharedPrefEdit.putString("Max Temp", String.valueOf(maxTemp) + "°C");
-                sharedPrefEdit.apply();
+                TankListActivity.tankList.get(index).getPiSeasXmlHandler().setMaxTemp(maxTemp);
+                TankListActivity.tankList.get(index).getPiSeasXmlHandler().setMinTemp(minTemp);
 
                 minTempTable.setText(String.valueOf(minTemp) + "°C");
                 maxTempTable.setText(String.valueOf(maxTemp) + "°C");
 
                 dialogInterface.dismiss();
+                FishyClient.sendMobileXmlData(TankListActivity.tankList.get(index).getId(), getFilesDir().getAbsolutePath().toString());
                 finish();
             }
         });
@@ -144,10 +138,9 @@ public class TemperatureUpdateActivity extends AppCompatActivity {
     }
 
     public void fillTable(){
-        SharedPreferences sharedPref = getSharedPreferences("piseas", MODE_PRIVATE);
-
-        minimumTemp = sharedPref.getString("Min Temp", "").toString();
-        maximumTemp = sharedPref.getString("Max Temp", "").toString();
+        FishyClient.retrieveMobileXmlData(TankListActivity.tankList.get(index).getId(), getFilesDir().getAbsolutePath().toString());
+        minimumTemp =  String.valueOf(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsMinTemp());
+        maximumTemp =  String.valueOf(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsMaxTemp());
 
         minTempTable.setText(minimumTemp);
         maxTempTable.setText(maximumTemp);

@@ -151,7 +151,7 @@ public class FeedingEditActivity extends AppCompatActivity {
                     boolean found = false;
                      for (FeedSchedule feed : schedule) {
                          if (feed.getTime().equals(aSeparate)) {
-                            feed.setWeek(i);
+                            feed.setWeek(i, true);
                             found = true;
                         }
                     }
@@ -160,7 +160,7 @@ public class FeedingEditActivity extends AppCompatActivity {
                          int hr = Integer.parseInt(timeSplit[0]);
                          int min = Integer.parseInt(timeSplit[1]);
                         FeedSchedule dayFeed = new FeedSchedule(hr, min);
-                        dayFeed.setWeek(i);
+                        dayFeed.setWeek(i, true);
                         schedule.add(dayFeed);
 
                     }
@@ -192,7 +192,7 @@ public class FeedingEditActivity extends AppCompatActivity {
                     Toast.makeText(this, "Can only have 2 feeds per day!", Toast.LENGTH_LONG).show();
                     return false;
                 }
-                curSchedule.setWeek(i);
+                curSchedule.setWeek(i, true);
                 for(FeedSchedule feed : schedule){
 //                    if(hourMax > hourMin) {
 //                        // check if hour is 2hr within another feed, current time is near midnight
@@ -218,7 +218,7 @@ public class FeedingEditActivity extends AppCompatActivity {
         return true;
     }
 
-    public void feedSave(View view){
+    public void feedSave(View view){ //TODO:change to xml formate
         HashMap<String, String> dataList = new HashMap<String, String>();
         min = pickerMin.getValue();
         hour = pickerHr.getValue();

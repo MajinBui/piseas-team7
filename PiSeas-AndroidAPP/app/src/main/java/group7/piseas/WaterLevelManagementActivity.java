@@ -22,10 +22,9 @@ public class WaterLevelManagementActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_water_level_management);
-        int index = getIntent().getIntExtra("id", -1);
+        index = getIntent().getIntExtra("id", -1);
         TextView tv = (TextView) findViewById(R.id.tankName);
         tv.setText("Tank: " + TankListActivity.tankList.get(index).getName());
 

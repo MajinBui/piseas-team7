@@ -109,6 +109,7 @@ public class FeedingManagementActivity extends AppCompatActivity {
 
     public void validateAuto(){
         //validation for automation
+        autoFeed.setChecked( TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsAutoFeed());
         if(feeds == null ||feeds.isEmpty()){
             autoFeed.setOnClickListener(new CompoundButton.OnClickListener(){
                 @Override
@@ -118,13 +119,25 @@ public class FeedingManagementActivity extends AppCompatActivity {
                     autoFeed.setChecked(false);
                 }
             });
+            autoFeed.setChecked(false);
         }
-        else
+        else{
             autoFeed.setOnClickListener(new CompoundButton.OnClickListener(){
                 @Override
                 public void onClick(View v) {
                 }
             });
+            autoFeed.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                public void onCheckedChanged(CompoundButton manual, boolean isChecked) {
+                    if (isChecked){
+                        //TODO : add single change function or update entire settings xml
+                    }
+                    else {
+
+                    }
+                }
+            });
+        }
     }
 
     @Override
