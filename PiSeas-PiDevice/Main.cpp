@@ -21,13 +21,11 @@ void printTime(LightSchedule &ls) {
 	while (it != la.end()) {
 		std::cout
 			<< it->getTime().tm_hour << ":"
-			<< it->getTime().tm_min << ":"
-			<< it->getTime().tm_sec << " State = "
+			<< it->getTime().tm_min << " State = "
 			<< it->getState() << " Manual = "
 			<< ls.getManual() << std::endl;
 		it++;
 	}
-
 }
 
 void printTemp(TempData &td) {
@@ -37,7 +35,16 @@ void printTemp(TempData &td) {
 		<< "Min      = " << td.getMin() << std::endl
 		<< "Max      = " << td.getMax() << std::endl
 		<< "Auto Reg = " << td.getAutoRegulate() << std::endl;
+}
 
+void printWater(WaterState &wS){
+	struct tm dT = wS.getDrainTime();
+	std::cout
+		<< "Water State in main" << std::endl
+		<< "===================" << std::endl
+		<< dT.tm_hour << ":"
+		<< dT.tm_min << " AutoReg = "
+		<< wS.getAutoRegulate() << std::endl;
 }
 
 void setup(){
@@ -55,9 +62,14 @@ void updateTemperature(TempData &td) {
 	XmlParser::updateTemperatureRange(td);
 }
 
+void updateWaterState(WaterState &wS){
+	XmlParser::updateWaterState(wS);
+}
+
 void updateData(Tank &t){
 	updateLight(t.getLightSchedule());
 	updateTemperature(t.getTemperatureData());
+	updateWaterState(t.getWaterState());
 }
 
 int main() {
@@ -69,6 +81,7 @@ int main() {
 
 		std::thread lightThread;
 		std::thread temperatureThread(&TempData::regulate, t.getTemperatureData());
+		std::thread waterStateThread;
 		
 		if(t.getLightSchedule().getAutoRegulate()){
 			lightThread = std::thread(&LightSchedule::regulate, t.getLightSchedule().getSchedule());
@@ -76,12 +89,40 @@ int main() {
 		else {
 			LightSchedule::toggleLight(t.getLightSchedule().getManual());
 		}
+		sleep(0.01);
+		if(t.getWaterState().getAutoRegulate()){
+			waterStateThread = std::thread(&WaterState::regulate, t.getWaterState());
+		}
+		else if(t.getWaterState().getManualDrain()){
+			if(!WaterState::getWaterSensorReading()){
+				WaterState::toggleOutPump(true);
+			}
+			else{
+				WaterState::toggleOutPump(false);
+			}
+		}
+		else if(t.getWaterState().getManualFill()){
+			if(WaterState::getWaterSensorReading()){
+				WaterState::toggleInPump(true);
+			}
+			else{
+				WaterState::toggleInPump(false);
+			}
+		}
 		
-		if(t.getLightSchedule().getAutoRegulate()){
+		
+		if(lightThread.joinable()){
 			lightThread.join();
 		}
 		
+		if(waterStateThread.joinable()){
+			waterStateThread.join();
+		}
+		
 		temperatureThread.join();
+
+		std::cout << std::endl << "======================================="
+		 << std::endl << std::endl;
 
 		sleep(5);
 	}

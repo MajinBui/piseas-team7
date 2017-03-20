@@ -4,4 +4,5 @@ class XmlParser {
 public:
 	static void updateLightSchedule(LightSchedule&);
 	static void updateTemperatureRange(TempData&);
+	static void updateWaterState(WaterState&);
 };

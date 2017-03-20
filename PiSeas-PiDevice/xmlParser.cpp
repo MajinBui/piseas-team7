@@ -48,3 +48,31 @@ void XmlParser::updateTemperatureRange(TempData &td){
 			<< "Max      = " << max << "°C" << std::endl << std::endl;
 	}
 }
+
+
+void XmlParser::updateWaterState(WaterState& wS){
+	if(!wS.getAutoRegulate()){
+		struct tm myTm;
+		time_t t;
+
+		t = std::time(0);
+		myTm = *localtime(&t);
+		
+		myTm.tm_min += 1;
+		
+		wS.setDrainTime(myTm);
+		wS.setAutoRegulate(true);
+		
+		std::cout
+			<< "Water State" << std::endl
+			<< "===========" << std::endl
+			//<< myTm.tm_hour << ":"
+			/*<< myTm.tm_min <<*/
+			<< "AutoReg = "
+			<< true << std::endl << std::endl;
+			
+		std::cout << std::endl
+			<< "=============="
+			<< std::endl << std::endl;
+	}
+}

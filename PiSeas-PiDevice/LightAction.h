@@ -1,6 +1,7 @@
 #ifndef _LIGHTACTION_
 #define _LIGHTACTION_
 #include <ctime>
+
 class LightAction {
 	struct tm time;
 	bool state;

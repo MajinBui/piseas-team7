@@ -1,7 +1,6 @@
 #include "Tank.h"
 
-Tank::Tank(){
-}
+Tank::Tank(){}
 
 void Tank::setLightSchedule(LightSchedule ls){
 	lightSchedule = ls;
@@ -41,4 +40,9 @@ float Tank::getMaxTemp(){
 
 bool Tank::getAutoTemp(){
 	return tempData.getAutoRegulate();
+}
+
+
+WaterState& Tank::getWaterState(){
+	return waterState;
 }

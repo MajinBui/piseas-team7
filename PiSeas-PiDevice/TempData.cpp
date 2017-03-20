@@ -14,6 +14,7 @@ TempData::TempData() {
 	TempData::toggleFan(false);
 	TempData::toggleHeater(false);
 }
+
 TempData::TempData(float min, float max, bool autoReg){
 	tempeSettings.setData(min, max, autoReg);
 }
@@ -60,13 +61,16 @@ void TempData::regulate(TempData tempData){
 	float curTemp = TempData::getTemp();
 	
 	if(curTemp > tempData.getMax()){
+		std::cout << "Temperature above max, turning FAN ON" << std::endl;
 		TempData::toggleFan(true);
 	}
 	else if(curTemp <= tempData.getMax() && curTemp >= tempData.getMin()){
+		std::cout << "Temperature within range, turning FAN and HEATER OFF" << std::endl;
 		TempData::toggleFan(false);
 		TempData::toggleHeater(false);
 	}
 	else if(curTemp < tempData.getMin()){
+		std::cout << "Temperature below min, turning HEATER ON" << std::endl;
 		TempData::toggleHeater(true);
 	}
 	std::cout << std::fixed << std::setprecision(2)

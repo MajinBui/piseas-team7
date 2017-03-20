@@ -22,7 +22,6 @@ bool LightAction::getState(){
 	return state;
 }
 
-#include <iostream>
 bool LightAction::operator==(LightAction lA) {
 	if(difftime(mktime(&time),mktime(&lA.time)) == 0 && state == lA.state)
 		return true;
