@@ -109,6 +109,7 @@ public class TemperatureManagementActivity extends AppCompatActivity {
 
         minTempTable.setText(minTemp);
         maxTempTable.setText(maxTemp);
+        FishyClient.retrieveSensorData(TankListActivity.tankList.get(index).getId(), getFilesDir().getAbsolutePath().toString());
         curTempTV.setText(String.valueOf(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSensorCurrentTemp()));
 
         validateAuto();

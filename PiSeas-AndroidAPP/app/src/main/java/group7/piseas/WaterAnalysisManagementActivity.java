@@ -10,7 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import piseas.network.FishyClient;
-
+// TODO: fix spinner
 public class WaterAnalysisManagementActivity extends AppCompatActivity {
     NumberPicker lowPH;
     NumberPicker highPH;
