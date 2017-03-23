@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Piseas>
   <Update>
-    <details feed="false" light="false" temperature="false" pump="false" pH="false" conductivity="false" />
+    <details feed="true" light="false" temperature="true" pump="false" pH="false" conductivity="false" />
   </Update>
-  <Date date="2017-02-20T19:19:19+0500"/>
+  <Date date="2017-02-20T19:19:19-0500"/>
   <Tank>
-    <details id="xyz789" name="tank" password="helloworld" size="20" description="my fishy home" type="true"/>
+    <details id="xyz789" name="tank" password="helloworld" size="20.2" description="my fishy home" type="true"/>
   </Tank>
   <Feed schedules="3" manual="false" auto="true" >
     <details hr="13" min="50" Mon="true" Tue="false" Wed="true" Thu="true" Fri="true" Sat="false" Sun="false"/>
@@ -17,7 +17,7 @@
     <details onHr="13" onMin="00" offHr="18" offMin="30"/>
   </Light>
   <Temperature>
-    <details min="16.0" max="22.0"/>
+    <details min="16.0" max="22.0" auto="true"/>
   </Temperature>
   <Pump>
     <details manualDrain="true" manualFill="true" auto="true"/>
