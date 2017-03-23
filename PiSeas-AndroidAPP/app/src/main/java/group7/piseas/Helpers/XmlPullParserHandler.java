@@ -255,6 +255,11 @@ public class XmlPullParserHandler {
         return Float.parseFloat(parseSettings("Temperature", "max"));
     }
 
+    public float getSettingsAuto(){
+        // Parse from tag "Temperature", attribute auto
+        return Float.parseFloat(parseSettings("Temperature", "auto"));
+    }
+
     public boolean getSettingsDrain(){
         // Parse from tag "Pump", attribute manualDrain
         return Boolean.parseBoolean(parseSettings("Pump", "manualDrain"));
@@ -312,35 +317,28 @@ public class XmlPullParserHandler {
 
             parser.setInput(fis, null);
 
-            while ((parser.nextToken()) != XmlPullParser.END_DOCUMENT) {
+            while ((parser.next()) != XmlPullParser.END_DOCUMENT) {
                 String tag = parser.getName();
-                if ("Feed".equals(tag)) {
-                    parser.nextTag();
-                    System.err.println(parser.getName());
-                    while("details".equals(parser.getName())) {
-                        System.err.println(parser.getName());
+                if (tag.equals("Feed")) {
+                    parser.next();
+                    while(parser.getName().equals("details")) {
                         // grab the first 2 attributes, hour/min, create the FeedSchedule object. All days are automatically
                         // set to false, parse through the rest of the attributes to see which is set to true. For the bool
                         // to go true, the string needs to be 'true', cannot be 1.
-                        FeedSchedule feed = new FeedSchedule(Integer.parseInt(parser.getAttributeValue(null, "hr")),
-                                Integer.parseInt(parser.getAttributeValue(null, "min")));
-
-                        feed.setWeek(0, Boolean.parseBoolean(parser.getAttributeValue(null, "Sun")));
-                        feed.setWeek(1, Boolean.parseBoolean(parser.getAttributeValue(null, "Mon")));
-                        feed.setWeek(2, Boolean.parseBoolean(parser.getAttributeValue(null, "Tue")));
-                        feed.setWeek(3, Boolean.parseBoolean(parser.getAttributeValue(null, "Wed")));
-                        feed.setWeek(4, Boolean.parseBoolean(parser.getAttributeValue(null, "Thu")));
-                        feed.setWeek(5, Boolean.parseBoolean(parser.getAttributeValue(null, "Fri")));
-                        feed.setWeek(6, Boolean.parseBoolean(parser.getAttributeValue(null, "Sat")));
-
+                        FeedSchedule feed = new FeedSchedule(Integer.parseInt(parser.getAttributeValue(0)),
+                                Integer.parseInt(parser.getAttributeValue(1)));
+                        for (int i = 2; i < 9; i++) {
+                            boolean day = Boolean.parseBoolean(parser.getAttributeValue(i));
+                            if (day)
+                                feed.setWeek(i-2);
+                        }
                         feeds.add(feed);
                         // next will take the same detail tag twice, I think because it needs a closing
                         // tag to go with the opening one. next() twice to get to the actual next tag
-                        parser.nextTag();
-                        parser.nextTag();
+                        parser.next();
+                        parser.next();
                     }
                     fis.close();
-                    System.err.println(feeds.size());
                     return feeds;
                 }
             }
@@ -359,29 +357,28 @@ public class XmlPullParserHandler {
         try{
             File file = new File(context.getFilesDir() + "/" + id + "_mobile_settings.xml");
             FileInputStream fis = new FileInputStream(file);
-
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
             XmlPullParser parser = factory.newPullParser();
 
             parser.setInput(fis, null);
 
-            while ((parser.nextToken()) != XmlPullParser.END_DOCUMENT) {
+            while ((parser.next()) != XmlPullParser.END_DOCUMENT) {
                 String tag = parser.getName();
-                if ("Light".equals(tag)) {
-                    parser.nextTag();
-                    while("details".equals(parser.getName())) {
+                if (tag.equals("Light")) {
+                    parser.next();
+                    while(parser.getName().equals("details")) {
                         LightSchedule light = new LightSchedule(
-                                Integer.parseInt(parser.getAttributeValue(null, "onHr")),      // onHr
-                                Integer.parseInt(parser.getAttributeValue(null, "offHr")),      // offHr
-                                Integer.parseInt(parser.getAttributeValue(null, "onMin")),      // onMn
-                                Integer.parseInt(parser.getAttributeValue(null, "offMin"))       // offMn
+                                Integer.parseInt(parser.getAttributeValue(0)),      // onHr
+                                Integer.parseInt(parser.getAttributeValue(2)),      // offHr
+                                Integer.parseInt(parser.getAttributeValue(1)),      // onMn
+                                Integer.parseInt(parser.getAttributeValue(3))       // offMn
                         );
                         lights.add(light);
                         // next will take the same detail tag twice, I think because it needs a closing
                         // tag to go with the opening one. next() twice to get to the actual next tag
-                        parser.nextTag();
-                        parser.nextTag();
+                        parser.next();
+                        parser.next();
                     }
                     fis.close();
                     return lights;
@@ -787,7 +784,6 @@ public class XmlPullParserHandler {
         write("Temperature", "max", String.valueOf(value));
     }
 
-    // Keeping or no? ------------------------------------------------------------------------------------------------------------
     public void setAutoTemp(boolean value){
         write("Temperature", "auto", String.valueOf(value));
     }
@@ -805,11 +801,11 @@ public class XmlPullParserHandler {
     }
 
     public void setPHMin(float value){
-        write("PH", "pHmin", String.valueOf(value));
+        write("Sensor", "pHmin", String.valueOf(value));
     }
 
     public void setPHMax(float value){
-        write("PH", "pHmax", String.valueOf(value));
+        write("Sensor", "pHmax", String.valueOf(value));
     }
 
     public void setAutoPH(boolean value){
@@ -970,6 +966,7 @@ public class XmlPullParserHandler {
             xmlSerializer.startTag("", "details");
             xmlSerializer.attribute("", "min", minTemp);
             xmlSerializer.attribute("", "max", maxTemp);
+            xmlSerializer.attribute("", "auto", "true");
             xmlSerializer.endTag("", "details");
             xmlSerializer.endTag("", "Temperature");
 
