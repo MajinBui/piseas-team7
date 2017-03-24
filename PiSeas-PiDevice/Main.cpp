@@ -63,7 +63,7 @@ void updateTemperature(TempData &td) {
 }
 
 void updateWaterState(WaterState &wS){
-	XmlParser::updateWaterState(wS);
+	//XmlParser::updateWaterState(wS);
 }
 
 void updateData(Tank &t){

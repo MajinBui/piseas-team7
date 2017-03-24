@@ -8,8 +8,9 @@
 #include <fstream>
 #include <vector>
 #include <ctime>
-#include "rapidxml_utils.hpp"
-
+#include "../libraries/rapidxml_utils.hpp"
+#include "LightSchedule.h"
+#include "FeedSchedule.h"
 
 const static char* mobileName = "1_mobile_settings.xml";
 
