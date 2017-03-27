@@ -326,7 +326,7 @@ public class FishyServerRunnable implements Runnable {
 	 * @return true if id has been removed
 	 */
 	private static synchronized boolean endClientServerTransaction(String tankId) {
-		if (!TANK_IDS.get(tankId).isEmpty())
+		if (TANK_IDS.get(tankId)!= null && !TANK_IDS.get(tankId).isEmpty())
 			TANK_IDS.get(tankId).remove();
 		return true;
 	}
@@ -593,8 +593,9 @@ public class FishyServerRunnable implements Runnable {
 
 	        transformer.transform(new DOMSource(doc), new StreamResult(sw));
 	        return sw.toString();
-	    } catch (Exception ex) {
-	        throw new RuntimeException("Error converting to String", ex);
+	    } catch (Exception e) {
+			e.printStackTrace();  
+	        throw new RuntimeException("Error converting to String", e);
 	    }
 	}
 
@@ -609,8 +610,8 @@ public class FishyServerRunnable implements Runnable {
 			return document;
 		} catch (Exception e) {  
 			e.printStackTrace();  
+	        throw new RuntimeException("Error converting to Doc", e);
 		}
-		return null;
 	}
 
 	
