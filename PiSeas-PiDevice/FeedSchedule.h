@@ -18,6 +18,14 @@ public:
 	bool getAutoFeed();
 	void manualFeed();
 	void reset();
+	int getCount();
+	void setAutoFeed(bool);
+	void addFeedAction(tm, bool);
+	void addFeedAction(FeedAction);
+	bool getAutoFeed();
+	void updateFeedAction(FeedAction, FeedAction);
+	void removeLightAction(FeedAction);
+	void operator=(FeedSchedule);
 	//static void regulate(std::list<FeedAction>, bool);
 };
 #endif

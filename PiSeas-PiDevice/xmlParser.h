@@ -8,9 +8,8 @@
 #include <fstream>
 #include <vector>
 #include <ctime>
-#include "../libraries/rapidxml_utils.hpp"
-#include "LightSchedule.h"
-#include "FeedSchedule.h"
+#include "rapidxml_utils.hpp"
+
 
 const static char* mobileName = "1_mobile_settings.xml";
 
@@ -18,8 +17,12 @@ class XmlParser {
 	static std::string parser(const char*, const char*);
 public:
 	static void updateLightSchedule(LightSchedule&);
+	static void updateFeedSchedule(FeedSchedule&);
 	static void updateTemperatureRange(TempData&);
-	static bool* getSettingsUpdated();
+	static void updateConductivityRange(Conductivity&);
+	static void updatePHRange(PH&);
+	static void updateWaterState(WaterState&);
+	static bool getSettingsUpdated(const char*);
 	static std::tm getSettingsDate();
 	static std::string getSettingsID();
 	static std::string getSettingsName();
@@ -35,6 +38,7 @@ public:
 	static LightSchedule getSettingsLightSchedule();
 	static float getSettingsMinTemp();
 	static float getSettingsMaxTemp();
+	static bool getSettingsTempAuto();
 	static bool getSettingsDrain();
 	static bool getSettingsFill();
 	static bool getSettingsAutoWaterChange();

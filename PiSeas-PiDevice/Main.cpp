@@ -58,18 +58,33 @@ void updateLight(LightSchedule &ls) {
 	XmlParser::updateLightSchedule(ls);
 }
 
+void updateFeed(FeedSchedule &fs) {
+	XmlParser::updateFeedSchedule(fs);
+}
+
 void updateTemperature(TempData &td) {
 	XmlParser::updateTemperatureRange(td);
 }
 
-void updateWaterState(WaterState &wS){
-	//XmlParser::updateWaterState(wS);
+void updateConductivity(Conductivity &con) {
+	XmlParser::updateConductivityRange(con);
+}
+
+void updatePH(PH &ph) {
+	XmlParser::updatePHRange(ph);
+}
+
+void updateWaterState(WaterState &water) {
+	XmlParser::updateWaterState(water);
 }
 
 void updateData(Tank &t){
-	updateLight(t.getLightSchedule());
-	updateTemperature(t.getTemperatureData());
-	updateWaterState(t.getWaterState());
+		updateLight(t.getLightSchedule());
+		updateFeed(t.getFeedSchedule());
+		updateTemperature(t.getTemperatureData());
+		updateConductivity(t.getConductivity());
+		updatePH(t.getPH());
+		updateWaterState(t.getWaterState());
 }
 
 int main() {

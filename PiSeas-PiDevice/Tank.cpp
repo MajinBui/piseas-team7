@@ -1,6 +1,7 @@
 #include "Tank.h"
 
-Tank::Tank(){}
+Tank::Tank(){
+}
 
 void Tank::setLightSchedule(LightSchedule ls){
 	lightSchedule = ls;
@@ -12,6 +13,18 @@ LightSchedule& Tank::getLightSchedule(){
 
 void Tank::addLightAction(tm t, bool b){
 	lightSchedule.addLightAction(t, b);
+}
+
+FeedSchedule& Tank::getFeedSchedule() {
+	return feedSchedule;
+}
+
+void Tank::setFeedSchedule(FeedSchedule fs) {
+	feedSchedule = fs;
+}
+
+void Tank::addFeedAction(tm t, bool b) {
+	feedSchedule.addFeedAction(t, b);
 }
 
 void Tank::setAutoLight(bool s){
@@ -42,7 +55,26 @@ bool Tank::getAutoTemp(){
 	return tempData.getAutoRegulate();
 }
 
+Conductivity& Tank::getConductivity() {
+	return conductivity;
+}
 
-WaterState& Tank::getWaterState(){
+void Tank::setConductivity(Conductivity c_) {
+	conductivity = c_;
+}
+
+PH& Tank::getPH() {
+	return pH;
+}
+
+void Tank::setPH(PH ph_) {
+	pH = ph_;
+}
+
+WaterState& Tank::getWaterState() {
 	return waterState;
+}
+
+void Tank::setWaterState(WaterState ws_) {
+	waterState = ws_;
 }

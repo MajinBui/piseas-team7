@@ -6,51 +6,37 @@
 using namespace rapidxml;
 
 void XmlParser::updateLightSchedule(LightSchedule &ls){
-	//if(ls.getSchedule().empty()){
-	//	ls.setAutoRegulate(true);
-	//	struct tm myTm;
-	//	time_t t;
-	//	int min;
-	//
-	//	t = std::time(0);
-	//	myTm = *localtime(&t);
-	//	min = myTm.tm_min;
-	//	std::cout
-	//	<< "Light Schedule" << std::endl
-	//	<< "==============" << std::endl;
-	//
-	//	for (int i = 0; myTm.tm_min < 59; i++) {
-	//		myTm.tm_min = min + i;
-	//		bool state;
-	//		if(i%2 == 0)
-	//			state = false;
-	//		else
-	//			state = true;
-	//		ls.addLightAction(myTm, state);
-	//		std::cout
-	//		<< myTm.tm_hour << ":"
-	//		<< myTm.tm_min
-	//		<< "    State = "
-	//		<< state << std::endl;
-	//	}	
-	//}
+	if(getSettingsUpdated("light"))		
+		ls = getSettingsLightSchedule();
+}
+
+void XmlParser::updateFeedSchedule(FeedSchedule &fs) {
+	if (getSettingsUpdated("feed"))
+		fs = getSettingsFeedSchedule();
 }
 
 void XmlParser::updateTemperatureRange(TempData &td){
-	//if(td.getMin() == 0){
-	//	float min = 20;
-	//	float max = 30;
-	//	bool autoReg = true;
-
-	//	td.setTempData(min, max, autoReg);
-	//	std::cout << std::endl << std::fixed << std::setprecision(2)
-	//		<< "Temperature Range:" << std::endl
-	//		<< "==================" << std::endl
-	//		<< "Min      = " << min << "°C" << std::endl
-	//		<< "Max      = " << max << "°C" << std::endl << std::endl;
-	//}
+	if (getSettingsUpdated("temperature"))
+		td = TempData(getSettingsMinTemp(), getSettingsMaxTemp(), getSettingsTempAuto());
 }
 
+void XmlParser::updateConductivityRange(Conductivity &con) {
+	if (getSettingsUpdated("condictivity"))
+		con = Conductivity(getSettingsCMin(), getSettingsCMax(), getSettingsTempAuto());
+}
+
+void XmlParser::updatePHRange(PH &ph) {
+	if (getSettingsUpdated("ph"))
+		ph = PH(getSettingsPHMin(), getSettingsPHMax(), getSettingsPHAuto());
+}
+
+void XmlParser::updateWaterState(WaterState &water) {
+	if (getSettingsUpdated("pump")) {
+		water.setManualDrain(getSettingsDrain());
+		water.setManualFill(getSettingsFill());
+		water.setAutoRegulate(getSettingsAutoWaterChange());
+	}
+}
 
 std::string XmlParser::parser(const char* tag, const char* attribute) {
 	rapidxml::file<> xmlFile(mobileName);
@@ -85,49 +71,55 @@ std::tm XmlParser::getSettingsDate() {
 	int sta = 0;
 	int fin = date.find(delimiter);
 
-	std::string year = date.substr(sta, fin);
+	int year = stoi(date.substr(sta, fin));
 	sta = date.find(delimiter, fin)+1;
 	fin = date.find(delimiter, sta);
 	
-	std::string month = date.substr(sta, fin-sta);
+	int month = stoi(date.substr(sta, fin-sta));
 	sta = date.find(delimiter, fin) + 1;
 	delimiter = "T";
 	fin = date.find(delimiter, sta);
 
-	std::string day = date.substr(sta, fin-sta);
+	int day = stoi(date.substr(sta, fin-sta));
 	sta = date.find(delimiter, fin) + 1;
 	delimiter = ":";
 	fin = date.find(delimiter, sta);
 
-	std::string hr = date.substr(sta, fin - sta);
+	int hr = stoi(date.substr(sta, fin - sta));
 	sta = date.find(delimiter, fin) + 1;
 	fin = date.find(delimiter, sta);
 
-	std::string min = date.substr(sta, fin - sta);
+	int min = stoi(date.substr(sta, fin - sta));
 	sta = date.find(delimiter, fin) + 1;
 	fin = date.length() - 5;
 
-	std::string sec = date.substr(sta, fin - sta);
+	int sec = stoi(date.substr(sta, fin - sta));
 	
 	delimiter = date.substr(date.length() - 5, 1);
-	std::string tmhr = date.substr(date.length() - 4, 2);
-	std::string tmmin = date.substr(date.length() - 2, 2);
-
+	int tmhr = stoi(date.substr(date.length() - 4, 2));
+	int tmmin = stoi(date.substr(date.length() - 2, 2));
 
 	struct std::tm time;
-	time.tm_hour = 1;
+	time.tm_year = year;
+	time.tm_mon = month;
+	time.tm_hour = hr;
+	time.tm_min = min;
+	time.tm_sec = sec;
+	
+	if (delimiter == "+") {
+		time.tm_min += tmmin;
+		time.tm_hour += tmhr;
+	}
+	else {
+		time.tm_min -= tmmin;
+		time.tm_hour -= tmhr;
+	}
+
 	return time;
 }
 
-bool* XmlParser::getSettingsUpdated() {
-	bool* updates = new bool[6];
-	updates[0] = (parser("Update", "feed") == "true") ? true : false;
-	updates[1] = (parser("Update", "light") == "true") ? true : false;
-	updates[2] = (parser("Update", "temperature") == "true") ? true : false;
-	updates[3] = (parser("Update", "pump") == "true") ? true : false;
-	updates[4] = (parser("Update", "pH") == "true") ? true : false;
-	updates[5] = (parser("Update", "conductivity") == "true") ? true : false;
-	return updates;
+bool XmlParser::getSettingsUpdated(const char* update) {
+	return (parser("Update", update) == "true") ? true : false;
 }
 
 std::string XmlParser::getSettingsID() {
@@ -155,12 +147,11 @@ bool XmlParser::getSettingsType() {
 }
 
 bool XmlParser::getSettingsManualFeed() {
-	return (parser("Tank", "type") == "true") ? true : false;
+	return (parser("Feed", "manual") == "true") ? true : false;
 }
 
 bool XmlParser::getSettingsAutoFeed() {
-
-	return true;
+	return (parser("Feed", "auto") == "true") ? true : false;
 }
 
 FeedSchedule XmlParser::getSettingsFeedSchedule() {
@@ -211,13 +202,11 @@ FeedSchedule XmlParser::getSettingsFeedSchedule() {
 }
 
 bool XmlParser::getSettingsManualLight() {
-
-	return true;
+	return (parser("Light", "manual") == "true") ? true : false;
 }
 
 bool XmlParser::getSettingsAutoLight() {
-
-	return true;
+	return (parser("Light", "auto") == "true") ? true : false;
 }
 
 LightSchedule XmlParser::getSettingsLightSchedule() {
@@ -236,15 +225,16 @@ LightSchedule XmlParser::getSettingsLightSchedule() {
 	xml_node<> * root_node = doc.first_node("Piseas");
 	xml_node<>* piNode = root_node->first_node("Light");
 
-	int size = atoi(piNode->first_attribute("schedules")->value());
+	int count = atoi(piNode->first_attribute("schedules")->value());
 	bool autoRegulate = (piNode->first_attribute("auto")->value() == "true") ? true : false;
 	bool manual = (piNode->first_attribute("manual")->value() == "true") ? true : false; //-----------
 
 	LightSchedule ls;
 	ls.setAutoRegulate(autoRegulate);
+	ls.setCount = count;
 
 	piNode = piNode->first_node();
-	for (int i = 0; i < size; i++, piNode->next_sibling()) {
+	for (int i = 0; i < count; i++, piNode->next_sibling()) {
 		int onHr = atoi(piNode->first_attribute("onHr")->value());
 		int onMin = atoi(piNode->first_attribute("onMin")->value());
 		int offHr = atoi(piNode->first_attribute("offHr")->value());
@@ -270,6 +260,10 @@ float XmlParser::getSettingsMinTemp() {
 
 float XmlParser::getSettingsMaxTemp() {
 	return stof(parser("Temperature", "max"));
+}
+
+bool XmlParser::getSettingsTempAuto() {
+	return (parser("Temperature", "auto") == "true") ? true : false;
 }
 
 bool XmlParser::getSettingsDrain() {
