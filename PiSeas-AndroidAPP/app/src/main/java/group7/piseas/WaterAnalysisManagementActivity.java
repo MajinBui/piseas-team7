@@ -4,23 +4,33 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.NumberPicker;
+import cn.carbswang.android.numberpickerview.library.NumberPickerView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import group7.piseas.Objects.PH;
+import group7.piseas.Objects.Tank;
+import group7.piseas.Objects.WaterConductivity;
 import piseas.network.FishyClient;
-// TODO: fix spinner
+
 public class WaterAnalysisManagementActivity extends AppCompatActivity {
-    NumberPicker lowPH;
-    NumberPicker highPH;
-    NumberPicker lowCon;
-    NumberPicker highCon;
+    NumberPickerView lowPH;
+    NumberPickerView highPH;
+    NumberPickerView lowCon;
+    NumberPickerView highCon;
     Switch autoPH;
     Switch autoCon;
     TextView pHValue;
     TextView conValue;
+
+    private Tank tank;
+    private PH pH;
+    private WaterConductivity wc;
+
     int index;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,36 +39,53 @@ public class WaterAnalysisManagementActivity extends AppCompatActivity {
         tv.setText("Tank: " + TankListActivity.tankList.get(index).getName());
         index = getIntent().getIntExtra("id", -1);
 
-        lowPH = (NumberPicker) findViewById(R.id.pHMinInput);
-        highPH = (NumberPicker) findViewById(R.id.pHMaxInput);
-        lowCon = (NumberPicker) findViewById(R.id.CMinInput);
-        highCon = (NumberPicker) findViewById(R.id.CMaxInput);
+        lowPH = (NumberPickerView) findViewById(R.id.pHMinInput);
+        highPH = (NumberPickerView) findViewById(R.id.pHMaxInput);
+        lowCon = (NumberPickerView) findViewById(R.id.CMinInput);
+        highCon = (NumberPickerView) findViewById(R.id.CMaxInput);
         autoCon = (Switch) findViewById(R.id.enableCCheck);
         autoPH = (Switch) findViewById(R.id.enablePH);
         pHValue =  (TextView) findViewById(R.id.pHDisplay);
         conValue =  (TextView) findViewById(R.id.conDisplay);
 
+        // generate ph values into string list
+        String[] pHValues = new String[15];
+        for (int i = 0; i < 15; i++) {
+            pHValues[i] = Integer.toString(i);
+        }
+
+        // generate water conductivity values into string list
+        String[] wcValues = new String[21];
+        for (int i = 0; i < 21; i++) {
+            wcValues[i] = Integer.toString(i * 100);
+        }
+        lowPH.setDisplayedValues(pHValues);
         lowPH.setMinValue(0);
         lowPH.setMaxValue(14);
         lowPH.setWrapSelectorWheel(false);
         lowPH.setValue(0);
 
+        highPH.setDisplayedValues(pHValues);
         highPH.setMinValue(0);
         highPH.setMaxValue(14);
         highPH.setWrapSelectorWheel(false);
         highPH.setValue(0);
 
+        lowCon.setDisplayedValues(wcValues);
         lowCon.setMinValue(0);
-        lowCon.setMaxValue(14);
+        lowCon.setMaxValue(20);
         lowCon.setWrapSelectorWheel(false);
         lowCon.setValue(0);
 
+        highCon.setDisplayedValues(wcValues);
         highCon.setMinValue(0);
-        highCon.setMaxValue(14);
+        highCon.setMaxValue(20);
         highCon.setWrapSelectorWheel(false);
         highCon.setValue(0);
 
-        populatePage();
+        tank = new Tank(getApplicationContext(), TankListActivity.tankList.get(getIntent().getIntExtra("id", -1)).getId());
+        pH = tank.getpH();
+        wc = tank.getWc();
     }
 
     public void validateAuto(){
@@ -102,29 +129,41 @@ public class WaterAnalysisManagementActivity extends AppCompatActivity {
         if (lowCon.getValue() >= highCon.getValue() || lowPH.getValue() >= highPH.getValue()) {
             Toast.makeText(getBaseContext(), "Can not save, please double check values",
                     Toast.LENGTH_LONG).show();
-        } else {//add server call
+        } else {
             validateAuto();
-            TankListActivity.tankList.get(index).getPiSeasXmlHandler().setAutoPH(autoPH.isChecked());
-            TankListActivity.tankList.get(index).getPiSeasXmlHandler().setAutoConductivity(autoCon.isChecked());
-            TankListActivity.tankList.get(index).getPiSeasXmlHandler().setPHMax(highPH.getValue());
-            TankListActivity.tankList.get(index).getPiSeasXmlHandler().setPHMin(lowPH.getValue());
-            TankListActivity.tankList.get(index).getPiSeasXmlHandler().setCMax(highCon.getValue());
-            TankListActivity.tankList.get(index).getPiSeasXmlHandler().setCMin(lowCon.getValue());
-            FishyClient.sendMobileXmlData(TankListActivity.tankList.get(index).getId(), getFilesDir().getAbsolutePath().toString());
+            pH.setAuto(autoPH.isChecked());
+            pH.setpHMax(highPH.getValue());
+            pH.setpHMin(lowPH.getValue());
+
+            wc.setAuto(autoCon.isChecked());
+            wc.setConMax(highCon.getValue());
+            wc.setConMin(lowCon.getValue());
+
+            tank.updateWaterAnalysis();
             finish();
         }
     }
 
     public void populatePage(){
         FishyClient.retrieveMobileXmlData(TankListActivity.tankList.get(index).getId(), getFilesDir().getAbsolutePath().toString());
-        lowPH.setValue((int)TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsPHMin());
-        highPH.setValue((int)TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsPHMax());
-        lowCon.setValue((int)TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsCMin());
-        highCon.setValue((int)TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsCMax());
-        autoPH.setChecked(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsPHAuto());
-        autoCon.setChecked(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsCAuto());
-        //TODO: change this so it looks nicer, not append but setText later
-        pHValue.append(String.valueOf(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSensorPH()));
-        conValue.append(String.valueOf(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSensorConductivity()));
+        lowPH.setValue((int)pH.getpHMin());
+        highPH.setValue((int) pH.getpHMax());
+        autoPH.setChecked(pH.isAuto());
+        lowCon.setValue((int)wc.getConMin());
+        highCon.setValue((int)wc.getConMax());
+        autoCon.setChecked(wc.isAuto());
+        pHValue.setText(String.valueOf(pH.getValue()));
+        conValue.setText(String.valueOf(wc.getValue()));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        populatePage();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 }

@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_tank_page"
     style="@style/MainLayout"
-    tools:context="group7.piseas.TankMainPageActivity">
+    tools:context="group7.piseas.TankMainPageActivity"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 <TextView
     android:id="@+id/tankName"
@@ -46,12 +47,12 @@
             android:id="@+id/pHMax"
           />
 
-        <NumberPicker
+        <cn.carbswang.android.numberpickerview.library.NumberPickerView
             android:id="@+id/pHMinInput"
             android:layout_width="60dp"
             android:layout_height="125dp"
             android:layout_toRightOf="@+id/pHMax"
-            android:textSize="20dp"
+            app:npv_TextSizeNormal="16sp"
             android:layout_marginLeft="10dp"
             />
 
@@ -67,14 +68,15 @@
             android:id="@+id/pHMin"
             />
 
-        <NumberPicker
+        <cn.carbswang.android.numberpickerview.library.NumberPickerView
             android:id="@+id/pHMaxInput"
             android:layout_width="60dp"
             android:layout_height="125dp"
             android:layout_toRightOf="@+id/pHMin"
-            android:textSize="16sp"
+            app:npv_TextSizeNormal="16sp"
             android:layout_marginLeft="10dp"
             />
+
 
     </RelativeLayout>
 
@@ -120,11 +122,12 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:layout_marginLeft="20dp"
+        android:layout_below="@+id/cName"
         android:id="@+id/row2"
         android:layout_centerVertical="true"
-        android:layout_alignParentEnd="true">
+        android:layout_alignParentStart="true">
         <TextView
+            android:layout_marginLeft="20dp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="WC Min"
@@ -133,16 +136,15 @@
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:gravity="center_vertical"
-
             android:id="@+id/CMax"
             />
 
-        <NumberPicker
+        <cn.carbswang.android.numberpickerview.library.NumberPickerView
             android:id="@+id/CMinInput"
             android:layout_width="60dp"
             android:layout_height="125dp"
             android:layout_toRightOf="@+id/CMax"
-            android:textSize="16sp"
+            app:npv_TextSizeNormal="16sp"
             android:layout_marginLeft="10dp"
             />
 
@@ -158,12 +160,12 @@
             android:id="@+id/CMin"
             />
 
-        <NumberPicker
+        <cn.carbswang.android.numberpickerview.library.NumberPickerView
             android:id="@+id/CMaxInput"
             android:layout_width="60dp"
             android:layout_height="125dp"
             android:layout_toRightOf="@+id/CMin"
-            android:textSize="16sp"
+            app:npv_TextSizeNormal="16sp"
             android:layout_marginLeft="10dp"
             />
     </RelativeLayout>
@@ -174,29 +176,75 @@
         android:layout_below="@id/bar2"
         android:id="@+id/display">
 
-        <TextView
+        <LinearLayout
             style="@style/SideTitles"
             android:layout_width="wrap_content"
             android:layout_height="100dp"
             android:background="@color/darkBlue"
             android:textColor="@color/text"
-            android:text="pH Level : "
             android:layout_weight="1"
             android:textAlignment="center"
-            android:id="@+id/pHDisplay"
-            />
-
-        <TextView
+            android:id="@+id/pHDisplayBox"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:background="@color/darkBlue"
+                android:textColor="@color/text"
+                android:text="pH Level"
+                android:textAlignment="center"
+                android:id="@+id/pHDisplayHeader"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:background="@color/darkBlue"
+                android:textColor="@color/text"
+                android:text="2"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:id="@+id/pHDisplay"/>
+        </LinearLayout>
+        <LinearLayout
             style="@style/SideTitles"
             android:layout_width="wrap_content"
             android:layout_height="100dp"
             android:background="@color/darkBlue"
             android:textColor="@color/text"
-            android:text="WC Level : "
+            android:text="pH Level"
             android:layout_weight="1"
             android:textAlignment="center"
-            android:id="@+id/conDisplay"
-            />
+            android:id="@+id/conDisplayBox"
+            android:orientation="vertical"
+            android:layout_marginRight="20dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="20dp"
+                android:background="@color/darkBlue"
+                android:textColor="@color/text"
+                android:text="WC Level"
+                android:textAlignment="center"
+                android:id="@+id/conDisplayHeader"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:background="@color/darkBlue"
+                android:textColor="@color/text"
+                android:text="100"
+                android:gravity="center"
+                android:textAlignment="center"
+                android:id="@+id/conDisplay"/>
+        </LinearLayout>
+        <!--<TextView-->
+            <!--style="@style/SideTitles"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="100dp"-->
+            <!--android:background="@color/darkBlue"-->
+            <!--android:textColor="@color/text"-->
+            <!--android:text="WC Level : "-->
+            <!--android:layout_weight="1"-->
+            <!--android:textAlignment="center"-->
+            <!--android:id="@+id/conDisplay"-->
+            <!--/>-->
     </LinearLayout>
 
     <Button

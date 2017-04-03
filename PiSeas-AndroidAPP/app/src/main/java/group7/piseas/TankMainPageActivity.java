@@ -10,12 +10,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import group7.piseas.Helpers.TankTimer;
+import group7.piseas.Objects.Tank;
 import piseas.network.FishyClient;
 
 public class TankMainPageActivity extends AppCompatActivity {
     static int index;
     TextView temperatureTextView;
     TextView pHTextView;
+    Tank tank;
     private long UPDATE_VALUE_DELAY = 10000;
     Handler handler = new Handler();
     Runnable runnable = new Runnable() {
@@ -43,6 +45,7 @@ public class TankMainPageActivity extends AppCompatActivity {
         pHTextView = (TextView) findViewById(R.id.pHValueTextView);
         handler.postDelayed(runnable, UPDATE_VALUE_DELAY);
         updatePage();
+        tank = TankListActivity.tankList.get(index);
     }
 
     public void onFeedingClick(View view){
@@ -59,12 +62,16 @@ public class TankMainPageActivity extends AppCompatActivity {
     public void onWaterAnalysisClick(View view){
         Intent i = new Intent(this, WaterAnalysisManagementActivity.class);
         i.putExtra("id", index);
+        tank.retrieveMobileSettingsFromServer();
+        tank.getpH().loadLocalXmlData();
+        tank.getWc().loadLocalXmlData();
         startActivity(i);
     }
     public void onWaterFlowClick(View view){
         Intent i = new Intent(this, WaterLevelManagementActivity.class);
         i.putExtra("id", index);
-        // TODO:  call tank.retrieveMobileSettingsFromServer() here to pull from server first
+        tank.retrieveMobileSettingsFromServer();
+        tank.getPump().loadLocalXmlData();
         startActivity(i);
     }
     public void onTemperatureClick(View view){

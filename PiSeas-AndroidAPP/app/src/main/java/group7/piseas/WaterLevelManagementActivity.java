@@ -70,7 +70,7 @@ public class WaterLevelManagementActivity extends AppCompatActivity {
         pump = tank.getPump();
     }
 
-    private void setView() {
+    private void populatePage() {
         fill.setChecked(pump.isManualFill());
         auto.setChecked(pump.isAuto());
         drain.setChecked(pump.isManualDrain());
@@ -94,10 +94,11 @@ public class WaterLevelManagementActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
     }
+
     @Override
     protected void onResume() {
         super.onResume();
-        setView();
+        populatePage();
     }
 
 }

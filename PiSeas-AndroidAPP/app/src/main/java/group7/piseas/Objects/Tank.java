@@ -24,6 +24,7 @@ public class Tank implements Runnable {
     private XmlPullParserHandler piSeasXmlHandler;
     private PH pH;
     private Pump pump;
+    private WaterConductivity wc;
 
     /**
      * Constructor for newly added tanks.
@@ -48,6 +49,8 @@ public class Tank implements Runnable {
         this.desc = desc;
 
         this.pump = new Pump(this);
+        this.pH = new PH(this);
+        this.wc = new WaterConductivity(this);
     }
 
     /**
@@ -68,14 +71,18 @@ public class Tank implements Runnable {
         this.desc = piSeasXmlHandler.getSettingsDescription();
 
         this.pump = new Pump(this);
+        this.pH = new PH(this);
+        this.wc = new WaterConductivity(this);
     }
 
     /**
-     * Pull all current mobile settings from the server.
+     * Pull all current mobile settings from the server.  Should be used every time
+     * the user opens a new activity
      * @return success
      */
     public boolean retrieveMobileSettingsFromServer() {
-        return FishyClient.retrieveMobileXmlData(id, context.getFilesDir().getAbsolutePath());
+        boolean rc = FishyClient.retrieveMobileXmlData(id, context.getFilesDir().getAbsolutePath());
+        return rc;
     }
 
     public String getId() {
@@ -128,6 +135,21 @@ public class Tank implements Runnable {
 
     public void updatePump() {
         pump.sendPumpSettingsToServer();
+    }
+
+    public PH getpH() {return this.pH;}
+
+    public void updatepH() { pH.sendPHSettingsToServer(); }
+
+    public WaterConductivity getWc() {
+        return this.wc;
+    }
+
+    public void updateWC() { wc.sendWCSettingsToServer(); }
+
+    public void updateWaterAnalysis() {
+        pH.sendPHSettingsToServer();
+        wc.sendWCSettingsToServer();
     }
 
     // Not used yet
