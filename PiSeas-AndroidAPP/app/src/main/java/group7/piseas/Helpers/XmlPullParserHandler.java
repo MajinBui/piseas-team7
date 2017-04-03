@@ -807,11 +807,11 @@ public class XmlPullParserHandler {
     }
 
     public void setPHMin(float value){
-        write("Sensor", "pHmin", String.valueOf(value));
+        write("PH", "pHmin", String.valueOf(value));
     }
 
     public void setPHMax(float value){
-        write("Sensor", "pHmax", String.valueOf(value));
+        write("PH", "pHmax", String.valueOf(value));
     }
 
     public void setAutoPH(boolean value){
