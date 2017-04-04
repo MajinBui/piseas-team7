@@ -12,7 +12,7 @@ A major change from the original requirements document is the connection process
 
 ## To-Do
 * Integrate XML data transfer on phone app
-* Integrate XML data transfer on Pi  
+
 * Create XML parser for Pi side using c++ 
 * Save relevant XML on Android device through app  
 
@@ -41,5 +41,6 @@ A major change from the original requirements document is the connection process
 * ~~Programming Pi side (relay, light and fan)~~
 * ~~Programming Pi side (self regulation logic, light and fan)~~
 * ~~Programming Pi side (temperature sensor)~~
+* ~Integrate XML data transfer on Pi~  
 
 * ~~Wrap FishyClient into C++ wrapper~~  
