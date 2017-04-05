@@ -3,16 +3,16 @@
 #include <cstdlib>
 #include <fstream>
 #include <string>
-#include <wiringPi.h>
+//#include <wiringPi.h>
 #include <iomanip>
 #include <iostream>
 
 TempData::TempData() {
-	pinMode(FAN_PIN, OUTPUT);
-	pinMode(HEATER_PIN, OUTPUT);
-	
-	TempData::toggleFan(false);
-	TempData::toggleHeater(false);
+	//pinMode(FAN_PIN, OUTPUT);
+	//pinMode(HEATER_PIN, OUTPUT);
+
+	//TempData::toggleFan(false);
+	//TempData::toggleHeater(false);
 }
 
 TempData::TempData(float min, float max, bool autoReg){
@@ -23,19 +23,28 @@ void TempData::setTempData(float minTemp, float maxTemp, bool autoReg){
 	tempeSettings.setData(minTemp, maxTemp, autoReg);
 }
 
-float TempData::getMin()
-{
+float TempData::getMin(){
 	return tempeSettings.getMin();
 }
 
-float TempData::getMax()
-{
+float TempData::getMax(){
 	return tempeSettings.getMax();
 }
 
-bool TempData::getAutoRegulate()
-{
+bool TempData::getAutoRegulate(){
 	return tempeSettings.getAutoRegulate();
+}
+
+void TempData::setMin(float min_) {
+	tempeSettings.setMin(min_);
+}
+
+void TempData::setMax(float max_) {
+	tempeSettings.setMax(max_);
+}
+
+void TempData::setAutoRegulate(bool regulate_) {
+	tempeSettings.setAutoRegulate(regulate_);
 }
 
 float TempData::getTemp(){
@@ -55,34 +64,29 @@ float TempData::getTemp(){
 	
 	return temperature;
 }
-
-void TempData::regulate(TempData tempData){
+void TempData::regulate(TempData tempData, bool manual){
 	
-	float curTemp = TempData::getTemp();
-	
-	if(curTemp > tempData.getMax()){
-		std::cout << "Temperature above max, turning FAN ON" << std::endl;
-		TempData::toggleFan(true);
-	}
-	else if(curTemp <= tempData.getMax() && curTemp >= tempData.getMin()){
-		std::cout << "Temperature within range, turning FAN and HEATER OFF" << std::endl;
-		TempData::toggleFan(false);
-		TempData::toggleHeater(false);
-	}
-	else if(curTemp < tempData.getMin()){
-		std::cout << "Temperature below min, turning HEATER ON" << std::endl;
-		TempData::toggleHeater(true);
-	}
-	std::cout << std::fixed << std::setprecision(2)
-	<< "Cur Temp = " << TempData::getTemp() << "°C" << std::endl;
+	//float curTemp = TempData::getTemp();
+	//
+	//if(curTemp > tempData.getMax()){
+	//	digitalWrite(FAN_PIN, HIGH);
+	//}
+	//else if(curTemp <= tempData.getMax() && curTemp >= tempData.getMin()){
+	//	digitalWrite(FAN_PIN, LOW);
+	//}
+	//else if(curTemp < tempData.getMin()){
+	//
+	//}
+	//std::cout << std::fixed << std::setprecision(2)
+	//<< "Cur Temp = " << TempData::getTemp() << "°C" << std::endl;
 	
 }
 
-void TempData::toggleFan(bool state){
-	digitalWrite(FAN_PIN, state);
-}
-
-void TempData::toggleHeater(bool state){
-	digitalWrite(HEATER_PIN, state);
-}
+//void TempData::toggleFan(bool state) {
+//	digitalWrite(FAN_PIN, state);
+//}
+//
+//void TempData::toggleHeater(bool state) {
+//	digitalWrite(HEATER_PIN, state);
+//}
 

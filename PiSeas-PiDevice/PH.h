@@ -10,6 +10,9 @@ public:
 	float getMin();
 	float getMax();
 	bool getAutoRegulate();
+	void setMin(float);
+	void setMax(float);
+	void setAutoRegulate(bool);
 	static float getPH();
 	static void regulate(PH, bool);
 };
