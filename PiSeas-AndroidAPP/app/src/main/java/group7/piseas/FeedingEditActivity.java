@@ -3,6 +3,7 @@ package group7.piseas;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.NumberPicker;
 import android.widget.TextView;
@@ -257,5 +258,16 @@ public class FeedingEditActivity extends AppCompatActivity {
         cleaningLady.put(light, lightVal);
         //FishyClient.writeToServerData(tankID, cleaningLady);
         Toast.makeText(this, "Cleaning lady is done!", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case android.R.id.home:
+                this.finish();
+                return (true);
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

@@ -2,6 +2,7 @@ package group7.piseas;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -59,4 +60,16 @@ public class LogActivity extends AppCompatActivity {
         }
         adapter.notifyDataSetChanged();
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case android.R.id.home:
+                this.finish();
+                return (true);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 }

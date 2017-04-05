@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ListView;
@@ -143,5 +144,16 @@ public class FeedingManagementActivity extends AppCompatActivity {
     protected void onRestart() {
         super.onRestart();
         populateList();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case android.R.id.home:
+                this.finish();
+                return (true);
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

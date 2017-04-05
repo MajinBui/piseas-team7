@@ -178,8 +178,8 @@ public class TankListActivity extends AppCompatActivity {
         AlarmManager alarm = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
         // First parameter is the type: ELAPSED_REALTIME, ELAPSED_REALTIME_WAKEUP, RTC_WAKEUP
         // Interval can be INTERVAL_FIFTEEN_MINUTES, INTERVAL_HALF_HOUR, INTERVAL_HOUR, INTERVAL_DAY
-        alarm.setInexactRepeating(AlarmManager.RTC, firstMillis,
-                AlarmManager.INTERVAL_FIFTEEN_MINUTES, pi);
+//        alarm.setInexactRepeating(AlarmManager.RTC, firstMillis, 60000, pi);
+        alarm.setInexactRepeating(AlarmManager.RTC, firstMillis, AlarmManager.INTERVAL_FIFTEEN_MINUTES, pi);
     }
 
     public void cancelNotifications() {

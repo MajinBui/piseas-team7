@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.WakefulBroadcastReceiver;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -42,8 +43,12 @@ public class PiseasService extends IntentService{
 
     private void makeNotifications() {
         List<Tank> tankList = TankListActivity.tankList;
-        load(TankListActivity.tankList);
-        if (tankList != null && !tankList.isEmpty()) {
+        if (tankList == null) {
+            tankList = new ArrayList<Tank>();
+        }
+        load(tankList);
+        TankListActivity.tankList = tankList;
+        if (!tankList.isEmpty()) {
             Log.i("PiseasService", "tanklist not empty");
             SharedPreferences sharedPref = getSharedPreferences("piseas", MODE_PRIVATE);
             for (Tank tank : tankList) {
@@ -55,7 +60,7 @@ public class PiseasService extends IntentService{
                 long dateLastLogCheck = sharedPref.getLong(prefKey, new Date(Long.MIN_VALUE).getTime());
                 long newLastLogCheck = dateLastLogCheck;
                 for (PiseasLog log : logs.getPiseasLogs()) {
-                    Log.i("PiseasService", "getting logs");
+                    Log.i("PiseasService", "getting log");
                     Log.i("PiseasService", Utilities.dateToString(log.getDate()) + " vs " + Utilities.dateToString(new Date(dateLastLogCheck)));
                     // Stop immediately when notifications has already been read
                     if (log.getDate().compareTo(new Date(dateLastLogCheck)) <= 0 )
@@ -69,7 +74,7 @@ public class PiseasService extends IntentService{
                         if (log.getDescription().toLowerCase().contains("temp")) {
                             cls = TemperatureManagementActivity.class;
                             id = 11;
-                        } else if (log.getDescription().toLowerCase().contains("pH") || log.getDescription().toLowerCase().contains("conductivity")) {
+                        } else if (log.getDescription().toLowerCase().contains("ph") || log.getDescription().toLowerCase().contains("conductivity")) {
                             cls = WaterAnalysisManagementActivity.class;
                             id = 12;
                         } else if (log.getDescription().toLowerCase().contains("water")) {
@@ -94,8 +99,6 @@ public class PiseasService extends IntentService{
     }
 
     private void load(List<Tank> tankList){
-        if (tankList != null)
-            return;
         Log.i("PiseasService", "LOAD");
         SharedPreferences sharedPref = getSharedPreferences("piseas", MODE_PRIVATE);
         // clear old shared preferences if old version
@@ -116,6 +119,7 @@ public class PiseasService extends IntentService{
         int type = 0;
         int tankSize = 0;
 
+        tankList.clear();
         for (int i=0;i<size; i++){
             String tankCode = sharedPref.getString("code"+i, "0");
             Log.i("PiseasService", "LOAD Tank Code" + tankCode);

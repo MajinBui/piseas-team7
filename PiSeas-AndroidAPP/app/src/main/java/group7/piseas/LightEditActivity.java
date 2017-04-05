@@ -3,6 +3,7 @@ package group7.piseas;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.NumberPicker;
 import android.widget.Toast;
@@ -204,6 +205,17 @@ public class LightEditActivity extends Activity{
         //TODO:change to xml format
         //FishyClient.writeToServerData(tankID, cleaningLady);
         Toast.makeText(this, "Cleaning is done!", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId())
+        {
+            case android.R.id.home:
+                this.finish();
+                return (true);
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
 

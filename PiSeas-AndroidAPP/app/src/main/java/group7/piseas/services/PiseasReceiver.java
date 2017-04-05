@@ -36,6 +36,7 @@ public class PiseasReceiver extends WakefulBroadcastReceiver {
 
             AlarmManager FPAlarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             FPAlarm.setRepeating(AlarmManager.RTC, firstMillis, AlarmManager.INTERVAL_FIFTEEN_MINUTES, pi);
+            //FPAlarm.setRepeating(AlarmManager.RTC, firstMillis, 60000, pi);
             Log.i("PiseasReceiver", "PiseasReceiver did start service");
         } else {
             Log.i("PiseasReceiver", "PiseasReceiver did not start service");
