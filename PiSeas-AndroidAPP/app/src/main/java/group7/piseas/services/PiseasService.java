@@ -23,6 +23,8 @@ import group7.piseas.WaterLevelManagementActivity;
 
 /**
  * Created by Van on 2017-04-04.
+ * Piseas service used to periodically check for new action log items and make notifications
+ * for each entry.
  */
 
 public class PiseasService extends IntentService{
@@ -51,18 +53,19 @@ public class PiseasService extends IntentService{
                 String prefKey = "logdate"+tank.getId();
 
                 long dateLastLogCheck = sharedPref.getLong(prefKey, new Date(Long.MIN_VALUE).getTime());
-                //dateLastLogCheck = new Date(Long.MIN_VALUE).getTime();
                 long newLastLogCheck = dateLastLogCheck;
                 for (PiseasLog log : logs.getPiseasLogs()) {
                     Log.i("PiseasService", "getting logs");
                     Log.i("PiseasService", Utilities.dateToString(log.getDate()) + " vs " + Utilities.dateToString(new Date(dateLastLogCheck)));
+                    // Stop immediately when notifications has already been read
                     if (log.getDate().compareTo(new Date(dateLastLogCheck)) <= 0 )
                         break;
+                    // Build notification
                     if (log.getType().equals("NOT")) {
                         Class cls = TankListActivity.class;
                         String title = "Piseas";
                         String message = log.getDescription();
-                        int id = 0;
+                        int id = 0;  // notification id, used to layer how notifications are sent
                         if (log.getDescription().toLowerCase().contains("temp")) {
                             cls = TemperatureManagementActivity.class;
                             id = 11;
@@ -78,10 +81,11 @@ public class PiseasService extends IntentService{
                         }
                         NotificationHelper.createNotification(this, cls, title, message, id, tankList.indexOf(tank));
                     }
-                    if (log.getDate().compareTo(new Date(newLastLogCheck)) > 0) {
+                    // reset the current last date checked for notifications
+                    if (log.getDate().compareTo(new Date(newLastLogCheck)) > 0)
                         newLastLogCheck = log.getDate().getTime();
-                    }
                 }
+                // save changes
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putLong(prefKey, newLastLogCheck);
                 editor.commit();

@@ -20,6 +20,15 @@ import group7.piseas.R;
  */
 
 public class NotificationHelper {
+    /**
+     * Helper function used to create notifications.
+     * @param context the application context
+     * @param cls the activity to open when the notification is opened
+     * @param title the title of the notification
+     * @param message the message of the notification
+     * @param id the id of the notification
+     * @param index the index of the tank that created this notification
+     */
     public static void createNotification(Context context, Class cls, String title, String message, int id, int index) {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)

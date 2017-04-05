@@ -14,6 +14,9 @@ import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by Van on 2017-04-04.
+ *
+ * This receiver is strictly used just to activate the service on phone boot up.
+ *
  */
 
 public class PiseasReceiver extends WakefulBroadcastReceiver {
