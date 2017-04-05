@@ -319,9 +319,7 @@ public class XmlPullParserHandler {
                 String tag = parser.getName();
                 if ("Feed".equals(tag)) {
                     parser.nextTag();
-                    System.err.println(parser.getName());
                     while("details".equals(parser.getName())) {
-                        System.err.println(parser.getName());
                         // grab the first 2 attributes, hour/min, create the FeedSchedule object. All days are automatically
                         // set to false, parse through the rest of the attributes to see which is set to true. For the bool
                         // to go true, the string needs to be 'true', cannot be 1.
@@ -342,7 +340,6 @@ public class XmlPullParserHandler {
                         parser.nextTag();
                     }
                     fis.close();
-                    System.err.println(feeds.size());
                     return feeds;
                 }
             }
