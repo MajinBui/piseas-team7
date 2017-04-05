@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Date;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -32,7 +33,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
@@ -40,11 +40,9 @@ import javax.xml.xpath.XPathFactory;
 
 import group7.piseas.Objects.FeedSchedule;
 import group7.piseas.Objects.LightSchedule;
-import group7.piseas.Objects.piDate;
 import group7.piseas.Objects.Log.LogDesc;
 import group7.piseas.Objects.Log.Logs;
-import group7.piseas.Objects.Log.Log;
-import piseas.network.FishyClient;
+import group7.piseas.Objects.Log.PiseasLog;
 
 public class XmlPullParserHandler {
 
@@ -106,9 +104,9 @@ public class XmlPullParserHandler {
         return parseSensor("Tank", "password");
     }
 
-    public piDate getSensorDate(){
+    public Date getSensorDate(){
         // Parse from tag Date, attribute date
-        return new piDate(parseSensor("Date", "date"));
+        return Utilities.stringToDate(parseSensor("Date", "date"));
     }
 
     public int getSensorTotalFeeds(){
@@ -220,9 +218,9 @@ public class XmlPullParserHandler {
         return Boolean.valueOf(parseSettings("Tank", "type"));
     }
 
-    public piDate getSettingsDate(){
+    public Date getSettingsDate(){
         // Parse from tag "Date", attribute date
-        return new piDate(parseSettings("Date", "date"));
+        return Utilities.stringToDate(parseSettings("Date", "date"));
     }
 
     public boolean getSettingsManualFeed(){
@@ -403,14 +401,14 @@ public class XmlPullParserHandler {
     public Logs getLogs(){
         Logs logs = new Logs();
         try{
-            is = context.getAssets().open(id + "_action_log.xml");
+            File file = new File(context.getFilesDir() + "/" + id + "_action_log.xml");
+            FileInputStream fis = new FileInputStream(file);
 
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
             factory.setNamespaceAware(true);
             XmlPullParser parser = factory.newPullParser();
 
-            is.reset();
-            parser.setInput(is, null);
+            parser.setInput(fis, null);
 
             while ((parser.next()) != XmlPullParser.END_DOCUMENT) {
                 String tag = parser.getName();
@@ -423,20 +421,21 @@ public class XmlPullParserHandler {
                 tag = parser.getName();
                 while(parser.getName().equals("Log")) {
 
-                    logs.add(new Log(
+                    logs.add(new PiseasLog(
                             parser.getAttributeValue(null, "date"),
                             parser.getAttributeValue(null, "type"),
-                            LogDesc.fromString(parser.getAttributeValue(null, "decs"))
+                            LogDesc.fromString(parser.getAttributeValue(null, "desc"))
                     ));
                     // next will take the same detail tag twice, I think because it needs a closing
                     // tag to go with the opening one. next() twice to get to the actual next tag
                     parser.nextTag();
                     parser.nextTag();
                 }
-                is.close();
+                fis.close();
+                logs.sort();
                 return logs;
             }
-            is.close();
+            fis.close();
         } catch (XmlPullParserException e) {
             e.printStackTrace();
         } catch ( IOException e) {
@@ -1025,4 +1024,5 @@ public class XmlPullParserHandler {
     public Context getContext() {
         return context;
     }
+
 }

@@ -8,8 +8,10 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
+import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 
 import group7.piseas.R;
 
@@ -18,7 +20,7 @@ import group7.piseas.R;
  */
 
 public class NotificationHelper {
-    public NotificationHelper(Context context, Class cls, String title, String message) {
+    public static void createNotification(Context context, Class cls, String title, String message, int id, int index) {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
                         .setContentTitle(title)
@@ -32,6 +34,7 @@ public class NotificationHelper {
         }
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(context, cls);
+        resultIntent.putExtra("id", index);
 
         // The stack builder object will contain an artificial back stack for the
         // started Activity.
@@ -42,6 +45,10 @@ public class NotificationHelper {
         stackBuilder.addParentStack(cls);
         // Adds the Intent that starts the Activity to the top of the stack
         stackBuilder.addNextIntent(resultIntent);
+
+        for (int i = 0; i < stackBuilder.getIntentCount(); i++) {
+            stackBuilder.editIntentAt(i).putExtra("id", index);
+        }
         PendingIntent resultPendingIntent =
                 stackBuilder.getPendingIntent(
                         0,
@@ -51,6 +58,6 @@ public class NotificationHelper {
         NotificationManager mNotificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         // mId allows you to update the notification later on.
-        mNotificationManager.notify(0, mBuilder.build());
+        mNotificationManager.notify(id, mBuilder.build());
     }
 }

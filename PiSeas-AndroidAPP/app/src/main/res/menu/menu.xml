@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/serverSetup"
-        android:title="Setup Server Side"/>
+    <item android:id="@+id/allowNotifications"
+        android:title="Allow Notifications"
+        android:checkable="true"/>
 </menu>

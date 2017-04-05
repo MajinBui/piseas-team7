@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="group7.piseas">
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -11,24 +13,47 @@
         android:theme="@style/AppTheme">
         <activity android:name=".TankMainPageActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".TankListActivity"/>
+        </activity>
         <activity android:name=".TankManagementActivity"
             android:configChanges="orientation"
             android:screenOrientation="portrait"/>
 
         <activity android:name=".LightManagementActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".TankMainPageActivity"/>
+        </activity>
+
         <activity android:name=".LightEditActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".LightManagementActivity"/>
+        </activity>
 
         <activity android:name=".WaterLevelManagementActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".TankMainPageActivity"/>
+        </activity>
+
+
         <activity android:name=".WaterAnalysisManagementActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".TankMainPageActivity"/>
+        </activity>
 
         <activity
             android:name=".TemperatureManagementActivity"
@@ -39,16 +64,30 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".TankMainPageActivity"/>
         </activity>
+
         <activity android:name=".TemperatureUpdateActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".TemperatureManagementActivity"/>
+        </activity>
 
         <activity android:name=".FeedingManagementActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".TankMainPageActivity"/>
+        </activity>
+
         <activity android:name=".FeedingEditActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".FeedingManagementActivity"/>
+        </activity>
 
         <activity android:name=".TankListActivity"
             android:configChanges="orientation"
@@ -66,8 +105,21 @@
 
         <activity android:name=".LogActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".TankMainPageActivity"/>
+        </activity>
 
+        <service
+            android:name=".services.PiseasService"
+            android:exported="false" />
+
+        <receiver android:name="group7.piseas.services.PiseasReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

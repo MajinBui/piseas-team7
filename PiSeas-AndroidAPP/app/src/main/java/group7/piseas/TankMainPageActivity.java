@@ -33,6 +33,7 @@ public class TankMainPageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tank_main_page);
         index = getIntent().getIntExtra("id", -1);
+
         TextView tv = (TextView) findViewById(R.id.tankName);
 
         try {
@@ -43,7 +44,7 @@ public class TankMainPageActivity extends AppCompatActivity {
         //Creation of notifications
         temperatureTextView = (TextView) findViewById(R.id.temperatureValueTextView);
         pHTextView = (TextView) findViewById(R.id.pHValueTextView);
-        handler.postDelayed(runnable, UPDATE_VALUE_DELAY);
+        //handler.postDelayed(runnable, UPDATE_VALUE_DELAY);
         updatePage();
         tank = TankListActivity.tankList.get(index);
     }
@@ -62,7 +63,9 @@ public class TankMainPageActivity extends AppCompatActivity {
     public void onWaterAnalysisClick(View view){
         Intent i = new Intent(this, WaterAnalysisManagementActivity.class);
         i.putExtra("id", index);
+        // Get new settings
         tank.retrieveMobileSettingsFromServer();
+        // Reload the xml data
         tank.getpH().loadLocalXmlData();
         tank.getWc().loadLocalXmlData();
         startActivity(i);
@@ -70,7 +73,9 @@ public class TankMainPageActivity extends AppCompatActivity {
     public void onWaterFlowClick(View view){
         Intent i = new Intent(this, WaterLevelManagementActivity.class);
         i.putExtra("id", index);
+        // Get new settings
         tank.retrieveMobileSettingsFromServer();
+        // Reload the xml data
         tank.getPump().loadLocalXmlData();
         startActivity(i);
     }
@@ -87,6 +92,9 @@ public class TankMainPageActivity extends AppCompatActivity {
     }
     public void logButtonClick(View view){
         Intent i = new Intent(this, LogActivity.class);
+        // Get new log
+        tank.retrieveActionLogFromServer();
+        // do not need to reload object for this one
         i.putExtra("id", index);
         startActivity(i);
     }
@@ -94,18 +102,18 @@ public class TankMainPageActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        handler.removeCallbacks(runnable);
+        //handler.removeCallbacks(runnable);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        handler.removeCallbacks(runnable);
+        //handler.removeCallbacks(runnable);
     }
     @Override
     protected void onResume() {
         super.onResume();
-        handler.postDelayed(runnable, UPDATE_VALUE_DELAY);
+        //handler.postDelayed(runnable, UPDATE_VALUE_DELAY);
     }
 
     protected void updatePage(){

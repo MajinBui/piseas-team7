@@ -7,7 +7,6 @@ import java.util.HashMap;
 
 import group7.piseas.Objects.PH;
 import group7.piseas.Objects.Temperature;
-import group7.piseas.Server.FishyClient;
 
 /**
  * Created by Van on 2016-12-06.
@@ -24,7 +23,7 @@ public class TankTimer implements Runnable{
         //pH = new PH(context, pHTextView);
     }
     public void run() {
-        HashMap<String, String> dataList = FishyClient.retrieveServerData("VAN");
+        //HashMap<String, String> dataList = FishyClient.retrieveServerData("VAN");
         //temperature.run(dataList);
         //pH.run(dataList);
     }

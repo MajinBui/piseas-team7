@@ -66,7 +66,7 @@ public class WaterLevelManagementActivity extends AppCompatActivity {
                 }
             }
         });
-        tank = new Tank(getApplicationContext(), TankListActivity.tankList.get(getIntent().getIntExtra("id", -1)).getId());
+        tank = TankListActivity.tankList.get(getIntent().getIntExtra("id", -1));
         pump = tank.getPump();
     }
 

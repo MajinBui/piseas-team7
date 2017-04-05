@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import group7.piseas.Objects.FeedSchedule;
-import group7.piseas.Server.FishyClient;
 
 /**
  * Created by mmbab on 12/1/2016.
@@ -23,7 +22,7 @@ import group7.piseas.Server.FishyClient;
 public class FeedingEditActivity extends AppCompatActivity {
     private ArrayList<FeedSchedule> schedule;
     private FeedSchedule curSchedule;
-    private FishyClient client;
+    //private FishyClient client;
     private final String tankID = "Matt";
     private final int MAX = 2;
     private final String divider = "<br/>";
@@ -123,7 +122,9 @@ public class FeedingEditActivity extends AppCompatActivity {
     }
 
     public void getData(){
-        HashMap<String, String> retrieveList = FishyClient.retrieveServerData(tankID);
+        // TODO: OLD SERVER SET UP
+
+        //HashMap<String, String> retrieveList = FishyClient.retrieveServerData(tankID);
 
 //            for(int i=0; i<7; i++){
 //                if(!retrieveList.get(days[i]).equals("-")){
@@ -144,30 +145,30 @@ public class FeedingEditActivity extends AppCompatActivity {
 //                            FeedSchedule dayFeed = new FeedSchedule(hr, min);
 //                            dayFeed.setWeek(i);
 //                            schedule.add(dayFeed);
-        for(int i=0; i<7; i++){
-            if(!retrieveList.get(days[i]).equals("-")) {
-                String[]separate = retrieveList.get(days[i]).split(divider);
-                for (String aSeparate : separate) {
-                    boolean found = false;
-                     for (FeedSchedule feed : schedule) {
-                         if (feed.getTime().equals(aSeparate)) {
-                            feed.setWeek(i, true);
-                            found = true;
-                        }
-                    }
-                    if (!found) {
-                        String[]timeSplit = aSeparate.split(":");
-                         int hr = Integer.parseInt(timeSplit[0]);
-                         int min = Integer.parseInt(timeSplit[1]);
-                        FeedSchedule dayFeed = new FeedSchedule(hr, min);
-                        dayFeed.setWeek(i, true);
-                        schedule.add(dayFeed);
-
-                    }
-                }
-            }
-            }
-        lightVal = retrieveList.get(light);
+//        for(int i=0; i<7; i++){
+//            if(!retrieveList.get(days[i]).equals("-")) {
+//                String[]separate = retrieveList.get(days[i]).split(divider);
+//                for (String aSeparate : separate) {
+//                    boolean found = false;
+//                     for (FeedSchedule feed : schedule) {
+//                         if (feed.getTime().equals(aSeparate)) {
+//                            feed.setWeek(i, true);
+//                            found = true;
+//                        }
+//                    }
+//                    if (!found) {
+//                        String[]timeSplit = aSeparate.split(":");
+//                         int hr = Integer.parseInt(timeSplit[0]);
+//                         int min = Integer.parseInt(timeSplit[1]);
+//                        FeedSchedule dayFeed = new FeedSchedule(hr, min);
+//                        dayFeed.setWeek(i, true);
+//                        schedule.add(dayFeed);
+//
+//                    }
+//                }
+//            }
+//            }
+//        lightVal = retrieveList.get(light);
     }
 
     private boolean checkMax(){
@@ -218,7 +219,7 @@ public class FeedingEditActivity extends AppCompatActivity {
         return true;
     }
 
-    public void feedSave(View view){ //TODO:change to xml formate
+    public void feedSave(View view){ //TODO:change to xml format
         HashMap<String, String> dataList = new HashMap<String, String>();
         min = pickerMin.getValue();
         hour = pickerHr.getValue();
@@ -240,7 +241,7 @@ public class FeedingEditActivity extends AppCompatActivity {
 
             dataList.put(light, lightVal);
 
-            FishyClient.writeToServerData(tankID, dataList);
+            //FishyClient.writeToServerData(tankID, dataList);
 
             finish();
         }
@@ -254,7 +255,7 @@ public class FeedingEditActivity extends AppCompatActivity {
         }
         //cleaningLady.put(light, "-");
         cleaningLady.put(light, lightVal);
-        FishyClient.writeToServerData(tankID, cleaningLady);
+        //FishyClient.writeToServerData(tankID, cleaningLady);
         Toast.makeText(this, "Cleaning lady is done!", Toast.LENGTH_LONG).show();
     }
 }

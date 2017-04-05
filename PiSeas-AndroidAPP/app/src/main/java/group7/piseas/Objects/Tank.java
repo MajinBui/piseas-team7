@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 
 import group7.piseas.Helpers.XmlPullParserHandler;
+import group7.piseas.Objects.Log.Logs;
 import piseas.network.FishyClient;
 
 
@@ -25,6 +26,7 @@ public class Tank implements Runnable {
     private PH pH;
     private Pump pump;
     private WaterConductivity wc;
+    private Logs logs;
 
     /**
      * Constructor for newly added tanks.
@@ -37,10 +39,7 @@ public class Tank implements Runnable {
      * @param desc
      */
     public Tank(Context context, String id, String pw, String name, int type, int size, String desc){
-        FishyClient.retrieveMobileXmlData(id, context.getFilesDir().getAbsolutePath());
         this.context = context;
-        this.piSeasXmlHandler = new XmlPullParserHandler(context, id);
-
         this.id = id;
         this.pw = pw;
         this.name = name;
@@ -48,9 +47,17 @@ public class Tank implements Runnable {
         this.size = size;
         this.desc = desc;
 
+        retrieveMobileSettingsFromServer();
+        retrieveActionLogFromServer();
+        retrieveSensorDataFromServer();
+
+        this.piSeasXmlHandler = new XmlPullParserHandler(context, id);
+
+
         this.pump = new Pump(this);
         this.pH = new PH(this);
         this.wc = new WaterConductivity(this);
+        this.logs = piSeasXmlHandler.getLogs();
     }
 
     /**
@@ -59,11 +66,14 @@ public class Tank implements Runnable {
      * @param context
      */
     public Tank(Context context, String id) {
-        FishyClient.retrieveMobileXmlData(id, context.getFilesDir().getAbsolutePath());
         this.context = context;
-        this.piSeasXmlHandler = new XmlPullParserHandler(context, id);
-
         this.id = id;
+
+        retrieveMobileSettingsFromServer();
+        retrieveActionLogFromServer();
+        retrieveSensorDataFromServer();
+
+        this.piSeasXmlHandler = new XmlPullParserHandler(context, id);
         this.pw = piSeasXmlHandler.getSettingsPassword();
         this.name = piSeasXmlHandler.getSettingsName();
         this.type = (piSeasXmlHandler.getSettingsType()? 1 : 0); //TODO: Boolean type; Should it stay or should it go? *Song plays in background*
@@ -73,6 +83,7 @@ public class Tank implements Runnable {
         this.pump = new Pump(this);
         this.pH = new PH(this);
         this.wc = new WaterConductivity(this);
+        this.logs = piSeasXmlHandler.getLogs();
     }
 
     /**
@@ -82,6 +93,16 @@ public class Tank implements Runnable {
      */
     public boolean retrieveMobileSettingsFromServer() {
         boolean rc = FishyClient.retrieveMobileXmlData(id, context.getFilesDir().getAbsolutePath());
+        return rc;
+    }
+
+    public boolean retrieveActionLogFromServer() {
+        boolean rc = FishyClient.retrieveActionLog(id, context.getFilesDir().getAbsolutePath());
+        return rc;
+    }
+
+    public boolean retrieveSensorDataFromServer() {
+        boolean rc = FishyClient.retrieveSensorData(id, context.getFilesDir().getAbsolutePath());
         return rc;
     }
 
@@ -152,6 +173,8 @@ public class Tank implements Runnable {
         wc.sendWCSettingsToServer();
     }
 
+    public Logs getLogs() {logs = piSeasXmlHandler.getLogs(); return logs;}
+
     // Not used yet
     @Override
     public void run() {
@@ -175,4 +198,5 @@ public class Tank implements Runnable {
                 Toast.makeText(context, "No internet connection;  Unable to update!", Toast.LENGTH_LONG).show();
         }
     }
+
 }

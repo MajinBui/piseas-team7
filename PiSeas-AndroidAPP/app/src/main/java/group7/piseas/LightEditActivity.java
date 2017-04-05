@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import group7.piseas.Objects.LightSchedule;
-import group7.piseas.Server.FishyClient;
 
 /**
  * Created by mmbab on 11/30/2016.
@@ -100,6 +99,8 @@ public class LightEditActivity extends Activity{
     }
 
     public void getData(){
+        //TODO:change to xml format
+        /*
         HashMap<String, String> retrieveList = FishyClient.retrieveServerData(tankID);
 
         if(!retrieveList.get(light).equals("-")) {
@@ -121,6 +122,7 @@ public class LightEditActivity extends Activity{
         // Get all data from feeding schedule
         for(int i=0; i<7; i++)
             feed[i] = retrieveList.get(days[i]);
+        */
     }
 
     private boolean checkData(){
@@ -188,7 +190,7 @@ public class LightEditActivity extends Activity{
 
             dataList.put(light, temp);
 
-            FishyClient.writeToServerData(tankID, dataList);
+            //FishyClient.writeToServerData(tankID, dataList);
 
             finish();
         }
@@ -199,8 +201,8 @@ public class LightEditActivity extends Activity{
         cleaningLady.put("tankId", tankID);
 
         cleaningLady.put(light, "-");
-
-        FishyClient.writeToServerData(tankID, cleaningLady);
+        //TODO:change to xml format
+        //FishyClient.writeToServerData(tankID, cleaningLady);
         Toast.makeText(this, "Cleaning is done!", Toast.LENGTH_LONG).show();
     }
 }

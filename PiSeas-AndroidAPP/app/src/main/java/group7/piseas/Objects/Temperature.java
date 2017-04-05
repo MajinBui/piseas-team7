@@ -34,7 +34,7 @@ public class Temperature {
             long tempMin = Long.parseLong(dataList.get("Min Temp").replaceAll("\\D+", ""));
 
             if (temperature > tempMax && temperature > tempMin ) {
-                new NotificationHelper(context, TemperatureManagementActivity.class, "PiSeas", "Temperature levels dangerous");
+                //NotificationHelper.createNotification(context, TemperatureManagementActivity.class, "PiSeas", "Temperature levels dangerous", 11, 0);
             }
         } catch (NumberFormatException e) {
             Log.d("", e.getMessage());

@@ -1,5 +1,7 @@
 package group7.piseas;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,6 +24,8 @@ import java.util.List;
 
 import group7.piseas.Adapters.TankAdapter;
 import group7.piseas.Objects.Tank;
+import group7.piseas.services.PiseasReceiver;
+import group7.piseas.services.PiseasService;
 
 public class TankListActivity extends AppCompatActivity {
 
@@ -78,6 +82,13 @@ public class TankListActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
+        SharedPreferences settings = getSharedPreferences("piseas", MODE_PRIVATE);
+        boolean isChecked = settings.getBoolean("allowNotifications", false);
+        MenuItem item = menu.findItem(R.id.allowNotifications);
+        item.setChecked(isChecked);
+        if (isChecked) {
+            scheduleNotifications();
+        }
         return true;
     }
 
@@ -85,10 +96,20 @@ public class TankListActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            // TODO: Will need to setup again
-            case R.id.serverSetup:
-                Log.i("LISTACTIVITY", "SERVER SET UP");
-                Toast.makeText(this, "No more easy setup :(.  Use http://vanchaubui.com/fish_tanks/QWERT_mobile_settings.xml", Toast.LENGTH_LONG).show();
+            case R.id.allowNotifications:
+                item.setChecked(!item.isChecked());
+                if (item.isChecked()) {
+                    Log.i("LISTACTIVITY", "allow notifications");
+                    scheduleNotifications();
+                }
+                else {
+                    Log.i("LISTACTIVITY", "block notifications");
+                    cancelNotifications();
+                }
+                SharedPreferences settings = getSharedPreferences("piseas", MODE_PRIVATE);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putBoolean("allowNotifications", item.isChecked());
+                editor.commit();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -99,7 +120,7 @@ public class TankListActivity extends AppCompatActivity {
     protected void onStop() {
         Log.i("TANKLIST", "onStop");
         SharedPreferences.Editor editor = getSharedPreferences("piseas", Context.MODE_PRIVATE).edit();
-        editor.clear();
+        //editor.clear();
         editor.putInt("listSize", tankList.size());
         Log.i("TANKLIST", "size: " + tankList.size());
         for (int i = 0; i<tankList.size();i++){
@@ -143,5 +164,29 @@ public class TankListActivity extends AppCompatActivity {
             }
         }
         adapter.notifyDataSetChanged();
+    }
+
+    public void scheduleNotifications() {
+        // Construct an intent that will execute the AlarmReceiver
+        Intent startServiceIntent = new Intent(getApplicationContext(), PiseasService.class);
+        // Create a PendingIntent to be triggered when the alarm goes off
+
+        PendingIntent pi = PendingIntent.getService(this, 0, startServiceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        // Setup periodic alarm every 5 seconds
+        long firstMillis = System.currentTimeMillis(); // alarm is set right away
+        AlarmManager alarm = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        // First parameter is the type: ELAPSED_REALTIME, ELAPSED_REALTIME_WAKEUP, RTC_WAKEUP
+        // Interval can be INTERVAL_FIFTEEN_MINUTES, INTERVAL_HALF_HOUR, INTERVAL_HOUR, INTERVAL_DAY
+        alarm.setInexactRepeating(AlarmManager.RTC, firstMillis,
+                AlarmManager.INTERVAL_FIFTEEN_MINUTES, pi);
+    }
+
+    public void cancelNotifications() {
+        Intent startServiceIntent = new Intent(getApplicationContext(), PiseasService.class);
+        PendingIntent pi = PendingIntent.getService(this, 0, startServiceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        AlarmManager alarm = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+        alarm.cancel(pi);
     }
 }

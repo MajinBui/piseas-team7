@@ -76,7 +76,6 @@ public class FeedingManagementActivity extends AppCompatActivity {
        /* String[] days = new String[]{"Sunday", "Monday", "Tuesday",
                 "Wednesday", "Thursday", "Friday", "Saturday"};
         String divider = "<br/>";*/
-
         FishyClient.retrieveMobileXmlData(TankListActivity.tankList.get(index).getId(), getFilesDir().getAbsolutePath().toString());
         return TankListActivity.tankList.get(index).getPiSeasXmlHandler().getFeedSchedules();
         /*

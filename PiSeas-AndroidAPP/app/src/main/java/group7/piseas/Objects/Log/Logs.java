@@ -1,48 +1,68 @@
 package group7.piseas.Objects.Log;
 
-import group7.piseas.Objects.piDate;
+import android.util.Log;
 
+import group7.piseas.Helpers.Utilities;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
 
 /**
  * Created by mmbab on 2/20/2017.
  *
- * Container of all logs
+ * Container of all piseasLogs
  *
  */
 
 public class Logs {
-    private piDate stamp;
-    private ArrayList<Log> logs;
+    private Date stamp;
+    private ArrayList<PiseasLog> piseasLogs;
+    private final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
-    public Logs(){ logs = new ArrayList<Log>(); }
+    public Logs(){ piseasLogs = new ArrayList<PiseasLog>(); }
 
     // Add timestamp
-    public void timeStamp(String time){ stamp = new piDate(time); }
+    public void timeStamp(String time){ stamp = Utilities.stringToDate(time); }
 
-    public void add(Log ll){ logs.add(ll); }
+    public void add(PiseasLog ll){ piseasLogs.add(ll); }
 
     public int size(){
-        return logs.size();
+        return piseasLogs.size();
     }
 
-    public ArrayList<Log> getLogs(){ return logs; }
+    public ArrayList<PiseasLog> getPiseasLogs(){ return piseasLogs; }
 
-    public String getTimeStamp(){ return stamp.toString(); }
+    public String getTimeStamp(){ return Utilities.dateToString(stamp); }
 
     public String getType(int i){
-        return logs.get(i).getType();
+        return piseasLogs.get(i).getType();
     }
 
-    public String getDate(int i){return logs.get(i).getDate(); }
+    public String getDate(int i){return piseasLogs.get(i).getDateString(); }
 
     public String getDesccription(int i){
-        return logs.get(i).getDescription();
+        return piseasLogs.get(i).getDescription();
     }
 
-    public Log getLog(int i) { return logs.get(i); }
+    public PiseasLog getLog(int i) { return piseasLogs.get(i); }
 
-    public void remove(int i){ logs.remove(i); }
+    public void remove(int i){ piseasLogs.remove(i); }
 
-    public void clear(){ logs.clear(); }
+    public void clear(){ piseasLogs.clear(); }
+
+    public void sort() {
+        if (piseasLogs != null)
+            Collections.sort(piseasLogs, new Comparator<PiseasLog>() {
+                @Override
+                public int compare(PiseasLog lhs, PiseasLog rhs) {
+                    // -1 - less than, 1 - greater than, 0 - equal, all inversed for descending
+                    return lhs.getDate().compareTo(rhs.getDate())*-1;
+                }
+            });
+    }
+
 }

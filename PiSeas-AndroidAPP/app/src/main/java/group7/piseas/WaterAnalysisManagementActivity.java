@@ -83,7 +83,7 @@ public class WaterAnalysisManagementActivity extends AppCompatActivity {
         highCon.setWrapSelectorWheel(false);
         highCon.setValue(0);
 
-        tank = new Tank(getApplicationContext(), TankListActivity.tankList.get(getIntent().getIntExtra("id", -1)).getId());
+        tank = TankListActivity.tankList.get(getIntent().getIntExtra("id", -1));
         pH = tank.getpH();
         wc = tank.getWc();
     }
