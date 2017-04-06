@@ -10,8 +10,8 @@ import java.util.List;
 import java.util.ArrayList;
 import group7.piseas.Adapters.LogAdapter;
 import group7.piseas.Helpers.Utilities;
-import group7.piseas.Objects.Log.Logs;
-import group7.piseas.Objects.Log.PiseasLog;
+import group7.piseas.Objects.PiseasLog.Logs;
+import group7.piseas.Objects.PiseasLog.PiseasLog;
 import group7.piseas.Objects.LogItem;
 import group7.piseas.Objects.Tank;
 

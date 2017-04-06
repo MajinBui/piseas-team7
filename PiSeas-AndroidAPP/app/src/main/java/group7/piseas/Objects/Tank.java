@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 
 import group7.piseas.Helpers.XmlPullParserHandler;
-import group7.piseas.Objects.Log.Logs;
+import group7.piseas.Objects.PiseasLog.Logs;
 import piseas.network.FishyClient;
 
 

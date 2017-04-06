@@ -1,6 +1,4 @@
-package group7.piseas.Objects.Log;
-
-import android.util.Log;
+package group7.piseas.Objects.PiseasLog;
 
 import group7.piseas.Helpers.Utilities;
 

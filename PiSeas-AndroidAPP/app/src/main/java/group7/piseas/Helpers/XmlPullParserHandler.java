@@ -40,9 +40,9 @@ import javax.xml.xpath.XPathFactory;
 
 import group7.piseas.Objects.FeedSchedule;
 import group7.piseas.Objects.LightSchedule;
-import group7.piseas.Objects.Log.LogDesc;
-import group7.piseas.Objects.Log.Logs;
-import group7.piseas.Objects.Log.PiseasLog;
+import group7.piseas.Objects.PiseasLog.LogDesc;
+import group7.piseas.Objects.PiseasLog.Logs;
+import group7.piseas.Objects.PiseasLog.PiseasLog;
 
 public class XmlPullParserHandler {
 

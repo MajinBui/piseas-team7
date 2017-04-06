@@ -1,4 +1,4 @@
-package group7.piseas.Objects.Log;
+package group7.piseas.Objects.PiseasLog;
 
 /**
  * Created by mmbab on 2/22/2017.
