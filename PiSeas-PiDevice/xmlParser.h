@@ -10,6 +10,7 @@
 #include <ctime>
 #include "rapidxml_utils.hpp"
 
+
 const static char* mobileName = "1_mobile_settings.xml";
 
 class XmlParser {
@@ -45,6 +46,7 @@ public:
 	static float getSettingsCMin();
 	static float getSettingsCMax();
 	static bool getSettingsCAuto();
+
 };
 
 #endif

@@ -22,7 +22,7 @@ public:
 	void addLightAction(tm, bool);
 	FeedSchedule& getFeedSchedule();
 	void setFeedSchedule(FeedSchedule);
-	void addFeedAction(tm, bool);
+	void addFeedAction(tm);
 	void setAutoLight(bool);
 	bool getAutoLight(bool);
 	TempData& getTemperatureData();

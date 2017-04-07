@@ -20,8 +20,16 @@ void FeedSchedule::setAutoFeed(bool autoFeed_) {
 	autoFeed = autoFeed_;
 }
 
+void FeedSchedule::setManual(bool manual_) {
+	manual = manual_;
+}
+
 bool FeedSchedule::getAutoFeed() {
 	return autoFeed;
+}
+
+bool FeedSchedule::getManual() {
+	return manual;
 }
 
 void FeedSchedule::manualFeed() {
