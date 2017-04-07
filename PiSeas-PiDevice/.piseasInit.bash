@@ -23,7 +23,7 @@ if [[ "$_java" ]]; then
 		_javaPath=$(find /usr/lib/jvm -type d -name "*jdk*")
 		echo "export JAVA_HOME=$_javaPath" >> ~/.bashrc
 		echo 'export PATH=$PATH:$JAVA_HOME/bin' >> ~/.bashrc
-		echo 'LIBPATH=$JAVA_HOME/jre/lib/arm/server' >> ~/.bashrc
+		echo 'export LIBPATH=$JAVA_HOME/jre/lib/arm/server' >> ~/.bashrc
 		echo 'export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${LIBPATH}' >> ~/.bashrc
     fi
 fi
@@ -44,12 +44,6 @@ else
 	echo "#PISEAS: Config file does not exist; Creating"
 	touch ~/.piseas.ini
 	echo "TANKID=$_TANKID" > ~/.piseas.ini
-	echo "LIGHT_PIN=$_LIGHT_PIN" >> ~/.piseas.ini
-	echo "FAN_PIN=$_FAN_PIN" >> ~/.piseas.ini
-	echo "HEATER_PIN=$_HEATER_PIN" >> ~/.piseas.ini
-	echo "IN_PUMP_PIN=$_OUT_PUMP_PIN" >> ~/.piseas.ini
-	echo "OUT_PUMP_PIN=$_OUT_PUMP_PIN" >> ~/.piseas.ini
-	echo "WATER_LEVEL_SENSOR_PIN=$_WATER_LEVEL_SENSOR_PIN" >> ~/.piseas.ini
 	cat ~/.piseas.ini 
 fi
 
