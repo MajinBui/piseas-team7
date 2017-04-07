@@ -17,7 +17,7 @@ Detailed guide: https://www.codeproject.com/Articles/993067/Calling-Java-from-Cp
 		-export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-armhf
 		-OR export JAVA_HOME=/usr/lib/jvm/jdk-8-oracle-arm32-vfp-hflt
 		-export PATH=$PATH:$JAVA_HOME/bin
-		-LIBPATH=$JAVA_HOME/jre/lib/arm/server
+		-export LIBPATH=$JAVA_HOME/jre/lib/arm/server
 		-export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${LIBPATH}
 	- After adding to .bashrc for the first time, execute the above lines in the terminal as well.
 	
