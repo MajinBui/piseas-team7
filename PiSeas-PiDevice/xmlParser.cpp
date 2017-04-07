@@ -6,28 +6,120 @@
 using namespace rapidxml;
 
 void XmlParser::updateLightSchedule(LightSchedule &ls){
-	if(getSettingsUpdated("light"))		
-		ls = getSettingsLightSchedule();
+	if (getSettingsUpdated("light")) {
+
+		std::list<LightAction> lists = ls.getSchedule();
+		lists.clear();
+
+		rapidxml::file<> xmlFile(mobileName);
+		xml_document<> doc;										// character type defaults to char
+		doc.parse<0>(xmlFile.data());							// 0 means default parse flags
+
+		std::ifstream theFile(mobileName);
+
+		std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
+		buffer.push_back('\0');
+
+		doc.parse<0>(&buffer[0]);
+
+		// Find root node
+		xml_node<>* root_node = doc.first_node("Piseas");
+		xml_node<>* piNode = root_node->first_node("Light");
+
+		int count = atoi(piNode->first_attribute("schedules")->value());
+		bool autoRegulate = (piNode->first_attribute("auto")->value() == "true") ? true : false;
+		bool manual = (piNode->first_attribute("manual")->value() == "true") ? true : false;
+
+		//LightSchedule ls;
+		ls.setAutoRegulate(autoRegulate);
+		ls.setCount = count;
+
+		piNode = piNode->first_node();
+		for (int i = 0; i < count; i++, piNode->next_sibling()) {
+			int onHr = atoi(piNode->first_attribute("onHr")->value());
+			int onMin = atoi(piNode->first_attribute("onMin")->value());
+			int offHr = atoi(piNode->first_attribute("offHr")->value());
+			int offMin = atoi(piNode->first_attribute("offMin")->value());
+
+			struct std::tm on;
+			struct std::tm off;
+			on.tm_hour = onHr;
+			on.tm_min = onMin;
+			off.tm_hour = offHr;
+			off.tm_min = offMin;
+
+			ls.addLightAction(on, true);
+			ls.addLightAction(off, false);
+		}
+	}
 }
 
 void XmlParser::updateFeedSchedule(FeedSchedule &fs) {
-	if (getSettingsUpdated("feed"))
-		fs = getSettingsFeedSchedule();
+	if (getSettingsUpdated("feed")) {
+		rapidxml::file<> xmlFile(mobileName);
+		xml_document<> doc;										// character type defaults to char
+		doc.parse<0>(xmlFile.data());							// 0 means default parse flags
+
+		std::ifstream theFile(mobileName);
+
+		std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
+		buffer.push_back('\0');
+
+		doc.parse<0>(&buffer[0]);
+
+		// Find root node
+		xml_node<>* root_node = doc.first_node("Piseas");
+		xml_node<>* piNode = root_node->first_node("Feed");
+
+		int size = atoi(piNode->first_attribute("schedules")->value());
+		bool autoFeed = (piNode->first_attribute("auto")->value() == "true") ? true : false;
+
+		//FeedSchedule fs;
+		fs.setAutoFeed(autoFeed);
+
+		piNode = piNode->first_node();
+		for (int i = 0; i < size; i++, piNode->next_sibling()) {
+			int hr = atoi(piNode->first_attribute("hr")->value());
+			int min = atoi(piNode->first_attribute("min")->value());
+
+			struct std::tm time;
+			time.tm_hour = hr;
+			time.tm_min = min;
+
+			xml_attribute<>* atts = piNode->first_attribute("Mon");
+			for (int n = 0; n < 7; n++, atts = atts->next_attribute()) {
+				if ((atts->value() == "true")) {
+					time.tm_wday = n;
+					fs.addFeedSchedule(time);
+				}
+				std::string val = atts->value();
+			}
+		}
+	}
 }
 
 void XmlParser::updateTemperatureRange(TempData &td){
-	if (getSettingsUpdated("temperature"))
-		td = TempData(getSettingsMinTemp(), getSettingsMaxTemp(), getSettingsTempAuto());
+	if (getSettingsUpdated("temperature")) {
+		td.setMin = getSettingsMinTemp();
+		td.setMax = getSettingsMaxTemp();
+		td.setAutoRegulate = getSettingsTempAuto();
+	}
 }
 
 void XmlParser::updateConductivityRange(Conductivity &con) {
-	if (getSettingsUpdated("condictivity"))
-		con = Conductivity(getSettingsCMin(), getSettingsCMax(), getSettingsTempAuto());
+	if (getSettingsUpdated("condictivity")) {
+		con.setMin = getSettingsCMin();
+		con.setMax = getSettingsCMax();
+		con.setAutoRegulate = getSettingsCAuto();
+	}
 }
 
 void XmlParser::updatePHRange(PH &ph) {
-	if (getSettingsUpdated("ph"))
-		ph = PH(getSettingsPHMin(), getSettingsPHMax(), getSettingsPHAuto());
+	if (getSettingsUpdated("ph")) {
+		ph.setMin = getSettingsPHMin();
+		ph.setMax = getSettingsPHMax();
+		ph.setAutoRegulate = getSettingsPHAuto();
+	}
 }
 
 void XmlParser::updateWaterState(WaterState &water) {
@@ -154,104 +246,12 @@ bool XmlParser::getSettingsAutoFeed() {
 	return (parser("Feed", "auto") == "true") ? true : false;
 }
 
-FeedSchedule XmlParser::getSettingsFeedSchedule() {
-	rapidxml::file<> xmlFile(mobileName);
-	xml_document<> doc;										// character type defaults to char
-	doc.parse<0>(xmlFile.data());							// 0 means default parse flags
-
-	std::ifstream theFile(mobileName);
-
-	std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
-	buffer.push_back('\0');
-
-	doc.parse<0>(&buffer[0]);
-
-	// Find root node
-	xml_node<>* root_node = doc.first_node("Piseas");
-	xml_node<>* piNode = root_node->first_node("Feed");
-
-	int size = atoi(piNode->first_attribute("schedules")->value());
-	bool autoFeed = (piNode->first_attribute("auto")->value() == "true") ? true : false;
-
-	FeedSchedule fs;
-	fs.setAutoFeed(autoFeed);
-
-	piNode = piNode->first_node();
-	for (int i = 0; i < size; i++, piNode->next_sibling()) {
-		int hr = atoi(piNode->first_attribute("hr")->value());
-		int min = atoi(piNode->first_attribute("min")->value());
-
-		struct std::tm time;
-		time.tm_hour = hr;
-		time.tm_min = min;
-
-		FeedAction feed(time);
-		
-		xml_attribute<>* atts = piNode->first_attribute("Mon");
-		for (int n = 0; n < 7; n++, atts = atts->next_attribute()) {
-			std::string val = atts->value();
-			feed.setWeek(n, (val == "true") ? true : false);
-		}
-
-			
-		fs.addFeedAction(feed);
-
-	}
-
-	return fs;
-}
-
 bool XmlParser::getSettingsManualLight() {
 	return (parser("Light", "manual") == "true") ? true : false;
 }
 
 bool XmlParser::getSettingsAutoLight() {
 	return (parser("Light", "auto") == "true") ? true : false;
-}
-
-LightSchedule XmlParser::getSettingsLightSchedule() {
-	rapidxml::file<> xmlFile(mobileName);
-	xml_document<> doc;										// character type defaults to char
-	doc.parse<0>(xmlFile.data());							// 0 means default parse flags
-
-	std::ifstream theFile(mobileName);
-
-	std::vector<char> buffer((std::istreambuf_iterator<char>(theFile)), std::istreambuf_iterator<char>());
-	buffer.push_back('\0');
-
-	doc.parse<0>(&buffer[0]);
-
-	// Find root node
-	xml_node<> * root_node = doc.first_node("Piseas");
-	xml_node<>* piNode = root_node->first_node("Light");
-
-	int count = atoi(piNode->first_attribute("schedules")->value());
-	bool autoRegulate = (piNode->first_attribute("auto")->value() == "true") ? true : false;
-	bool manual = (piNode->first_attribute("manual")->value() == "true") ? true : false; //-----------
-
-	LightSchedule ls;
-	ls.setAutoRegulate(autoRegulate);
-	ls.setCount = count;
-
-	piNode = piNode->first_node();
-	for (int i = 0; i < count; i++, piNode->next_sibling()) {
-		int onHr = atoi(piNode->first_attribute("onHr")->value());
-		int onMin = atoi(piNode->first_attribute("onMin")->value());
-		int offHr = atoi(piNode->first_attribute("offHr")->value());
-		int offMin = atoi(piNode->first_attribute("offMin")->value());
-
-		struct std::tm on;
-		struct std::tm off;
-		on.tm_hour = onHr;
-		on.tm_min = onMin;
-		off.tm_hour = offHr;
-		off.tm_min = offMin;
-		
-		ls.addLightAction(on, true);
-		ls.addLightAction(off, false);
-	}
-	
-	return ls;
 }
 
 float XmlParser::getSettingsMinTemp() {
