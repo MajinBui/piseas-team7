@@ -93,6 +93,9 @@ public class Tank implements Runnable {
      */
     public boolean retrieveMobileSettingsFromServer() {
         boolean rc = FishyClient.retrieveMobileXmlData(id, context.getFilesDir().getAbsolutePath());
+        pump.loadLocalXmlData();
+        pH.loadLocalXmlData();
+        wc.loadLocalXmlData();
         return rc;
     }
 

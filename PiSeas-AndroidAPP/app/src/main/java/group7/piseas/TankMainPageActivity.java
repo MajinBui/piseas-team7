@@ -66,9 +66,6 @@ public class TankMainPageActivity extends AppCompatActivity {
         i.putExtra("id", index);
         // Get new settings
         tank.retrieveMobileSettingsFromServer();
-        // Reload the xml data
-        tank.getpH().loadLocalXmlData();
-        tank.getWc().loadLocalXmlData();
         startActivity(i);
     }
     public void onWaterFlowClick(View view){
@@ -76,8 +73,6 @@ public class TankMainPageActivity extends AppCompatActivity {
         i.putExtra("id", index);
         // Get new settings
         tank.retrieveMobileSettingsFromServer();
-        // Reload the xml data
-        tank.getPump().loadLocalXmlData();
         startActivity(i);
     }
     public void onTemperatureClick(View view){
