@@ -37,15 +37,37 @@ import org.xml.sax.SAXException;
  */
 public class FishyClient {
 	private final static String PASSCODE = "xBE3GnsotxlFSwb9sg7t";
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
 	public static void main(String args[]) {
 		// tester
 		// Initialize data
-		final String tankID = "QWERT";
-		final String tankID2 = "QWER";
+		final String tankID = "x";
+		final String tankID2 = "y";
 
+		
 		final String testInputDir = "C:\\Users\\Van\\Documents\\fish_test\\input";
 		final String testOutputDir = "C:\\Users\\Van\\Documents\\fish_test\\output";
+		if (true) {
+			FishyClient.updateTemperatureRange(tankID, 10, 20);
+			//FishyClient.appendActionLog(tankID2, "2017-03-20T19:19:19+0500", "TEMPRANGE", "NOT");
+			//FishyClient.appendActionLog(tankID, DATE_FORMAT.format(new Date()), "TEMPRANGE", "NOT");
+			//FishyClient.appendActionLog(tankID, DATE_FORMAT.format(new Date()), "PHRANGE", "NOT");
+			
+			//FishyClient.sendMobileXmlData(tankID, testInputDir);
+			
+//			while (true) {
+//				FishyClient.checkMobileSettingsUpdated(tankID2, "2017-03-20T19:19:19+0500");
+//			}
+//			FishyClient.sendMobileXmlData(tankID, testInputDir);
+//			FishyClient.sendSensorData(tankID, testInputDir);
+//			FishyClient.sendActionLog(tankID, testInputDir);
+//			FishyClient.sendMobileXmlData(tankID2, testInputDir);
+//			FishyClient.sendSensorData(tankID2, testInputDir);
+//			FishyClient.sendActionLog(tankID2, testInputDir);
+			//return;
+			return;
+		}
 		final boolean[][] weekArr = {
 				{ true, false, true, true, true, false, false },
 				{ false, true, false, true, false, false, false } 
@@ -872,13 +894,13 @@ public class FishyClient {
 				// Add schedule
 				for (int i = 0; i < weekArr.length; i++) {
 					HashMap<String, String> data = new HashMap<String, String>();
-					data.put("Mon", Boolean.toString(weekArr[i][0]));
-					data.put("Tue", Boolean.toString(weekArr[i][1]));
-					data.put("Wed", Boolean.toString(weekArr[i][2]));
-					data.put("Thu", Boolean.toString(weekArr[i][3]));
-					data.put("Fri", Boolean.toString(weekArr[i][4]));
-					data.put("Sat", Boolean.toString(weekArr[i][5]));
-					data.put("Sun", Boolean.toString(weekArr[i][6]));
+					data.put("Sun", Boolean.toString(weekArr[i][0]));
+					data.put("Mon", Boolean.toString(weekArr[i][1]));
+					data.put("Tue", Boolean.toString(weekArr[i][2]));
+					data.put("Wed", Boolean.toString(weekArr[i][3]));
+					data.put("Thu", Boolean.toString(weekArr[i][4]));
+					data.put("Fri", Boolean.toString(weekArr[i][5]));
+					data.put("Sat", Boolean.toString(weekArr[i][6]));
 					data.put("hr", Integer.toString(hour[i]));
 					data.put("min", Integer.toString(minute[i]));
 					appendXmlData(fishyConnection, NetworkTransactionSwitch.SERVER_APPEND_MOBILE_SETTINGS, tankId, NetworkConstants.XPATH_FEED, data);
@@ -1048,7 +1070,7 @@ public class FishyClient {
 				System.err.println("Function used improperly or server bug; please complain to van");
 			}
 			fishyConnection.finish(tankId);
-
+			System.out.println(fileDate+ "vs"+ date);
 			return !fileDate.equals(date);
 		} catch (IOException e) {
 			System.err.println("Connection to server lost");
@@ -1078,7 +1100,7 @@ public class FishyClient {
 			}
 
 			fishyConnection.finish(tankId);
-
+			
 			return !fileDate.equals(date);
 		} catch (IOException e) {
 			System.err.println("Connection to server lost");
@@ -1139,7 +1161,7 @@ public class FishyClient {
 			}
 
 			fishyConnection.finish(tankId);
-
+				
 			return !fileDate.equals(date);
 		} catch (IOException e) {
 			System.err.println("Connection to server lost");
@@ -1483,7 +1505,98 @@ public class FishyClient {
 		}
 		return null;
 	}
-
+	
+	public static boolean setManualFeed(String tankId, boolean manual) {
+		FishyConnection fishyConnection;
+		boolean rc = true;
+		try {
+			fishyConnection = new FishyConnection();
+			try {
+				modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_FEED, "manual", Boolean.toString(manual));
+			} catch (Exception e) {
+				rc = false;
+				System.err.println("Function used improperly or server bug; please complain to van");
+			}
+			fishyConnection.finish(tankId);
+		} catch (IOException e) {
+			rc = false;
+			System.err.println("Connection to server lost");
+		} catch (ClassNotFoundException e) {
+			rc = false;
+			System.err.println("Client may be out of date");
+		}
+		return rc;
+	}
+	
+	
+	public static boolean setManualLight(String tankId, boolean manual) {
+		FishyConnection fishyConnection;
+		boolean rc = true;
+		try {
+			fishyConnection = new FishyConnection();
+			try {
+				modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_LIGHT, "manual", Boolean.toString(manual));
+			} catch (Exception e) {
+				rc = false;
+				System.err.println("Function used improperly or server bug; please complain to van");
+			}
+			fishyConnection.finish(tankId);
+		} catch (IOException e) {
+			rc = false;
+			System.err.println("Connection to server lost");
+		} catch (ClassNotFoundException e) {
+			rc = false;
+			System.err.println("Client may be out of date");
+		}
+		return rc;
+	}
+	
+	
+	public static boolean setManualDrain(String tankId, boolean manual) {
+		FishyConnection fishyConnection;
+		boolean rc = true;
+		try {
+			fishyConnection = new FishyConnection();
+			try {
+				modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_PUMP_DETAILS, "manualDrain", Boolean.toString(manual));
+			} catch (Exception e) {
+				rc = false;
+				System.err.println("Function used improperly or server bug; please complain to van");
+			}
+			fishyConnection.finish(tankId);
+		} catch (IOException e) {
+			rc = false;
+			System.err.println("Connection to server lost");
+		} catch (ClassNotFoundException e) {
+			rc = false;
+			System.err.println("Client may be out of date");
+		}
+		return rc;
+	}
+	
+	public static boolean setManualFill(String tankId, boolean manual) {
+		FishyConnection fishyConnection;
+		boolean rc = true;
+		try {
+			fishyConnection = new FishyConnection();
+			try {
+				modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_PUMP_DETAILS, "manualFill", Boolean.toString(manual));
+			} catch (Exception e) {
+				rc = false;
+				System.err.println("Function used improperly or server bug; please complain to van");
+			}
+			fishyConnection.finish(tankId);
+		} catch (IOException e) {
+			rc = false;
+			System.err.println("Connection to server lost");
+		} catch (ClassNotFoundException e) {
+			rc = false;
+			System.err.println("Client may be out of date");
+		}
+		return rc;
+	}
+	
+	
 	/**
 	 * Inner class to store a connection in progress.  Every public function MUST create a FishyConnection
 	 * and then pass it to every subsequent private method call. This is vital to ensure the server keeps correct
