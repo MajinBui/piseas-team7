@@ -58,7 +58,6 @@ public class TankAdapter extends ArrayAdapter<Tank> {
         }
         else
             holder = (ViewHolder) convertView.getTag(); // retrieve the view holder of
-        // TODO: OLD SERVER SET UP
         holder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -77,11 +76,12 @@ public class TankAdapter extends ArrayAdapter<Tank> {
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
+                                /*old server code
                                 HashMap<String, String> dataList =new HashMap<String, String>();
                                 dataList.put("name", "");
                                 dataList.put("type", 0+"");
                                 dataList.put("size", 0+"");
-                                dataList.put("desc", "");
+                                dataList.put("desc", "");*/
                                 //FishyClient.writeToServerData(TankListActivity.tankList.get(position).getId()+"", dataList);
 
                                 TankListActivity.tankList.remove(position);

@@ -5,15 +5,15 @@ Conductivity::Conductivity(float min, float max, bool regulate) {
 }
 
 float Conductivity::getMin() {
-	condSettings.getMin();
+	return condSettings.getMin();
 }
 
 float Conductivity::getMax() {
-	condSettings.getMax();
+	return condSettings.getMax();
 }
 
 bool Conductivity::getAutoRegulate() {
-	condSettings.getAutoRegulate();
+	return condSettings.getAutoRegulate();
 }
 
 void Conductivity::setMin(float min_) {

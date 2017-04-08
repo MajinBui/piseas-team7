@@ -42,7 +42,7 @@ void XmlParser::updateLightSchedule(LightSchedule &ls){
 		ls.setManual(manual);
 
 		piNode = piNode->first_node();
-		for (int i = 0; i < count; i++, piNode = piNode->next_sibling()) {
+		for (int i = 0; piNode!=nullptr; i++, piNode = piNode->next_sibling()) {
 			int onHr = atoi(piNode->first_attribute("onHr")->value());
 			int onMin = atoi(piNode->first_attribute("onMin")->value());
 			int offHr = atoi(piNode->first_attribute("offHr")->value());
@@ -93,7 +93,7 @@ void XmlParser::updateFeedSchedule(FeedSchedule &fs) {
 		
 
 		piNode = piNode->first_node();
-		for (int i = 0; i < size; i++, piNode = piNode->next_sibling()) {
+		for (int i = 0; piNode!=nullptr; i++, piNode = piNode->next_sibling()) {
 			int hr = atoi(piNode->first_attribute("hr")->value());
 			int min = atoi(piNode->first_attribute("min")->value());
 

@@ -5,15 +5,15 @@ PH::PH(float min, float max, bool regulate) {
 }
 
 float PH::getMin() {
-	phSettings.getMin();
+	return phSettings.getMin();
 }
 
 float PH::getMax() {
-	phSettings.getMax();
+	return phSettings.getMax();
 }
 
 bool PH::getAutoRegulate() {
-	phSettings.getAutoRegulate();
+	return phSettings.getAutoRegulate();
 }
 
 void PH::setMin(float min_) {

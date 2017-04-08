@@ -32,10 +32,8 @@ public:
 	static bool getSettingsType();
 	static bool getSettingsManualFeed();
 	static bool getSettingsAutoFeed();
-	static FeedSchedule getSettingsFeedSchedule();
 	static bool getSettingsManualLight();
 	static bool getSettingsAutoLight();
-	static LightSchedule getSettingsLightSchedule();
 	static float getSettingsMinTemp();
 	static float getSettingsMaxTemp();
 	static bool getSettingsTempAuto();

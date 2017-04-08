@@ -23,8 +23,8 @@ void Tank::setFeedSchedule(FeedSchedule fs) {
 	feedSchedule = fs;
 }
 
-void Tank::addFeedAction(tm t, bool b) {
-	feedSchedule.addFeedAction(t, b);
+void Tank::addFeedAction(tm t) {
+	feedSchedule.addFeedSchedule(t);
 }
 
 void Tank::setAutoLight(bool s){
