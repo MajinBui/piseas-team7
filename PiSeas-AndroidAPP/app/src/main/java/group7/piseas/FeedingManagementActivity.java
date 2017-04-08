@@ -15,11 +15,14 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
 import group7.piseas.Adapters.FeedingAdapter;
 import group7.piseas.Objects.FeedSchedule;
+import group7.piseas.Objects.Tank;
 import piseas.network.FishyClient;
 
 public class FeedingManagementActivity extends AppCompatActivity {
@@ -28,24 +31,64 @@ public class FeedingManagementActivity extends AppCompatActivity {
     private final String tankID = "Matt";
     Switch autoFeed;
     private int index;
+    private Tank tank;
+    private final int MAX = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feeding_management);
         autoFeed = (Switch) findViewById(R.id.autoLight);
         index = getIntent().getIntExtra("id", -1);
+        tank = TankListActivity.tankList.get(index);
 
         populateList();
         validateAuto();
     }
 
-    public void onManualFeed(View view){  //TODO: add manual validation
-        Toast.makeText(this, "Fish are fed manually", Toast.LENGTH_LONG).show();
+    public void onManualFeed(View view){
+        Date date = new Date();
+        int hour = date.getHours();
+        int min = date.getMinutes();
+        FeedSchedule curSchedule = new FeedSchedule(hour, min);
+        int hourMin = (hour-MAX)%24;
+        int hourMax = (hour+MAX)%24;
+        int feedsPerDay[] = new int[7];
+        int time = hour * 100 + min;
+        int timeMin = time - (MAX * 100);
+        int timeMax = time + (MAX * 100);
+        Toast.makeText(this, "manual check for " + hour +" "+min  , Toast.LENGTH_LONG).show();
+        for(FeedSchedule feed : feeds){
+            for(int i=0; i<7; i++) {
+                if (feed.getWeek(i))
+                    feedsPerDay[i]++;
+            }
+        }
+        boolean day[] = new boolean[7];
+        Arrays.fill(day, false);
+
+        for(int i=0; i<7; i++){
+            if(feedsPerDay[i]+1 > 2){
+                Toast.makeText(this, "Can only have 2 feeds per day!", Toast.LENGTH_LONG).show();
+                break;
+            }
+            curSchedule.setWeek(i, true);
+            for(FeedSchedule feed : feeds){
+                if(feed.getWeek(i) && timeMin <= feed.getTimeCompare() && timeMax >= feed.getTimeCompare()){
+                    Toast.makeText(this, "Must wait 2 hours from last feed time.", Toast.LENGTH_LONG).show();
+                    break;
+                }
+                else{
+                    //TODO:Add additional validation for last manual feed
+                    Toast.makeText(this, "Fish are fed manually", Toast.LENGTH_LONG).show();
+                    FishyClient.updateManualCommands(tank.getId(),true,false,false,false);
+                }
+            }
+
+        }
     }
 
     public void addSchedule(View view){
@@ -74,37 +117,9 @@ public class FeedingManagementActivity extends AppCompatActivity {
     }
 
     public ArrayList<FeedSchedule> getData(){
-       /* String[] days = new String[]{"Sunday", "Monday", "Tuesday",
-                "Wednesday", "Thursday", "Friday", "Saturday"};
-        String divider = "<br/>";*/
         FishyClient.retrieveMobileXmlData(TankListActivity.tankList.get(index).getId(), getFilesDir().getAbsolutePath().toString());
         return TankListActivity.tankList.get(index).getPiSeasXmlHandler().getFeedSchedules();
-        /*
-        HashMap<String, String> retrieveList = FishyClient.retrieveServerData(tankID);
 
-        for(int i=0; i<7; i++){
-            if(!retrieveList.get(days[i]).equals("-")){
-                String[] separate = retrieveList.get(days[i]).split(divider);
-
-                for (String aSeparate : separate) {
-                    boolean found = false;
-                    for (FeedSchedule feed : feeds) {
-                        if (feed.getTime().equals(aSeparate)) {
-                            feed.setWeek(i);
-                            found = true;
-                        }
-                    }
-                    if(!found){
-                        String[] timeSplit = aSeparate.split(":");
-                        int hr = Integer.parseInt(timeSplit[0]);
-                        int min = Integer.parseInt(timeSplit[1]);
-                        FeedSchedule dayFeed = new FeedSchedule(hr, min);
-                        dayFeed.setWeek(i);
-                        feeds.add(dayFeed);
-                    }
-                }
-            }
-        }*/
     }
 
     public void validateAuto(){
