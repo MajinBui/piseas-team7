@@ -111,7 +111,6 @@ public class PiseasService extends IntentService{
             editor.commit();
         }
         int size = sharedPref.getInt("listSize", 0);
-        Log.i("PiseasService", "LOAD size " + size);
 
         int pw = 0;
         String name = "";

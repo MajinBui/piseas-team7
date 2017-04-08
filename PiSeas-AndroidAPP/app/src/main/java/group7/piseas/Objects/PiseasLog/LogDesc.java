@@ -8,7 +8,7 @@ package group7.piseas.Objects.PiseasLog;
  */
 
 public enum LogDesc {
-    TEMPRANGE("Temperature out of range. "),
+    TEMPRANGE("Temp out of range. "),
     PHRANGE("pH out of range."),
     WCRANGE("Water conductivity out of range."),
     WATERCHANGE("Full manual water change required."),
