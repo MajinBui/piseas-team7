@@ -51,6 +51,7 @@ public class TemperatureManagementActivity extends AppCompatActivity {
         minTempTable = (TextView) findViewById(R.id.minTempValTV);
         maxTempTable = (TextView) findViewById(R.id.maxTempValTV);
         auto = (Switch) findViewById(R.id.enableTempRegSW);
+
         curTempTV = (TextView)findViewById(R.id.curTempTV);
 
         handler.postDelayed(runnable, UPDATE_VALUE_DELAY);
@@ -105,8 +106,7 @@ public class TemperatureManagementActivity extends AppCompatActivity {
         minTemp =  String.valueOf(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsMinTemp());
         maxTemp =  String.valueOf(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsMaxTemp());
 
-        //auto.setChecked(TankListActivity.tankList.get(index).getPiSeasXmlHandler().);
-        //TODO: get auto temperature function missing from parser
+        auto.setChecked(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsAuto());
 
         minTempTable.setText(minTemp);
         maxTempTable.setText(maxTemp);
@@ -119,6 +119,7 @@ public class TemperatureManagementActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        FishyClient.updateTemperature(TankListActivity.tankList.get(index).getId(), Float.parseFloat(minTemp), Float.parseFloat(maxTemp), auto.isChecked());
         handler.removeCallbacks(runnable);
         update();
     }
@@ -165,6 +166,7 @@ public class TemperatureManagementActivity extends AppCompatActivity {
                     else {
                         TankListActivity.tankList.get(index).getPiSeasXmlHandler().setAutoTemp(false);
                     }
+                    TankListActivity.tankList.get(index).getPiSeasXmlHandler().setAutoTemp(isChecked);
                 }
             });
 
@@ -172,7 +174,7 @@ public class TemperatureManagementActivity extends AppCompatActivity {
     }
 
     public void update(){
-        FishyClient.sendMobileXmlData(TankListActivity.tankList.get(index).getId(), getFilesDir().getAbsolutePath().toString());
+        FishyClient.updateTemperature(TankListActivity.tankList.get(index).getId(), Float.parseFloat(minTemp), Float.parseFloat(maxTemp), auto.isChecked());
     }
 
     @Override

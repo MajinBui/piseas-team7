@@ -253,9 +253,9 @@ public class XmlPullParserHandler {
         return Float.parseFloat(parseSettings("Temperature", "max"));
     }
 
-    public float getSettingsAuto(){
+    public boolean getSettingsAuto(){
         // Parse from tag "Temperature", attribute auto
-        return Float.parseFloat(parseSettings("Temperature", "auto"));
+        return Boolean.parseBoolean(parseSettings("Temperature", "auto"));
     }
 
     public boolean getSettingsDrain(){

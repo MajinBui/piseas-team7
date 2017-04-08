@@ -125,7 +125,7 @@ public class TemperatureUpdateActivity extends AppCompatActivity {
                 maxTempTable.setText(String.valueOf(maxTemp) + "°C");
 
                 dialogInterface.dismiss();
-                FishyClient.sendMobileXmlData(TankListActivity.tankList.get(index).getId(), getFilesDir().getAbsolutePath().toString());
+                FishyClient.updateTemperatureRange(TankListActivity.tankList.get(index).getId(), (minTemp), (maxTemp));
                 finish();
             }
         });
