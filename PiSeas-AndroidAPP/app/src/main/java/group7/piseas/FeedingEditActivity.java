@@ -222,7 +222,10 @@ public class FeedingEditActivity extends AppCompatActivity {
                 }
             }
         }
-        schedule.add(curSchedule);
+        if (Arrays.asList(curSchedule.getWeek()).contains(true))
+            schedule.add(curSchedule);
+        else
+            return false;
         return true;
     }
 
@@ -243,8 +246,8 @@ public class FeedingEditActivity extends AppCompatActivity {
                 min[i] = temp.getMin();
             }
             FishyClient.setFeeding(TankListActivity.tankList.get(index).getId(), weekArray,hour, min, autoStatus, false);
-            finish();
         }
+        finish();
     }
 
     public void clear(View view){

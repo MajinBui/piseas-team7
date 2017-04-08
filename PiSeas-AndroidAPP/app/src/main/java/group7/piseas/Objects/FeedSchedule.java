@@ -26,6 +26,10 @@ public class FeedSchedule {
         return week[day];
     }
 
+    public boolean[] getWeek(){
+        return week;
+    }
+
     public int getHour(){
         return hour;
     }
