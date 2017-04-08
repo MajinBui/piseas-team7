@@ -49,12 +49,12 @@ public class FishyClient {
 		final String testInputDir = "C:\\Users\\Van\\Documents\\fish_test\\input";
 		final String testOutputDir = "C:\\Users\\Van\\Documents\\fish_test\\output";
 		if (true) {
-			FishyClient.updateTemperatureRange(tankID, 10, 20);
+			//FishyClient.updateTemperatureRange(tankID, 10, 20);
 			//FishyClient.appendActionLog(tankID2, "2017-03-20T19:19:19+0500", "TEMPRANGE", "NOT");
 			//FishyClient.appendActionLog(tankID, DATE_FORMAT.format(new Date()), "TEMPRANGE", "NOT");
 			//FishyClient.appendActionLog(tankID, DATE_FORMAT.format(new Date()), "PHRANGE", "NOT");
 			
-			//FishyClient.sendMobileXmlData(tankID, testInputDir);
+			FishyClient.sendMobileXmlData(tankID, testInputDir);
 			
 //			while (true) {
 //				FishyClient.checkMobileSettingsUpdated(tankID2, "2017-03-20T19:19:19+0500");
@@ -1596,7 +1596,139 @@ public class FishyClient {
 		return rc;
 	}
 	
+	public static boolean setAutoFeed(String tankId, boolean auto) {
+		FishyConnection fishyConnection;
+		boolean rc = true;
+		try {
+			fishyConnection = new FishyConnection();
+			try {
+				modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_FEED, "auto", Boolean.toString(auto));
+			} catch (Exception e) {
+				rc = false;
+				System.err.println("Function used improperly or server bug; please complain to van");
+			}
+			fishyConnection.finish(tankId);
+		} catch (IOException e) {
+			rc = false;
+			System.err.println("Connection to server lost");
+		} catch (ClassNotFoundException e) {
+			rc = false;
+			System.err.println("Client may be out of date");
+		}
+		return rc;
+	}
 	
+	
+	public static boolean setAutoLight(String tankId, boolean auto) {
+		FishyConnection fishyConnection;
+		boolean rc = true;
+		try {
+			fishyConnection = new FishyConnection();
+			try {
+				modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_LIGHT, "auto", Boolean.toString(auto));
+			} catch (Exception e) {
+				rc = false;
+				System.err.println("Function used improperly or server bug; please complain to van");
+			}
+			fishyConnection.finish(tankId);
+		} catch (IOException e) {
+			rc = false;
+			System.err.println("Connection to server lost");
+		} catch (ClassNotFoundException e) {
+			rc = false;
+			System.err.println("Client may be out of date");
+		}
+		return rc;
+	}
+	
+	public static boolean setAutoWC(String tankId, boolean auto) {
+		FishyConnection fishyConnection;
+		boolean rc = true;
+		try {
+			fishyConnection = new FishyConnection();
+			try {
+				modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_CONDUCTIVITY_DETAILS, "auto", Boolean.toString(auto));
+			} catch (Exception e) {
+				rc = false;
+				System.err.println("Function used improperly or server bug; please complain to van");
+			}
+			fishyConnection.finish(tankId);
+		} catch (IOException e) {
+			rc = false;
+			System.err.println("Connection to server lost");
+		} catch (ClassNotFoundException e) {
+			rc = false;
+			System.err.println("Client may be out of date");
+		}
+		return rc;
+	}
+	
+	public static boolean setAutoPh(String tankId, boolean auto) {
+		FishyConnection fishyConnection;
+		boolean rc = true;
+		try {
+			fishyConnection = new FishyConnection();
+			try {
+				modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_PH_DETAILS, "auto", Boolean.toString(auto));
+			} catch (Exception e) {
+				rc = false;
+				System.err.println("Function used improperly or server bug; please complain to van");
+			}
+			fishyConnection.finish(tankId);
+		} catch (IOException e) {
+			rc = false;
+			System.err.println("Connection to server lost");
+		} catch (ClassNotFoundException e) {
+			rc = false;
+			System.err.println("Client may be out of date");
+		}
+		return rc;
+	}
+	
+	public static boolean setAutoWaterChange(String tankId, boolean auto) {
+		FishyConnection fishyConnection;
+		boolean rc = true;
+		try {
+			fishyConnection = new FishyConnection();
+			try {
+				modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_PUMP_DETAILS, "auto", Boolean.toString(auto));
+			} catch (Exception e) {
+				rc = false;
+				System.err.println("Function used improperly or server bug; please complain to van");
+			}
+			fishyConnection.finish(tankId);
+		} catch (IOException e) {
+			rc = false;
+			System.err.println("Connection to server lost");
+		} catch (ClassNotFoundException e) {
+			rc = false;
+			System.err.println("Client may be out of date");
+		}
+		return rc;
+	}
+	
+	
+	public static boolean setAutoTemp(String tankId, boolean auto) {
+		FishyConnection fishyConnection;
+		boolean rc = true;
+		try {
+			fishyConnection = new FishyConnection();
+			try {
+				modifyMobileXmlData(fishyConnection, tankId, NetworkConstants.XPATH_TEMPERATURE_DETAILS, "auto", Boolean.toString(auto));
+			} catch (Exception e) {
+				rc = false;
+				System.err.println("Function used improperly or server bug; please complain to van");
+			}
+			fishyConnection.finish(tankId);
+		} catch (IOException e) {
+			rc = false;
+			System.err.println("Connection to server lost");
+		} catch (ClassNotFoundException e) {
+			rc = false;
+			System.err.println("Client may be out of date");
+		}
+		return rc;
+	}
 	/**
 	 * Inner class to store a connection in progress.  Every public function MUST create a FishyConnection
 	 * and then pass it to every subsequent private method call. This is vital to ensure the server keeps correct
