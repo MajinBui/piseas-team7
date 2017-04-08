@@ -127,7 +127,7 @@ public class TankManagementActivity extends AppCompatActivity implements Adapter
             if (!dataList.get("size").isEmpty())
                 tankSize = Integer.parseInt(dataList.get("size"));
             */
-            //TODO: what was this for?
+            //
 //            FishyClient.retrieveServerData(tankCode+"");
 //            if (!dataList.get("name").isEmpty())
 //                name = ""; // name not saved in xml

@@ -87,12 +87,13 @@ public class FeedingManagementActivity extends AppCompatActivity {
                     FishyClient.updateManualCommands(tank.getId(),true,false,false,false);
                 }
             }
-
         }
     }
 
     public void addSchedule(View view){
         Intent i = new Intent(this, FeedingEditActivity.class);
+        i.putExtra("id", index);
+        i.putExtra("autoStatus", autoFeed.isChecked());
         startActivity(i);
     }
 

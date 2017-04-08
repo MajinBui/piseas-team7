@@ -54,7 +54,7 @@ public class TankListActivity extends AppCompatActivity {
                 startActivity(new Intent(getBaseContext(), AddTankActivity.class));
             }
         });
-
+        adapter.notifyDataSetChanged();
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

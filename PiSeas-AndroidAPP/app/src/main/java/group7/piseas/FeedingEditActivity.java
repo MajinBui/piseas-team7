@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import group7.piseas.Objects.FeedSchedule;
+import piseas.network.FishyClient;
 
 /**
  * Created by mmbab on 12/1/2016.
@@ -35,6 +36,8 @@ public class FeedingEditActivity extends AppCompatActivity {
     private int hour, min;
     private String lightVal;
     private String light = "Lights";
+    private int index;
+    private boolean autoStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +47,8 @@ public class FeedingEditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feeding_edit_schedule);
 
+        index = getIntent().getIntExtra("id", -1);
+        autoStatus = getIntent().getBooleanExtra("auto", false);
         textMon = (TextView) findViewById(R.id.textMon);
         textTues = (TextView) findViewById(R.id.textTue);
         textWed = (TextView) findViewById(R.id.textWed);
@@ -83,9 +88,9 @@ public class FeedingEditActivity extends AppCompatActivity {
                 //Display the newly selected number from picker
                 min = newVal;
             }
-    });
+        });
 
-        getData();
+        schedule = getData();
     }
 
     public void dayClick(View view) {
@@ -122,8 +127,9 @@ public class FeedingEditActivity extends AppCompatActivity {
         return today;
     }
 
-    public void getData(){
-        // TODO: OLD SERVER SET UP
+    public ArrayList<FeedSchedule> getData(){
+        FishyClient.retrieveMobileXmlData(TankListActivity.tankList.get(index).getId(), getFilesDir().getAbsolutePath().toString());
+        return TankListActivity.tankList.get(index).getPiSeasXmlHandler().getFeedSchedules();
 
         //HashMap<String, String> retrieveList = FishyClient.retrieveServerData(tankID);
 
@@ -220,30 +226,23 @@ public class FeedingEditActivity extends AppCompatActivity {
         return true;
     }
 
-    public void feedSave(View view){ //TODO:change to xml format
-        HashMap<String, String> dataList = new HashMap<String, String>();
+    public void feedSave(View view){
         min = pickerMin.getValue();
         hour = pickerHr.getValue();
 
         if(checkMax()){
-            String padding = "00";
-
-            dataList.put("tankId", tankID);
-            for(int i = 0; i < 7; i++){
-                String temp = "";
-                for(FeedSchedule feed : schedule){
-                    if(feed.getWeek(i))
-                        temp += feed.getTime() + divider;
-                }
-                if(temp.equals(""))
-                    temp = "-";
-                dataList.put(days[i], temp);
+            TankListActivity.tankList.get(index).getPiSeasXmlHandler().setFeed(schedule,false,autoStatus);
+            boolean[][] weekArray = new boolean[schedule.size()][7];
+            int[] hour = new int[schedule.size()];
+            int[] min = new int[schedule.size()];
+            for (int i =0; i< schedule.size(); i++){
+                FeedSchedule temp = schedule.get(i);
+                for (int j = 0; j< 7; j++)
+                    weekArray[i][j] = temp.getWeek(j);
+                hour[i] = temp.getHour();
+                min[i] = temp.getMin();
             }
-
-            dataList.put(light, lightVal);
-
-            //FishyClient.writeToServerData(tankID, dataList);
-
+            FishyClient.setFeeding(TankListActivity.tankList.get(index).getId(), weekArray,hour, min, autoStatus, false);
             finish();
         }
     }

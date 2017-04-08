@@ -585,7 +585,10 @@ public class XmlPullParserHandler {
                     "//text()[normalize-space(.) = '']");
             NodeList emptyTextNodes = (NodeList)
                     xpathExp.evaluate(doc, XPathConstants.NODESET);
-
+            for (int i = 0; i < emptyTextNodes.getLength(); i++) {
+                Node emptyTextNode = emptyTextNodes.item(i);
+                emptyTextNode.getParentNode().removeChild(emptyTextNode);
+            }
             // search for Updated tag
             NodeList nodes = doc.getElementsByTagName("Update");
             // get the Updated tag
