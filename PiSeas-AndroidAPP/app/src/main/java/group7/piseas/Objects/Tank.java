@@ -47,12 +47,11 @@ public class Tank implements Runnable {
         this.size = size;
         this.desc = desc;
 
-        retrieveMobileSettingsFromServer();
-        retrieveActionLogFromServer();
-        retrieveSensorDataFromServer();
+        FishyClient.retrieveActionLog(id, context.getFilesDir().getAbsolutePath());
+        FishyClient.retrieveSensorData(id, context.getFilesDir().getAbsolutePath());
+        FishyClient.retrieveMobileXmlData(id, context.getFilesDir().getAbsolutePath());
 
         this.piSeasXmlHandler = new XmlPullParserHandler(context, id);
-
 
         this.pump = new Pump(this);
         this.pH = new PH(this);
@@ -69,11 +68,12 @@ public class Tank implements Runnable {
         this.context = context;
         this.id = id;
 
-        retrieveMobileSettingsFromServer();
-        retrieveActionLogFromServer();
-        retrieveSensorDataFromServer();
+        FishyClient.retrieveActionLog(id, context.getFilesDir().getAbsolutePath());
+        FishyClient.retrieveSensorData(id, context.getFilesDir().getAbsolutePath());
+        FishyClient.retrieveMobileXmlData(id, context.getFilesDir().getAbsolutePath());
 
         this.piSeasXmlHandler = new XmlPullParserHandler(context, id);
+
         this.pw = piSeasXmlHandler.getSettingsPassword();
         this.name = piSeasXmlHandler.getSettingsName();
         this.type = (piSeasXmlHandler.getSettingsType()? 1 : 0); //TODO: Boolean type; Should it stay or should it go? *Song plays in background*
