@@ -98,38 +98,7 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="10dp">
-        <Switch
-            android:id="@+id/state"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingStart="20dp"
-            android:paddingEnd="10dp"
-            android:layout_alignParentEnd="true"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/state"
-            android:layout_alignParentStart="true"
-            android:textColor="@color/text"
-            android:textSize="16sp"
-            android:paddingStart="30dp"
-            android:paddingEnd="0dp"
-            />
 
-        <Button
-            android:text="testing button - clear"
-            android:onClick="clear"
-            android:textSize="7sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/state"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/button2" />
-    </RelativeLayout>
 
     <Button
         android:id="@+id/btnSave"
