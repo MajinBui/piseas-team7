@@ -98,7 +98,7 @@ public class LightAdapter extends ArrayAdapter<LightSchedule>{
                                     hrOn[van] = LightManagementActivity.lights.get(van).getOnHour();
                                     minOn[van] = LightManagementActivity.lights.get(van).getOnMin();
                                     hrOff[van] = LightManagementActivity.lights.get(van).getOffHour();
-                                    minOff[van] = LightManagementActivity.lights.get(van).getOffHour();
+                                    minOff[van] = LightManagementActivity.lights.get(van).getOffMin();
                                 }
 
                                 // int[] hrOn, int[]minOn, int[] hrOff, int[] minOff, bool auto, bool manual
