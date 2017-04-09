@@ -46,8 +46,6 @@ public class TankMainPageActivity extends AppCompatActivity {
         temperatureTextView = (TextView) findViewById(R.id.temperatureValueTextView);
         pHTextView = (TextView) findViewById(R.id.pHValueTextView);
         //handler.postDelayed(runnable, UPDATE_VALUE_DELAY);
-        updatePage();
-        tank = TankListActivity.tankList.get(index);
     }
 
     public void onFeedingClick(View view){
@@ -109,6 +107,8 @@ public class TankMainPageActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        updatePage();
+        tank = TankListActivity.tankList.get(index);
         //handler.postDelayed(runnable, UPDATE_VALUE_DELAY);
     }
 
