@@ -27,7 +27,6 @@ public class TemperatureUpdateActivity extends AppCompatActivity {
     private static int maxTemp;
     private String minimumTemp;
     private String maximumTemp;
-    private static String tankID = "Mike";
     private TextView minTempTable;
     private TextView maxTempTable;
     int index;

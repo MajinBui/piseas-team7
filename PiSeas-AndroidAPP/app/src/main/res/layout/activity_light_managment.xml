@@ -18,53 +18,58 @@
         android:layout_gravity="center_horizontal"
         android:text="@string/lightingSetting" />
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="10dp">
-        <Switch
-            android:id="@+id/autoLight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingStart="20dp"
-            android:paddingEnd="10dp"
-            android:layout_alignParentEnd="true"
-            android:theme="@style/SwitchColor"/>
+        android:paddingTop="20dp"
+        android:paddingStart="15dp"
+        android:paddingEnd="10dp">
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:text="@string/enableAutoLight"
             android:textColor="@color/text"
-            android:textSize="16sp"
-            android:layout_toStartOf="@id/autoLight"
+            android:textSize="18sp"
+            android:layout_weight="1"
             android:paddingStart="0dp"
             android:paddingEnd="35dp"
             />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="10dp">
         <Switch
-            android:id="@+id/manLight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/autoLight"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:paddingStart="20dp"
             android:paddingEnd="10dp"
-            android:layout_alignParentEnd="true"
+            android:layout_weight="3"
             android:theme="@style/SwitchColor"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="20dp"
+        android:paddingStart="15dp"
+        android:paddingEnd="10dp"
+        android:paddingBottom="20dp">
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
             android:text="@string/manLight"
             android:textColor="@color/text"
-            android:textSize="16sp"
-            android:layout_toStartOf="@id/manLight"
+            android:textSize="18sp"
             android:paddingStart="0dp"
             android:paddingEnd="35dp"
             />
-    </RelativeLayout>
+        <Switch
+            android:id="@+id/manLight"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="3"
+            android:paddingStart="20dp"
+            android:paddingEnd="10dp"
+            android:theme="@style/SwitchColor"/>
+    </LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
