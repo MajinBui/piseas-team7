@@ -41,6 +41,7 @@ public class WaterLevelManagementActivity extends AppCompatActivity {
                     fill.setChecked(false);
                     auto.setChecked(false);
                 }
+                update();
             }
         });
 
@@ -52,6 +53,7 @@ public class WaterLevelManagementActivity extends AppCompatActivity {
                     drain.setChecked(false);
                     auto.setChecked(false);
                 }
+                update();
             }
         });
 
@@ -65,6 +67,7 @@ public class WaterLevelManagementActivity extends AppCompatActivity {
                     fill.setChecked(false);
                     drain.setChecked(false);
                 }
+                update();
             }
         });
         tank = TankListActivity.tankList.get(getIntent().getIntExtra("id", -1));

@@ -160,13 +160,8 @@ public class TemperatureManagementActivity extends AppCompatActivity {
             });
             auto.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton manual, boolean isChecked) {
-                    if (isChecked){
-                        TankListActivity.tankList.get(index).getPiSeasXmlHandler().setAutoTemp(true);
-                    }
-                    else {
-                        TankListActivity.tankList.get(index).getPiSeasXmlHandler().setAutoTemp(false);
-                    }
                     TankListActivity.tankList.get(index).getPiSeasXmlHandler().setAutoTemp(isChecked);
+                    FishyClient.setAutoTemp(TankListActivity.tankList.get(index).getId(), isChecked);
                 }
             });
 

@@ -56,8 +56,7 @@ public class LogActivity extends AppCompatActivity {
     private void load(){
         logs = tank.getLogs();
         for (PiseasLog log : logs.getPiseasLogs()) {
-            if (log.getType().equals("NOT"))
-                logList.add(new LogItem(Utilities.simpleDateToString(log.getDate()), log.getDescription()));
+            logList.add(new LogItem(Utilities.simpleDateToString(log.getDate()), log.getDescription()));
         }
         adapter.notifyDataSetChanged();
     }

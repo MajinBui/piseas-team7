@@ -87,6 +87,34 @@ public class WaterAnalysisManagementActivity extends AppCompatActivity {
         tank = TankListActivity.tankList.get(getIntent().getIntExtra("id", -1));
         pH = tank.getpH();
         wc = tank.getWc();
+
+        autoCon.setOnClickListener(new CompoundButton.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+            }
+        });
+        autoCon.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton manual, boolean isChecked) {
+                TankListActivity.tankList.get(index).getPiSeasXmlHandler().setAutoConductivity(isChecked);
+                tank.getWc().setAuto(isChecked);
+                FishyClient.setAutoWC(TankListActivity.tankList.get(index).getId(), isChecked);
+            }
+        });
+
+        autoPH.setOnClickListener(new CompoundButton.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        autoPH.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton manual, boolean isChecked) {
+                TankListActivity.tankList.get(index).getPiSeasXmlHandler().setAutoPH(isChecked);
+                FishyClient.setAutoPh(TankListActivity.tankList.get(index).getId(), isChecked);
+                tank.getpH().setAuto(isChecked);
+            }
+        });
     }
 
     public void validateAuto(){
@@ -101,12 +129,6 @@ public class WaterAnalysisManagementActivity extends AppCompatActivity {
                 }
             });
         }
-        else
-            autoCon.setOnClickListener(new CompoundButton.OnClickListener(){
-                @Override
-                public void onClick(View v) {
-                }
-            });
 
         if(lowPH.getValue() > highPH.getValue()){
             autoPH.setOnClickListener(new CompoundButton.OnClickListener(){
@@ -118,12 +140,7 @@ public class WaterAnalysisManagementActivity extends AppCompatActivity {
                 }
             });
         }
-        else
-            autoPH.setOnClickListener(new CompoundButton.OnClickListener(){
-                @Override
-                public void onClick(View v) {
-                }
-            });
+
     }
 
     public void save(View view) {

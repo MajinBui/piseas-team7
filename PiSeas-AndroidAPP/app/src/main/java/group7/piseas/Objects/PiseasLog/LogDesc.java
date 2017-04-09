@@ -34,7 +34,18 @@ public enum LogDesc {
     DAILYDRAIN("Daily partial drain on."),
     DAILYFILL("Daily partial drain off."),
     FEEDACTIVE("Activate feeder."),
-    ALARMACTIVE("Activate alarm.");
+    ALARMACTIVE("Activate alarm."),
+    WCCHANGE("Water change required."),
+    LIGHTTON("Light on."),
+    LIGHTTOFF("Light off."),
+    HEATERON("Heater on."),
+    HEATEROFF("Heater off."),
+    FANON("Fan on."),
+    FANOFF("Fan off."),
+    INPUMPON("In pump on."),
+    OUTPUMPON("Out pump on."),
+    INPUMPOFF("In pump off."),
+    OUTPUMPOFF("Out pump off.");
 
     private String description;
 
