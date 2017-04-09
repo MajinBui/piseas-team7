@@ -6,6 +6,8 @@
 
     <color name="text">#FFD</color>
     <color name="solidBackgroundLight">#8BF</color>
+    <color name="solidBackgroundLightDarkest">#888cff</color>
+    <color name="solidBackgroundLightDarker">#8BF</color>
 
     <color name="SwitchColor">#00FF00</color>
 
