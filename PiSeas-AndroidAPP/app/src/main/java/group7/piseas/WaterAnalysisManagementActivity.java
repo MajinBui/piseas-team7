@@ -62,7 +62,7 @@ public class WaterAnalysisManagementActivity extends AppCompatActivity {
         // generate water conductivity values into string list
         String[] wcValues = new String[21];
         for (int i = 0; i < 21; i++) {
-            wcValues[i] = Integer.toString(i * 100);
+            wcValues[i] = Integer.toString(i * 10);
         }
         lowPH.setDisplayedValues(pHValues);
         lowPH.setMinValue(0);
@@ -154,12 +154,12 @@ public class WaterAnalysisManagementActivity extends AppCompatActivity {
         } else {
             validateAuto();
             pH.setAuto(autoPH.isChecked());
-            pH.setpHMax(highPH.getValue());
-            pH.setpHMin(lowPH.getValue());
+            pH.setpHMax(10*highPH.getValue());
+            pH.setpHMin(10*lowPH.getValue());
 
             wc.setAuto(autoCon.isChecked());
-            wc.setConMax(highCon.getValue());
-            wc.setConMin(lowCon.getValue());
+            wc.setConMax(10*highCon.getValue());
+            wc.setConMin(10*lowCon.getValue());
 
             tank.updateWaterAnalysis();
             finish();
