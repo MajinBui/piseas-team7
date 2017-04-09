@@ -43,13 +43,11 @@ public class TemperatureUpdateActivity extends AppCompatActivity {
         minTempTable = (TextView) findViewById(R.id.minTempValTV);
         maxTempTable = (TextView) findViewById(R.id.maxTempValTV);
 
-<<<<<<< HEAD
         title = (TextView) findViewById(R.id.title);
         title.setText("Feeding Settings: " + TankListActivity.tankList.get(index).getName());
 
         seekBars();
-=======
->>>>>>> origin/master
+
         fillTable();
         seekBars();
     }

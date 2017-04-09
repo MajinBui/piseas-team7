@@ -30,7 +30,7 @@
             android:layout_height="match_parent"
             android:text="@string/enableAutoLight"
             android:textColor="@color/text"
-            android:textSize="18sp"
+            style="SubTitle"
             android:layout_weight="1"
             android:paddingStart="0dp"
             android:paddingEnd="35dp"
