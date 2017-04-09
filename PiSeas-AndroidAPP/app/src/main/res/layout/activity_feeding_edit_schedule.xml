@@ -180,14 +180,5 @@
             android:layout_alignParentBottom="true"
             android:onClick="feedSave"/>
 
-        <Button
-            android:text="testing button - clear"
-            android:onClick="clear"
-            android:textSize="7sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:id="@+id/button2" />
     </RelativeLayout>
 </LinearLayout>
