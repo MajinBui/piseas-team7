@@ -3,6 +3,7 @@ package group7.piseas;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.NumberPicker;
@@ -20,7 +21,7 @@ import piseas.network.FishyClient;
  *
  */
 
-public class LightEditActivity extends Activity{
+public class LightEditActivity extends AppCompatActivity {
 
     NumberPicker pickerHrOn;
     NumberPicker pickerMinOn;

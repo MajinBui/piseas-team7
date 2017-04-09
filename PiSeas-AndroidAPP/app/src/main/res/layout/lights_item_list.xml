@@ -28,14 +28,15 @@
         android:id="@+id/txtTime"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textSize="36sp"
+        android:textSize="24sp"
         android:layout_weight="5"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
         android:gravity="center_vertical|center_horizontal"
-        android:textColor="@color/lightBlue"/>
+        android:textColor="@color/lightBlue"
+        android:text="0:00 - 0:00"/>
 
     <TextView
         android:layout_width="0dp"

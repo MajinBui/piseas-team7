@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -191,4 +192,189 @@
             android:layout_centerHorizontal="true"
             android:id="@+id/button2" />
     </RelativeLayout>
+=======
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_light_managment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="group7.piseas.FeedingEditActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:textColor="@color/text"
+        android:text="@string/feedSchedule"
+        android:textSize="20sp"
+
+        style="@style/Title"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:textSize="16sp"
+        android:text="@string/feedTimeMsg"
+        android:textColor="@color/text"
+        android:gravity="center_horizontal"/>
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="225dp"
+    android:layout_gravity="center_horizontal">
+
+    <NumberPicker
+        android:id="@+id/picker_hour"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:layout_marginEnd="40dp"
+        android:descendantFocusability="blocksDescendants"/>
+
+    <NumberPicker
+        android:id="@+id/picker_minute"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:descendantFocusability="blocksDescendants"/>
+</LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/textSun"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="S"
+            android:background="@drawable/backempty"
+            android:textSize="20sp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="2dp"
+            android:gravity="center_horizontal"
+            android:textColor="@color/text"
+            android:onClick="dayClick"/>
+        <TextView
+            android:id="@+id/textMon"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="M"
+            android:background="@drawable/backempty"
+            android:textSize="20sp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp"
+            android:gravity="center_horizontal"
+            android:textColor="@color/text"
+            android:onClick="dayClick"/>
+        <TextView
+            android:id="@+id/textTue"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="T"
+            android:background="@drawable/backempty"
+            android:textSize="20sp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp"
+            android:gravity="center_horizontal"
+            android:textColor="@color/text"
+            android:onClick="dayClick"/>
+        <TextView
+            android:id="@+id/textWed"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="W"
+            android:background="@drawable/backempty"
+            android:textSize="20sp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp"
+            android:gravity="center_horizontal"
+            android:textColor="@color/text"
+            android:onClick="dayClick"/>
+        <TextView
+            android:id="@+id/textThur"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="T"
+            android:background="@drawable/backempty"
+            android:textSize="20sp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp"
+            android:gravity="center_horizontal"
+            android:textColor="@color/text"
+            android:onClick="dayClick"/>
+        <TextView
+            android:id="@+id/textFri"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="F"
+            android:background="@drawable/backempty"
+            android:textSize="20sp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp"
+            android:gravity="center_horizontal"
+            android:textColor="@color/text"
+            android:onClick="dayClick"/>
+        <TextView
+            android:id="@+id/textSat"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="S"
+            android:background="@drawable/backempty"
+            android:textSize="20sp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="20dp"
+            android:gravity="center_horizontal"
+            android:textColor="@color/text"
+            android:onClick="dayClick"/>
+    </LinearLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent">
+        <Button
+            android:id="@+id/btnSaveFeedSchedule"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:text="@string/save"
+            android:textSize="15sp"
+            android:layout_alignParentBottom="true"
+            android:onClick="feedSave"/>
+
+    </RelativeLayout>
+>>>>>>> origin/master
 </LinearLayout>

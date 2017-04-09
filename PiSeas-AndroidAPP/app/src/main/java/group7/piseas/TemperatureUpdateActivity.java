@@ -27,7 +27,6 @@ public class TemperatureUpdateActivity extends AppCompatActivity {
     private static int maxTemp;
     private String minimumTemp;
     private String maximumTemp;
-    private static String tankID = "Mike";
     private TextView minTempTable;
     private TextView maxTempTable;
     int index;
@@ -44,11 +43,15 @@ public class TemperatureUpdateActivity extends AppCompatActivity {
         minTempTable = (TextView) findViewById(R.id.minTempValTV);
         maxTempTable = (TextView) findViewById(R.id.maxTempValTV);
 
+<<<<<<< HEAD
         title = (TextView) findViewById(R.id.title);
         title.setText("Feeding Settings: " + TankListActivity.tankList.get(index).getName());
 
         seekBars();
+=======
+>>>>>>> origin/master
         fillTable();
+        seekBars();
     }
 
     public void seekBars(){
@@ -59,6 +62,9 @@ public class TemperatureUpdateActivity extends AppCompatActivity {
 
         minTemp = minSeekBar.getProgress() + MIN_TEMP;
         maxTemp = maxSeekBar.getMax() + MIN_TEMP;
+
+        minTemp = (int)TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsMinTemp();
+        maxTemp = (int)TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsMaxTemp();
 
         maxSeekBar.setProgress(maxTemp - MIN_TEMP);
 
@@ -119,8 +125,6 @@ public class TemperatureUpdateActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialogInterface, int i) {
                 TextView minTempTable = (TextView) findViewById(R.id.minTempValTV);
                 TextView maxTempTable = (TextView) findViewById(R.id.maxTempValTV);
-                SharedPreferences.Editor sharedPrefEdit = getSharedPreferences("piseas",
-                        MODE_PRIVATE).edit();
 
                 TankListActivity.tankList.get(index).getPiSeasXmlHandler().setMaxTemp(maxTemp);
                 TankListActivity.tankList.get(index).getPiSeasXmlHandler().setMinTemp(minTemp);
