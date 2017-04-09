@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -35,6 +36,8 @@ public class FeedingManagementActivity extends AppCompatActivity {
     private final int MAX = 2;
     static FeedingAdapter adapter;
 
+    private TextView title;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +49,9 @@ public class FeedingManagementActivity extends AppCompatActivity {
         autoFeed = (Switch) findViewById(R.id.autoLight);
         index = getIntent().getIntExtra("id", -1);
         tank = TankListActivity.tankList.get(index);
+
+        title = (TextView) findViewById(R.id.title);
+        title.setText("Feeding Settings: " + TankListActivity.tankList.get(index).getName());
 
         populateList();
         validateAuto();

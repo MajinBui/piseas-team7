@@ -7,7 +7,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 <TextView
-    android:id="@+id/tankName"
+    android:id="@+id/title"
     style="@style/Title"
     android:text="Tank Name"/>
 
@@ -16,13 +16,13 @@
         style="@style/SideTitles"
         android:text="Automatic pH Check"
         android:layout_marginBottom="5dp"
-        android:layout_below="@+id/tankName"/>
+        android:layout_below="@+id/title"/>
 
     <Switch
         android:id="@+id/enablePH"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tankName"
+        android:layout_below="@+id/title"
         android:layout_marginLeft="95dp"
         android:layout_toRightOf="@+id/pHName"
         android:theme="@style/SwitchColor" />

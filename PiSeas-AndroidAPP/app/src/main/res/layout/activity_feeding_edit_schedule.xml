@@ -14,14 +14,15 @@
     tools:context="group7.piseas.FeedingEditActivity">
 
     <TextView
+        android:id="@+id/title"
+        style="@style/Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:textColor="@color/text"
         android:text="@string/feedSchedule"
-        android:textSize="20sp"
 
-        style="@style/Title"/>
+        android:textColor="@color/text"
+        android:textSize="20sp" />
 
     <TextView
         android:layout_width="match_parent"

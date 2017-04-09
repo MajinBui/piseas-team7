@@ -33,7 +33,7 @@ public class LogActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log);
         logList = new ArrayList<LogItem>();
-        title = (TextView) findViewById(R.id.tankName);
+        title = (TextView) findViewById(R.id.title);
         listView = (ListView) findViewById(R.id.list);
         adapter = new LogAdapter(this, R.layout.log_info, logList);
 

@@ -30,6 +30,7 @@ public class TemperatureManagementActivity extends AppCompatActivity {
     int index;
     private TextView curTempTV;
     private long UPDATE_VALUE_DELAY = 10000;
+    TextView title;
     Handler handler = new Handler();
     Runnable runnable = new Runnable() {
         @Override
@@ -51,6 +52,9 @@ public class TemperatureManagementActivity extends AppCompatActivity {
         minTempTable = (TextView) findViewById(R.id.minTempValTV);
         maxTempTable = (TextView) findViewById(R.id.maxTempValTV);
         auto = (Switch) findViewById(R.id.enableTempRegSW);
+
+        title = (TextView) findViewById(R.id.title);
+        title.setText("Temperature Settings: " + TankListActivity.tankList.get(index).getName());
 
         curTempTV = (TextView)findViewById(R.id.curTempTV);
 

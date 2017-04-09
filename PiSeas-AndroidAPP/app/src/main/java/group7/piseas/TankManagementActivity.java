@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Arrays;
@@ -35,6 +36,7 @@ public class TankManagementActivity extends AppCompatActivity implements Adapter
     Spinner spinner;
     Spinner spinner2;
     EditText descEdit;
+    TextView title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +52,8 @@ public class TankManagementActivity extends AppCompatActivity implements Adapter
 
         nameEdit = (EditText) findViewById(R.id.nameEditer);
         descEdit = (EditText) findViewById(R.id.descEditor);
+        title = (TextView) findViewById(R.id.title);
+        title.setText("Feeding Settings : " + TankListActivity.tankList.get(index).getName());
 
         Button updateButton = (Button) findViewById(R.id.updateButton);
         updateButton.setOnClickListener (new View.OnClickListener() {

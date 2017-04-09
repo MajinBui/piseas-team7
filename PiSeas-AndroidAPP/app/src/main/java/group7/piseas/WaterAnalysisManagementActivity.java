@@ -24,6 +24,7 @@ public class WaterAnalysisManagementActivity extends AppCompatActivity {
     Switch autoCon;
     TextView pHValue;
     TextView conValue;
+    TextView title;
 
     private Tank tank;
     private PH pH;
@@ -36,7 +37,7 @@ public class WaterAnalysisManagementActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_water_analysis_management);
-        TextView tv = (TextView) findViewById(R.id.tankName);
+        TextView tv = (TextView) findViewById(R.id.title);
         tv.setText("Tank: " + TankListActivity.tankList.get(index).getName());
         index = getIntent().getIntExtra("id", -1);
 
@@ -48,6 +49,9 @@ public class WaterAnalysisManagementActivity extends AppCompatActivity {
         autoPH = (Switch) findViewById(R.id.enablePH);
         pHValue =  (TextView) findViewById(R.id.pHDisplay);
         conValue =  (TextView) findViewById(R.id.conDisplay);
+
+        title = (TextView) findViewById(R.id.title);
+        title.setText("Water Analysis: " + TankListActivity.tankList.get(index).getName());
 
         // generate ph values into string list
         String[] pHValues = new String[15];

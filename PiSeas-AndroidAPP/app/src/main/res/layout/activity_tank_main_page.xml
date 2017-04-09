@@ -11,20 +11,20 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/tankName"
+            android:id="@+id/title"
             style="@style/Title"
             android:text="Tank Name"
             android:layout_weight="5"
             android:textAlignment="center"/>
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:layout_weight="0.5">
             <ImageButton
                 android:id="@+id/logButton"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:layout_alignTop="@+id/tankName"
+                android:layout_alignTop="@+id/title"
                 android:background="@drawable/history"
                 android:onClick="logButtonClick"
                />
@@ -43,13 +43,15 @@
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:textStyle="bold"
-            android:text="Temperature" />
+            android:text="Temperature"
+            android:layout_marginLeft="45dp"/>
         <TextView
             android:id="@+id/temperatureValueTextView"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:textAlignment="textEnd"
+            android:layout_marginRight="50dp"
             android:text="23&#176;C" />
     </LinearLayout>
 
@@ -65,14 +67,16 @@
             android:layout_height="match_parent"
             android:layout_weight="2"
             android:textStyle="bold"
-            android:text="pH Levels" />
+            android:text="pH Levels"
+            android:layout_marginLeft="45dp"/>
         <TextView
             android:id="@+id/pHValueTextView"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:textAlignment="textEnd"
-            android:text="7" />
+            android:layout_marginRight="50dp"
+            android:text="0" />
     </LinearLayout>
     <LinearLayout
         android:id="@+id/three"
@@ -80,20 +84,24 @@
         android:layout_height="30dp"
         android:layout_below="@+id/two"
         android:gravity="center">
+
         <TextView
             android:id="@+id/Description3"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="2"
+            android:text="Conductivity Level"
             android:textStyle="bold"
-            android:text="Water Levels" />
+            android:layout_marginLeft="45dp"/>
+
         <TextView
             android:id="@+id/value3"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:textAlignment="textEnd"
-            android:text="Good" />
+            android:layout_marginRight="50dp"
+            android:text="0" />
     </LinearLayout>
     <LinearLayout
         android:id="@+id/four"
@@ -105,16 +113,10 @@
             android:id="@+id/Description4"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="2"
-            android:textStyle="bold"
-            android:text="Next Feeding" />
-        <TextView
-            android:id="@+id/value4"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:textAlignment="textEnd"
-            android:text="6:00pm" />
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:text="🌊 🌊🌊 🌊🌊🌊 🌊🌊🌊 🌊🌊🌊 🌊🌊 🌊" />
     </LinearLayout>
 
     <LinearLayout

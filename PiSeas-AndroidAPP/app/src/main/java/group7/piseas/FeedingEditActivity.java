@@ -30,7 +30,7 @@ public class FeedingEditActivity extends AppCompatActivity {
     private final String divider = "<br/>";
 
     private NumberPicker pickerHr, pickerMin;
-    private TextView textMon, textTues, textWed, textThurs, textFri, textSat, textSun;
+    private TextView textMon, textTues, textWed, textThurs, textFri, textSat, textSun, title;
     private boolean day[];
     private String[] days;
     private int hour, min;
@@ -38,6 +38,7 @@ public class FeedingEditActivity extends AppCompatActivity {
     private String light = "Lights";
     private int index;
     private boolean autoStatus;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +57,8 @@ public class FeedingEditActivity extends AppCompatActivity {
         textFri = (TextView) findViewById(R.id.textFri);
         textSat = (TextView) findViewById(R.id.textSat);
         textSun = (TextView) findViewById(R.id.textSun);
+        title = (TextView) findViewById(R.id.title);
+        title.setText("Temperature Settings: " + TankListActivity.tankList.get(index).getName());
 
         schedule = new ArrayList<FeedSchedule>();
 

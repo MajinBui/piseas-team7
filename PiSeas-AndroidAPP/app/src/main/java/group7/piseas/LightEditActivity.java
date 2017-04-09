@@ -6,6 +6,7 @@ import android.os.StrictMode;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.NumberPicker;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ public class LightEditActivity extends Activity{
     private final String divider = "<br/>";
     private int index;
     private boolean autoReg;
+    TextView title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +46,9 @@ public class LightEditActivity extends Activity{
         StrictMode.setThreadPolicy(policy);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_light_edit_schedule);
+
+        title = (TextView) findViewById(R.id.title);
+        title.setText("Feeding Settings: " + TankListActivity.tankList.get(index).getName());
 
         schedule = new ArrayList<LightSchedule>();
 

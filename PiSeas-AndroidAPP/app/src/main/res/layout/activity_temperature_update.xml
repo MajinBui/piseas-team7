@@ -12,7 +12,7 @@
     android:background="@drawable/gradient_background">
 
     <TextView
-        android:id="@+id/activityTitleTV"
+        android:id="@+id/title"
         style="@style/Title"
         android:text="@string/titleTempActivity"
         android:layout_centerHorizontal="true" />
@@ -44,8 +44,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:textSize="18sp"
-        android:layout_below="@+id/activityTitleTV"
-        android:layout_alignEnd="@+id/activityTitleTV"
+        android:layout_below="@+id/title"
+        android:layout_alignEnd="@+id/title"
         android:layout_marginEnd="22dp" />
 
     <TextView

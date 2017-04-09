@@ -31,6 +31,7 @@ public class TemperatureUpdateActivity extends AppCompatActivity {
     private TextView minTempTable;
     private TextView maxTempTable;
     int index;
+    TextView title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +43,9 @@ public class TemperatureUpdateActivity extends AppCompatActivity {
         index = getIntent().getIntExtra("id", -1);
         minTempTable = (TextView) findViewById(R.id.minTempValTV);
         maxTempTable = (TextView) findViewById(R.id.maxTempValTV);
+
+        title = (TextView) findViewById(R.id.title);
+        title.setText("Feeding Settings: " + TankListActivity.tankList.get(index).getName());
 
         seekBars();
         fillTable();

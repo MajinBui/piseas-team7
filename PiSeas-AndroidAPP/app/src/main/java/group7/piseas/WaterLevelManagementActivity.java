@@ -2,13 +2,11 @@ package group7.piseas;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import group7.piseas.Helpers.XmlPullParserHandler;
 import group7.piseas.Objects.Pump;
 import group7.piseas.Objects.Tank;
 
@@ -20,14 +18,15 @@ public class WaterLevelManagementActivity extends AppCompatActivity {
     private Pump pump;
     private int index;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_water_level_management);
         index = getIntent().getIntExtra("id", -1);
-        TextView tv = (TextView) findViewById(R.id.tankName);
-        tv.setText("Tank: " + TankListActivity.tankList.get(index).getName());
+        TextView tv = (TextView) findViewById(R.id.title);
+        tv.setText("Water Flow: " + TankListActivity.tankList.get(index).getName());
 
         drain = (Switch) findViewById(R.id.enableDrain);
         fill = (Switch) findViewById(R.id.enableFill);

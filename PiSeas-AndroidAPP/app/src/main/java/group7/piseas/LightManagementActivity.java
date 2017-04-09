@@ -11,6 +11,7 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -32,14 +33,17 @@ public class LightManagementActivity extends AppCompatActivity {
     private ListView listView;
     private int index;
     static LightAdapter adapter;
+    TextView title;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_light_managment); //TODO: change the layout!!!!!!
+        setContentView(R.layout.activity_light_managment);
         index = getIntent().getIntExtra("id", -1);
+        title = (TextView) findViewById(R.id.title);
+        title.setText("Feeding Settings: " + TankListActivity.tankList.get(index).getName());
 
         autoLight = (Switch) findViewById(R.id.autoLight);
         manual = (Switch) findViewById(R.id.manLight);
