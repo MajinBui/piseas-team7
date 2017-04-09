@@ -53,7 +53,8 @@ public class TankManagementActivity extends AppCompatActivity implements Adapter
         nameEdit = (EditText) findViewById(R.id.nameEditer);
         descEdit = (EditText) findViewById(R.id.descEditor);
         title = (TextView) findViewById(R.id.title);
-        title.setText("Feeding Settings : " + TankListActivity.tankList.get(index).getName());
+        if(index>=0)
+            title.setText("Feeding Settings : " + TankListActivity.tankList.get(index).getName());
 
         Button updateButton = (Button) findViewById(R.id.updateButton);
         updateButton.setOnClickListener (new View.OnClickListener() {
@@ -112,11 +113,13 @@ public class TankManagementActivity extends AppCompatActivity implements Adapter
         spinner2.setAdapter(adapter2);
         spinner2.setOnItemSelectedListener(this);
 
-        FishyClient.retrieveMobileXmlData(TankListActivity.tankList.get(index).getId(), getFilesDir().getAbsolutePath().toString());
-        nameEdit.setText(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsName());
-        descEdit.setText(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsDescription());
-        spinner.setSelection(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsType()? 1: 0);
-        spinner2.setSelection((int)TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsSize());
+        if(index >=0){
+            FishyClient.retrieveMobileXmlData(TankListActivity.tankList.get(index).getId(), getFilesDir().getAbsolutePath().toString());
+            nameEdit.setText(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsName());
+            descEdit.setText(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsDescription());
+            spinner.setSelection(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsType()? 1: 0);
+            spinner2.setSelection((int)TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsSize());
+        }
     }
 
     private boolean uniqueName(String str){
