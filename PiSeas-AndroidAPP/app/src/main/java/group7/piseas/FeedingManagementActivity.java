@@ -89,15 +89,17 @@ public class FeedingManagementActivity extends AppCompatActivity {
         }
     }
     public boolean lastFeedCheck(int nowHour, int nowMin){
+        FishyClient.retrieveSensorData(TankListActivity.tankList.get(index).getId(), getFilesDir().getAbsolutePath().toString());
         int hour = tank.getPiSeasXmlHandler().getSensorFeedHr();
         int min = tank.getPiSeasXmlHandler().getSensorFeedMin();
         Date now = new Date(0, 0, 0, nowHour, nowMin);
         Date last = new Date(0, 0, 0, hour, min);
-        long diff = now.getTime() - last.getTime();
+        long diff = last.getTime() - now.getTime();
         long diffMinutes = diff / (60 * 1000);
         long diffHours = diff / (60 * 1000);
-        if ((diffHours + diffMinutes)>60){
-            if(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSensorTotalFeeds() < 2)
+        int totalNumber = TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSensorTotalFeeds();
+        if ((diffHours + diffMinutes)>120){
+            if(totalNumber < 2)
                 return true;
         }
         Toast.makeText(this, "Cannot feed manually feed right now, fed too many times.", Toast.LENGTH_LONG).show();
