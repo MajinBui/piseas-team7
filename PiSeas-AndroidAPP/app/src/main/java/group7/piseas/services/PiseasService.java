@@ -45,8 +45,8 @@ public class PiseasService extends IntentService{
         List<Tank> tankList = TankListActivity.tankList;
         if (tankList == null) {
             tankList = new ArrayList<Tank>();
+            load(tankList);
         }
-        load(tankList);
         TankListActivity.tankList = tankList;
         if (!tankList.isEmpty()) {
             Log.i("PiseasService", "tanklist not empty");

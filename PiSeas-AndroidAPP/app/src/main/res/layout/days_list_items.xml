@@ -96,4 +96,16 @@ android:background="@color/scheduleBlue">
             android:text="S"/>
     </LinearLayout>
 
+
+        <ImageView
+            android:id="@+id/xFeedButton"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:maxWidth="16dp"
+            android:minHeight="16dp"
+            android:background="@drawable/x"
+            android:padding="0dp"/>
+
 </RelativeLayout>

@@ -130,52 +130,6 @@ public class FeedingEditActivity extends AppCompatActivity {
     public ArrayList<FeedSchedule> getData(){
         FishyClient.retrieveMobileXmlData(TankListActivity.tankList.get(index).getId(), getFilesDir().getAbsolutePath().toString());
         return TankListActivity.tankList.get(index).getPiSeasXmlHandler().getFeedSchedules();
-
-        //HashMap<String, String> retrieveList = FishyClient.retrieveServerData(tankID);
-
-//            for(int i=0; i<7; i++){
-//                if(!retrieveList.get(days[i]).equals("-")){
-//                    String[] separate = retrieveList.get(days[i]).split(divider);
-//
-//                    for (String aSeparate : separate) {
-//                        boolean found = false;
-//                        for (FeedSchedule feed : schedule) {
-//                            if (feed.getTime().equals(aSeparate)) {
-//                                feed.setWeek(i);
-//                                found = true;
-//                            }
-//                        }
-//                        if(!found){
-//                            String[] timeSplit = aSeparate.split(":");
-//                            int hr = Integer.parseInt(timeSplit[0]);
-//                            int min = Integer.parseInt(timeSplit[1]);
-//                            FeedSchedule dayFeed = new FeedSchedule(hr, min);
-//                            dayFeed.setWeek(i);
-//                            schedule.add(dayFeed);
-//        for(int i=0; i<7; i++){
-//            if(!retrieveList.get(days[i]).equals("-")) {
-//                String[]separate = retrieveList.get(days[i]).split(divider);
-//                for (String aSeparate : separate) {
-//                    boolean found = false;
-//                     for (FeedSchedule feed : schedule) {
-//                         if (feed.getTime().equals(aSeparate)) {
-//                            feed.setWeek(i, true);
-//                            found = true;
-//                        }
-//                    }
-//                    if (!found) {
-//                        String[]timeSplit = aSeparate.split(":");
-//                         int hr = Integer.parseInt(timeSplit[0]);
-//                         int min = Integer.parseInt(timeSplit[1]);
-//                        FeedSchedule dayFeed = new FeedSchedule(hr, min);
-//                        dayFeed.setWeek(i, true);
-//                        schedule.add(dayFeed);
-//
-//                    }
-//                }
-//            }
-//            }
-//        lightVal = retrieveList.get(light);
     }
 
     private boolean checkMax(){
@@ -202,19 +156,6 @@ public class FeedingEditActivity extends AppCompatActivity {
                 }
                 curSchedule.setWeek(i, true);
                 for(FeedSchedule feed : schedule){
-//                    if(hourMax > hourMin) {
-//                        // check if hour is 2hr within another feed, current time is near midnight
-//                        if (feed.getWeek(i) && (feed.getHour() >= hourMin && feed.getHour() <= hourMax)) {
-//                            Toast.makeText(this, "Feeding times must be at least 2 hours apart!", Toast.LENGTH_LONG).show();
-//                            return false;
-//                        }
-//                    // check if hour is 2hr within another feed
-//                    }
-//                    else {
-//                        if (feed.getWeek(i) && feed.getHour() >= hourMin || feed.getHour() <= hourMax) {
-//                            Toast.makeText(this, "Feeding times must be at least 2 hours apart!", Toast.LENGTH_LONG).show();
-//                            return false;
-//                        }
                     if(feed.getWeek(i) && timeMin <= feed.getTimeCompare() && timeMax >= feed.getTimeCompare()){
                         Toast.makeText(this, "Feeding times must be at least 2 hours apart!", Toast.LENGTH_LONG).show();
                         return false;
@@ -222,10 +163,17 @@ public class FeedingEditActivity extends AppCompatActivity {
                 }
             }
         }
-        if (Arrays.asList(curSchedule.getWeek()).contains(true))
+        boolean run = false;
+        for (int times; time<7; time++){
+            if(curSchedule.getWeek(time))
+                run = true;
+        }
+        if (run)
             schedule.add(curSchedule);
-        else
+        else {
+            Toast.makeText(this, "Must select at least one day!", Toast.LENGTH_LONG).show();
             return false;
+        }
         return true;
     }
 
@@ -246,8 +194,8 @@ public class FeedingEditActivity extends AppCompatActivity {
                 min[i] = temp.getMin();
             }
             FishyClient.setFeeding(TankListActivity.tankList.get(index).getId(), weekArray,hour, min, autoStatus, false);
+            finish();
         }
-        finish();
     }
 
     public void clear(View view){

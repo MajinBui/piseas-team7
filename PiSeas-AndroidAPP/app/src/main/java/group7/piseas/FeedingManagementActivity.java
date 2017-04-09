@@ -26,13 +26,15 @@ import group7.piseas.Objects.Tank;
 import piseas.network.FishyClient;
 
 public class FeedingManagementActivity extends AppCompatActivity {
-    private List<FeedSchedule> feeds;
+    public static  ArrayList<FeedSchedule> feeds;
     private ListView listView;
     private final String tankID = "Matt";
-    Switch autoFeed;
+    public static Switch autoFeed;
     private int index;
     private Tank tank;
     private final int MAX = 2;
+    static FeedingAdapter adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,40 +56,52 @@ public class FeedingManagementActivity extends AppCompatActivity {
         int hour = date.getHours();
         int min = date.getMinutes();
         FeedSchedule curSchedule = new FeedSchedule(hour, min);
-        int hourMin = (hour-MAX)%24;
-        int hourMax = (hour+MAX)%24;
         int feedsPerDay[] = new int[7];
         int time = hour * 100 + min;
         int timeMin = time - (MAX * 100);
         int timeMax = time + (MAX * 100);
-        Toast.makeText(this, "manual check for " + hour +" "+min  , Toast.LENGTH_LONG).show();
+
         for(FeedSchedule feed : feeds){
             for(int i=0; i<7; i++) {
                 if (feed.getWeek(i))
                     feedsPerDay[i]++;
             }
         }
+
         boolean day[] = new boolean[7];
         Arrays.fill(day, false);
 
-        for(int i=0; i<7; i++){
-            if(feedsPerDay[i]+1 > 2){
-                Toast.makeText(this, "Can only have 2 feeds per day!", Toast.LENGTH_LONG).show();
-                break;
-            }
-            curSchedule.setWeek(i, true);
-            for(FeedSchedule feed : feeds){
-                if(feed.getWeek(i) && timeMin <= feed.getTimeCompare() && timeMax >= feed.getTimeCompare()){
-                    Toast.makeText(this, "Must wait 2 hours from last feed time.", Toast.LENGTH_LONG).show();
-                    break;
-                }
-                else{
-                    //TODO:Add additional validation for last manual feed
-                    Toast.makeText(this, "Fish are fed manually", Toast.LENGTH_LONG).show();
-                    FishyClient.updateManualCommands(tank.getId(),true,false,false,false);
-                }
+        int dateDay = date.getDay();
+        if(feedsPerDay[dateDay]+1 > 2){
+            Toast.makeText(this, "Can only have 2 feeds per day!", Toast.LENGTH_LONG).show();
+        }
+        boolean feedNow = true;
+        for(FeedSchedule feed : feeds){
+            if(feed.getWeek(dateDay) && timeMin <= feed.getTimeCompare() && timeMax >= feed.getTimeCompare()){
+                Toast.makeText(this, "Must wait 2 hours from last feed time.", Toast.LENGTH_LONG).show();
+                feedNow = false;
             }
         }
+
+        if(feedNow && lastFeedCheck(hour, min)){
+            Toast.makeText(this, "Fish are fed manually", Toast.LENGTH_LONG).show();
+            FishyClient.setManualFeed(tank.getId(),true);
+        }
+    }
+    public boolean lastFeedCheck(int nowHour, int nowMin){
+        int hour = tank.getPiSeasXmlHandler().getSensorFeedHr();
+        int min = tank.getPiSeasXmlHandler().getSensorFeedMin();
+        Date now = new Date(0, 0, 0, nowHour, nowMin);
+        Date last = new Date(0, 0, 0, hour, min);
+        long diff = now.getTime() - last.getTime();
+        long diffMinutes = diff / (60 * 1000);
+        long diffHours = diff / (60 * 1000);
+        if ((diffHours + diffMinutes)>60){
+            if(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSensorTotalFeeds() < 2)
+                return true;
+        }
+        Toast.makeText(this, "Cannot feed manually feed right now, fed too many times.", Toast.LENGTH_LONG).show();
+        return false;
     }
 
     public void addSchedule(View view){
@@ -103,15 +117,14 @@ public class FeedingManagementActivity extends AppCompatActivity {
         super.onResume();
         populateList();
         validateAuto();
+        adapter.notifyDataSetChanged();
     }
 
     private void populateList(){
         feeds =  getData();
 
         listView = (ListView) findViewById(R.id.list_schedule);
-        //TODO: add delete option with context menu
-
-        FeedingAdapter adapter = new FeedingAdapter(this, R.layout.days_list_items, feeds);
+        adapter = new FeedingAdapter(this, R.layout.days_list_items, feeds, index);
 
         listView.setAdapter(adapter);
         validateAuto();
@@ -146,10 +159,10 @@ public class FeedingManagementActivity extends AppCompatActivity {
             autoFeed.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton manual, boolean isChecked) {
                     if (isChecked){
-                        //TODO : add single change function or update entire settings xml
+                        FishyClient.setAutoFeed(TankListActivity.tankList.get(index).getId(), true);
                     }
                     else {
-
+                        FishyClient.setAutoFeed(TankListActivity.tankList.get(index).getId(), false);
                     }
                 }
             });
