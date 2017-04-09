@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import group7.piseas.Objects.Tank;
+import piseas.network.FishyClient;
 
 
 public class TankManagementActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
@@ -107,43 +108,11 @@ public class TankManagementActivity extends AppCompatActivity implements Adapter
         spinner2.setAdapter(adapter2);
         spinner2.setOnItemSelectedListener(this);
 
-        if (index>=0){//load current data to display from phone
-            Log.i("TankMangement", "Load from phone at index" + index);
-            nameEdit.setText(TankListActivity.tankList.get(index).getName());
-            descEdit.setText(TankListActivity.tankList.get(index).getDesc());
-            spinner.setSelection(TankListActivity.tankList.get(index).getType());
-            spinner2.setSelection((int)TankListActivity.tankList.get(index).getSize());
-        }
-        else {//checks server, would need the id for this, add to intent
-            Log.i("TankMangement", "Load from server for " + tankCode);
-            /*  Legacy
-            HashMap<String, String> dataList = FishyClient.retrieveServerData(tankCode+"");
-            if (!dataList.get("name").isEmpty())
-                name = dataList.get("name");
-            if (!dataList.get("desc").isEmpty())
-                desc = dataList.get("desc");
-            if (!dataList.get("type").isEmpty())
-                fishType = Integer.parseInt(dataList.get("type"));
-            if (!dataList.get("size").isEmpty())
-                tankSize = Integer.parseInt(dataList.get("size"));
-            */
-            //
-//            FishyClient.retrieveServerData(tankCode+"");
-//            if (!dataList.get("name").isEmpty())
-//                name = ""; // name not saved in xml
-//            if (!dataList.get("desc").isEmpty())
-//                desc = dataList.get("desc");
-//            if (!dataList.get("type").isEmpty())
-//                fishType = Integer.parseInt(dataList.get("type"));
-//            if (!dataList.get("size").isEmpty())
-//                tankSize = Integer.parseInt(dataList.get("size"));
-
-            nameEdit.setText(name);
-            descEdit.setText(desc);
-            spinner.setSelection(fishType);
-            spinner2.setSelection(tankSize);
-        }
-        Log.i("TankMangement", "Successful Loading of page");
+        FishyClient.retrieveMobileXmlData(TankListActivity.tankList.get(index).getId(), getFilesDir().getAbsolutePath().toString());
+        nameEdit.setText(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsName());
+        descEdit.setText(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsDescription());
+        spinner.setSelection(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsType()? 1: 0);
+        spinner2.setSelection((int)TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsSize());
     }
 
     private boolean uniqueName(String str){
