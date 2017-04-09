@@ -54,7 +54,7 @@ public class FishyClient {
 			//FishyClient.appendActionLog(tankID, DATE_FORMAT.format(new Date()), "TEMPRANGE", "NOT");
 			//FishyClient.appendActionLog(tankID, DATE_FORMAT.format(new Date()), "PHRANGE", "NOT");
 			
-			FishyClient.sendMobileXmlData(tankID, testInputDir);
+			//FishyClient.sendMobileXmlData(tankID, testInputDir);
 			
 //			while (true) {
 //				FishyClient.checkMobileSettingsUpdated(tankID2, "2017-03-20T19:19:19+0500");
@@ -64,7 +64,7 @@ public class FishyClient {
 //			FishyClient.sendActionLog(tankID, testInputDir);
 //			FishyClient.sendMobileXmlData(tankID2, testInputDir);
 //			FishyClient.sendSensorData(tankID2, testInputDir);
-//			FishyClient.sendActionLog(tankID2, testInputDir);
+			FishyClient.sendActionLog(tankID, testInputDir);
 			//return;
 			return;
 		}
@@ -1216,7 +1216,7 @@ public class FishyClient {
 		try {
 			fishyConnection = new FishyConnection();
 			try {
-				modifySensorXmlData(fishyConnection, tankId, NetworkConstants.XPATH_FEED, "totalFeeds", Integer.toString(feedHr));
+				modifySensorXmlData(fishyConnection, tankId, NetworkConstants.XPATH_FEED, "totalFeeds", Integer.toString(totalFeeds));
 				modifySensorXmlData(fishyConnection, tankId, NetworkConstants.XPATH_FEED, "feedHr", Integer.toString(feedHr));
 				modifySensorXmlData(fishyConnection, tankId, NetworkConstants.XPATH_FEED, "feedMin", Integer.toString(feedMin));
 			} catch (Exception e) {
