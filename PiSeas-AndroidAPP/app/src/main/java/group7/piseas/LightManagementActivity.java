@@ -20,17 +20,18 @@ import java.util.List;
 import group7.piseas.Adapters.LightAdapter;
 import group7.piseas.Objects.LightSchedule;
 //import group7.piseas.Server.FishyClient;
+import group7.piseas.Objects.Tank;
 import piseas.network.FishyClient;
 
 
 
 public class LightManagementActivity extends AppCompatActivity {
-    private final String tankID = "Matt";
-    private Switch auto;
-    private Switch manual;
-    private List<LightSchedule> lights;
+    public static Switch autoLight;
+    public static Switch manual;
+    public static ArrayList<LightSchedule> lights;
     private ListView listView;
     private int index;
+    static LightAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,14 +41,20 @@ public class LightManagementActivity extends AppCompatActivity {
         setContentView(R.layout.activity_light_managment); //TODO: change the layout!!!!!!
         index = getIntent().getIntExtra("id", -1);
 
-        auto = (Switch) findViewById(R.id.autoLight);
+        autoLight = (Switch) findViewById(R.id.autoLight);
         manual = (Switch) findViewById(R.id.manLight);
+
+        autoLight.setChecked(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsAutoLight());
+        manual.setChecked(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsManualLight());
 
         populateList();
     }
 
     public void addSchedule(View view) {
         Intent i = new Intent(this, LightEditActivity.class);
+        i.putExtra("index", index);
+        i.putExtra("auto", autoLight.isChecked());
+
         startActivity(i);
     }
 
@@ -55,6 +62,11 @@ public class LightManagementActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         populateList();
+        adapter.notifyDataSetChanged();
+    }
+
+    public static void update(){
+        adapter.notifyDataSetChanged();
     }
 
     private void populateList(){
@@ -62,62 +74,45 @@ public class LightManagementActivity extends AppCompatActivity {
 
         listView = (ListView) findViewById(R.id.list_schedule_light);
 
-        LightAdapter adapter = new LightAdapter(this, R.layout.lights_item_list, lights);
+        adapter = new LightAdapter(this, R.layout.lights_item_list, lights, index);
         listView.setAdapter(adapter);
         validateAuto();
     }
 
     private ArrayList<LightSchedule> getData() {
-        /*HashMap<String, String> retrieveList = FishyClient.retrieveServerData(tankID);
-        String divider = "<br/>";
-        String light = "Lights";
-
-        if (!retrieveList.get(light).equals("-")) {
-            String[] separate = retrieveList.get(light).split(divider);
-            for (String aSeparate : separate) {
-                int hOn, mOn, hOff, mOff;
-                String temp = aSeparate.replace(" - ", ":");
-                String[] times = temp.split(":");
-                hOn = Integer.parseInt(times[0]);
-                mOn = Integer.parseInt(times[1]);
-                hOff = Integer.parseInt(times[2]);
-                mOff = Integer.parseInt(times[3]);
-                LightSchedule dayLight = new LightSchedule(hOn, hOff, mOn, mOff);
-                lights.add(dayLight);
-                }
-            }*/
-
         FishyClient.retrieveMobileXmlData(TankListActivity.tankList.get(index).getId(), getFilesDir().getAbsolutePath().toString());
         return TankListActivity.tankList.get(index).getPiSeasXmlHandler().getLightSchedules();
     }
+
     public void validateAuto(){
         //validation for automation
-        auto.setChecked( TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsAutoLight());
+        autoLight.setChecked( TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsAutoLight());
         manual.setChecked( TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSettingsManualLight());
-        if(lights == null ||lights.isEmpty()){
-            auto.setOnClickListener(new CompoundButton.OnClickListener(){
+        if(lights == null || lights.isEmpty()){
+            autoLight.setOnClickListener(new CompoundButton.OnClickListener(){
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getBaseContext(), "Can not enable, create schedule first",
-                            Toast.LENGTH_LONG).show();
-                    auto.setChecked(false);
-                    //TODO save settings on xml
+                    Toast.makeText(getBaseContext(), "Can not enable, create schedule first", Toast.LENGTH_LONG).show();
+                    autoLight.setChecked(false);
                 }
             });
-            auto.setChecked(false);
+            autoLight.setChecked(false);
         }
-        else { //TODO fix auto turning on
-            auto.setOnClickListener(new CompoundButton.OnClickListener(){
+        else {
+            autoLight.setOnClickListener(new CompoundButton.OnClickListener(){
                 @Override
                 public void onClick(View v) {
+                    //autoLight.setChecked(true);
                     Log.i("LIGHT MANAGEMENT"," on click auto switch");
                 }
             });
-           auto.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            autoLight.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 public void onCheckedChanged(CompoundButton manual, boolean isChecked) {
-                    if (isChecked)
-                        manual.setChecked(false);
-                    Log.i("LIGHT MANAGEMENT","man switch off");
+                    if (isChecked) {
+                        sendData();
+                    }
+                    else
+                        sendData();
                 }
             });
         }
@@ -125,7 +120,7 @@ public class LightManagementActivity extends AppCompatActivity {
         manual.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton manual, boolean isChecked) {
                 if (isChecked){
-                    auto.setChecked(false);
+                    autoLight.setChecked(false);
                     FishyClient.updateManualCommands(TankListActivity.tankList.get(index).getId(),
                             false, true, false, false);
                 }
@@ -133,11 +128,31 @@ public class LightManagementActivity extends AppCompatActivity {
                     FishyClient.updateManualCommands(TankListActivity.tankList.get(index).getId(),
                             false, false, false, false);
                 }
-                Log.i("LIGHT MANAGEMENT","man change");
             }
         });
 
     }
+
+    private void sendData(){
+        int size = LightManagementActivity.lights.size();
+        int[] hrOn = new int[size];
+        int[] minOn = new int[size];
+        int[] hrOff = new int[size];
+        int[] minOff = new int[size];
+
+        for(int van = 0; van<LightManagementActivity.lights.size();van++){
+            hrOn[van] = LightManagementActivity.lights.get(van).getOnHour();
+            minOn[van] = LightManagementActivity.lights.get(van).getOnMin();
+            hrOff[van] = LightManagementActivity.lights.get(van).getOffHour();
+            minOff[van] = LightManagementActivity.lights.get(van).getOffHour();
+        }
+
+        // int[] hrOn, int[]minOn, int[] hrOff, int[] minOff, bool auto, bool manual
+        FishyClient.setLighting(TankListActivity.tankList.get(index).getId(), hrOn, minOn, hrOff, minOff,
+                autoLight.isChecked(), manual.isChecked());
+
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

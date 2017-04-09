@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import group7.piseas.Objects.LightSchedule;
+import piseas.network.FishyClient;
 
 /**
  * Created by mmbab on 11/30/2016.
@@ -34,6 +35,8 @@ public class LightEditActivity extends Activity{
     private String light = "Lights";
     private final String tankID = "Matt";
     private final String divider = "<br/>";
+    private int index;
+    private boolean autoReg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +46,9 @@ public class LightEditActivity extends Activity{
         setContentView(R.layout.activity_light_edit_schedule);
 
         schedule = new ArrayList<LightSchedule>();
+
+        index = getIntent().getIntExtra("index", -1);
+        autoReg = getIntent().getBooleanExtra("auto", false);
 
         pickerHrOn = (NumberPicker) findViewById(R.id.picker_hour_on);
         pickerMinOn = (NumberPicker) findViewById(R.id.picker_minute_on);
@@ -100,112 +106,74 @@ public class LightEditActivity extends Activity{
     }
 
     public void getData(){
-        //TODO:change to xml format
-        /*
-        HashMap<String, String> retrieveList = FishyClient.retrieveServerData(tankID);
-
-        if(!retrieveList.get(light).equals("-")) {
-            String[] separate = retrieveList.get(light).split(divider);
-            for (String aSeparate : separate) {
-                int hOn, mOn, hOff, mOff;
-                String temp = aSeparate.replace(" - ", ":");
-                String[] times = temp.split(":");
-                hOn = Integer.parseInt(times[0]);
-                mOn = Integer.parseInt(times[1]);
-                hOff = Integer.parseInt(times[2]);
-                mOff = Integer.parseInt(times[3]);
-                LightSchedule dayLight = new LightSchedule(hOn, hOff, mOn, mOff);
-                schedule.add(dayLight);
-            }
-        }
-
-        feed = new String[7];
-        // Get all data from feeding schedule
-        for(int i=0; i<7; i++)
-            feed[i] = retrieveList.get(days[i]);
-        */
+        schedule.clear();
+        FishyClient.retrieveMobileXmlData(TankListActivity.tankList.get(index).getId(), getFilesDir().getAbsolutePath().toString());
+        schedule = TankListActivity.tankList.get(index).getPiSeasXmlHandler().getLightSchedules();
     }
 
-    private boolean checkData(){
-//        lightSchedule = new LightSchedule(hourOn, hourOff, minOn, minOff);
-//        schedule.add(lightSchedule);
-//
-//        if(hourOn < hourOff || (hourOn == hourOff && minOn > minOff)){
-//            Toast.makeText(this, "Off time must be after on time", Toast.LENGTH_LONG).show();
-        int max = 2400, on = hourOn * 100 + minOn,
-        off = hourOff * 100 + minOff;
+    public void feedSave(View view){
+        int on = hourOn * 100 + minOn,
+                off = hourOff * 100 + minOff;
         boolean fail = false;
         if(on == off){
             Toast.makeText(this, "On and off times must not be the same", Toast.LENGTH_LONG).show();
-            return false;
+            return;
         }
 
         for(LightSchedule l : schedule){
-//            if((hourOn >= l.getOnHour() && hourOn <= l.getOffHour()) ||
-//                    (hourOff >= l.getOnHour() && hourOff <= l.getOffHour()) ||
-//                    (hourOn <= l.getOnHour() && hourOff >= l.getOffHour())
-//                    ){
-//                Toast.makeText(this, "Schedule times must not overlap", Toast.LENGTH_LONG).show();
-//                return false;
             if(on < off){
                 if(l.getTimeOnCompare() < l.getTimeOffCompare()){
                     if(off < l.getTimeOnCompare() || on > l.getTimeOffCompare())
                         ;
                     else
-                    fail = true;
-                    }
+                        fail = true;
+                }
                 else{
                     if(on < l.getTimeOffCompare() || off > l.getTimeOnCompare())
                         fail = true;
-                    }
                 }
+            }
             else{
                 if((on <= l.getTimeOffCompare() || on <= l.getTimeOnCompare() ||
                         off >= l.getTimeOffCompare() || off >= l.getTimeOnCompare())
-                        && l.getTimeOffCompare() > l.getTimeOnCompare())
+                    && l.getTimeOffCompare() > l.getTimeOnCompare())
                     fail = true;
             }
         }
 
         if (fail){
             Toast.makeText(this, "Schedule times must not overlap", Toast.LENGTH_LONG).show();
-            return false;
-            }
-
-                lightSchedule = new LightSchedule(hourOn, hourOff, minOn, minOff);
-        schedule.add(lightSchedule);
-        return true;
-    }
-
-    public void feedSave(View view){
-        HashMap<String, String> dataList = new HashMap<String, String>();
-        if(checkData()){
-            dataList.put("tankId", tankID);
-            // Insert whatever was in the feeding schedule back into the hash map for display
-            for(int i=0; i<7; i++)
-                dataList.put(days[i], feed[i]);
-
-            String temp = "";
-            for(LightSchedule l : schedule)
-                temp += l.getTime() + divider;
-
-            dataList.put(light, temp);
-
-            //FishyClient.writeToServerData(tankID, dataList);
-
-            finish();
+            return;
         }
+
+        lightSchedule = new LightSchedule(hourOn, hourOff, minOn, minOff);
+        schedule.add(lightSchedule);
+
+        int[] hrOn = new int[schedule.size()];
+        int[] minOn = new int[schedule.size()];
+        int[] hrOff = new int[schedule.size()];
+        int[] minOff = new int[schedule.size()];
+
+        for(int van = 0; van<schedule.size();van++){
+            hrOn[van] = schedule.get(van).getOnHour();
+            minOn[van] = schedule.get(van).getOnMin();
+            hrOff[van] = schedule.get(van).getOffHour();
+            minOff[van] = schedule.get(van).getOffMin();
+        }
+
+        // int[] hrOn, int[]minOn, int[] hrOff, int[] minOff, bool auto, bool manual
+        FishyClient.setLighting(TankListActivity.tankList.get(index).getId(), hrOn, minOn, hrOff, minOff,
+                autoReg, LightManagementActivity.manual.isChecked());
+
+
+        //TankListActivity.tankList.get(index).getPiSeasXmlHandler().setLight(schedule, false, false);
+
+//        FishyClient.sendMobileXmlData(TankListActivity.tankList.get(index).getId(),
+//                getFilesDir().getAbsolutePath().toString());
+
+        finish();
     }
 
-    public void clear(View view){
-        HashMap<String, String> cleaningLady = new HashMap<String, String>();
-        cleaningLady.put("tankId", tankID);
-
-        cleaningLady.put(light, "-");
-        //TODO:change to xml format
-        //FishyClient.writeToServerData(tankID, cleaningLady);
-        Toast.makeText(this, "Cleaning is done!", Toast.LENGTH_LONG).show();
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
