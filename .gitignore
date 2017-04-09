@@ -24,6 +24,7 @@ PiSeas-Network/*.launch
 # Android Studio ignored files
 PiSeas-AndroidAPP/*.iml
 PiSeas-AndroidAPP/.gradle
+PiSeas-AndroidAPP/.idea
 PiSeas-AndroidAPP/local.properties
 PiSeas-AndroidAPP/.idea/workspace.xml
 PiSeas-AndroidAPP/.idea/libraries
