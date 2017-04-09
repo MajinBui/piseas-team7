@@ -154,8 +154,8 @@ public class WaterAnalysisManagementActivity extends AppCompatActivity {
         } else {
             validateAuto();
             pH.setAuto(autoPH.isChecked());
-            pH.setpHMax(10*highPH.getValue());
-            pH.setpHMin(10*lowPH.getValue());
+            pH.setpHMax(highPH.getValue());
+            pH.setpHMin(lowPH.getValue());
 
             wc.setAuto(autoCon.isChecked());
             wc.setConMax(10*highCon.getValue());
@@ -171,8 +171,8 @@ public class WaterAnalysisManagementActivity extends AppCompatActivity {
         lowPH.setValue((int)pH.getpHMin());
         highPH.setValue((int) pH.getpHMax());
         autoPH.setChecked(pH.isAuto());
-        lowCon.setValue((int)wc.getConMin());
-        highCon.setValue((int)wc.getConMax());
+        lowCon.setValue((int)wc.getConMin()/10);
+        highCon.setValue((int)wc.getConMax()/10);
         autoCon.setChecked(wc.isAuto());
         pHValue.setText(String.valueOf(pH.getValue()));
         conValue.setText(String.valueOf(wc.getValue()));
