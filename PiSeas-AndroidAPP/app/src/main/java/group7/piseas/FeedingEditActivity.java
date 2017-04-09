@@ -164,9 +164,11 @@ public class FeedingEditActivity extends AppCompatActivity {
             }
         }
         boolean run = false;
-        for (int times; time<7; time++){
-            if(curSchedule.getWeek(time))
+        for (int daysSelected = 0; daysSelected<7; daysSelected++){
+            if(curSchedule.getWeek(daysSelected)){
                 run = true;
+                break;
+            }
         }
         if (run)
             schedule.add(curSchedule);
