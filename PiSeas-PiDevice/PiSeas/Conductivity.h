@@ -1,19 +1,19 @@
 #ifndef _CONDUCTIVITY_
-#define _CONDICTIVITY_
+#define _CONDUCTIVITY_
 #include "DataRange.h"
 
+float median(float* array, int length);
+
 class Conductivity {
-	DataRange condSettings;
+	DataRange conductivitySettings;
+
 public:
-	Conductivity() {}
+	Conductivity();
 	Conductivity(float, float, bool);
+	void setConductivityData(float, float, bool);
 	float getMin();
 	float getMax();
 	bool getAutoRegulate();
-	void setMin(float);
-	void setMax(float);
-	void setAutoRegulate(bool);
 	static float getConductivity();
-	static void regulate(Conductivity, bool);
 };
 #endif

@@ -1,10 +1,7 @@
 #include "LightSchedule.h"
 #include "Pins.h"
-#include <string>
-#include <stdio.h>
 #include <unistd.h>
 #include <wiringPi.h>
-#include <algorithm>
 
 LightSchedule::LightSchedule(){
 	autoRegulate = false;
@@ -43,22 +40,14 @@ bool LightSchedule::getManual(){
 
 void LightSchedule::setManual(bool m){
 	manual = m;
-	autoRegulate = false;
 }
 
 void LightSchedule::addLightAction(tm t, bool s){
 	lightActions.push_back(LightAction(t, s));
 }
 
-void LightSchedule::updateLightAction(LightAction oldLa, LightAction newLa){
-	std::replace (lightActions.begin(), lightActions.end(), oldLa, newLa);
-}
-
-void LightSchedule::removeLightAction(LightAction lA){
-	lightActions.remove(lA);
-}
-
-void LightSchedule::regulate(std::list<LightAction> la) {
+void LightSchedule::regulate(LightSchedule ls, Log& log) {
+	std::list<LightAction> la = ls.getSchedule();
 	struct tm curTime;
 	time_t t = std::time(0);
 	curTime = *localtime(&t);
@@ -73,6 +62,13 @@ void LightSchedule::regulate(std::list<LightAction> la) {
 				LightSchedule::toggleLight(it->getState());
 				done = true;
 				LightAction temp(curTime, it->getState());
+				log.setDateTime();
+				if(it->getState())
+					log.setDesc(LIGHTON);
+				else
+					log.setDesc(LIGHTOFF);
+				log.setType(ACT);
+				log.setUsed(true);
 			}
 			else{
 				it++;
@@ -80,7 +76,6 @@ void LightSchedule::regulate(std::list<LightAction> la) {
 		}while(it != la.end() && !done);
 	}
 }
-
 
 void LightSchedule::toggleLight(bool state) {
 	digitalWrite(LIGHT_PIN, state);

@@ -8,10 +8,9 @@
 #include <fstream>
 #include <vector>
 #include <ctime>
-#include "rapidxml_utils.hpp"
+#include "../libraries/rapidxml_utils.hpp"
 
-
-const static char* mobileName = "1_mobile_settings.xml";
+const static char* mobileName = "x_mobile_settings.xml";
 
 class XmlParser {
 	static std::string parser(const char*, const char*);
@@ -46,7 +45,6 @@ public:
 	static float getSettingsCMin();
 	static float getSettingsCMax();
 	static bool getSettingsCAuto();
-
 };
 
 #endif

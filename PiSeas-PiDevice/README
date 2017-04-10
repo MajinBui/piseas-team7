@@ -1,2 +1,0 @@
-Compilation:
-	g++ -std=c++0x -pthread -lwiringPi *.cpp

@@ -14,19 +14,6 @@ float DataRange::getMax(){
 	return max;
 }
 
-bool DataRange::getAutoRegulate() {
+bool DataRange::getAutoRegulate(){
 	return autoRegulate;
 }
-
-void DataRange::setMin(float min_) {
-	min = min_;
-}
-
-void DataRange::setMax(float max_) {
-	max = max_;
-}
-
-void DataRange::setAutoRegulate(bool autoRegulate_) {
-	autoRegulate = autoRegulate_;
-}
-

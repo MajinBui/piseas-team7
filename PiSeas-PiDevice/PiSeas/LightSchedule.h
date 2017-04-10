@@ -2,7 +2,7 @@
 #define _LIGHTSCHEDULE_
 #include <list>
 #include "LightAction.h"
-#include <string>
+#include "Log.h"
 
 class LightSchedule{
 	std::list<LightAction> lightActions;
@@ -19,9 +19,7 @@ public:
 	bool getManual();
 	void setManual(bool);
 	void addLightAction(tm, bool);
-	void updateLightAction(LightAction, LightAction);
-	void removeLightAction(LightAction);
-	static void regulate(std::list<LightAction>);
+	static void regulate(LightSchedule, Log&);
 	static void toggleLight(bool);
 };
 #endif

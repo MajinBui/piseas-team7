@@ -1,4 +1,5 @@
 #include "xmlParser.h"
+#include "TempData.h"
 #include <iostream>
 #include <iomanip>
 #include <stdlib.h>     /* atof */
@@ -8,8 +9,7 @@ using namespace rapidxml;
 void XmlParser::updateLightSchedule(LightSchedule &ls){
 	if (getSettingsUpdated("light")) {
 
-		std::list<LightAction> lists = ls.getSchedule();
-		lists.clear();
+		ls.getSchedule().clear();
 
 		rapidxml::file<> xmlFile(mobileName);
 		xml_document<> doc;										// character type defaults to char
@@ -27,22 +27,18 @@ void XmlParser::updateLightSchedule(LightSchedule &ls){
 		xml_node<>* piNode = root_node->first_node("Light");
 
 		int count = atoi(piNode->first_attribute("schedules")->value());
-
-		std::string tmp = piNode->first_attribute("auto")->value();
-		bool autoRegulate = false;
-		bool manual = false;
-		if (tmp == "true")
-			autoRegulate = true;
-		tmp = piNode->first_attribute("manual")->value();
-		if (tmp == "true")
-			manual = true;
+		
+		std::string a = piNode->first_attribute("auto")->value();
+		std::string m = piNode->first_attribute("manual")->value();
+		bool autoRegulate = (a == "true") ? true : false;
+		bool manual = (m == "true") ? true : false;
 
 		//LightSchedule ls;
 		ls.setAutoRegulate(autoRegulate);
 		ls.setManual(manual);
 
 		piNode = piNode->first_node();
-		for (int i = 0; piNode!=nullptr; i++, piNode = piNode->next_sibling()) {
+		for (int i = 0; i < count; i++) {
 			int onHr = atoi(piNode->first_attribute("onHr")->value());
 			int onMin = atoi(piNode->first_attribute("onMin")->value());
 			int offHr = atoi(piNode->first_attribute("offHr")->value());
@@ -57,12 +53,17 @@ void XmlParser::updateLightSchedule(LightSchedule &ls){
 
 			ls.addLightAction(on, true);
 			ls.addLightAction(off, false);
+			
+			piNode = piNode->next_sibling();
 		}
 	}
 }
 
 void XmlParser::updateFeedSchedule(FeedSchedule &fs) {
 	if (getSettingsUpdated("feed")) {
+		
+		fs.getSchedule().clear();
+		
 		rapidxml::file<> xmlFile(mobileName);
 		xml_document<> doc;										// character type defaults to char
 		doc.parse<0>(xmlFile.data());							// 0 means default parse flags
@@ -79,40 +80,60 @@ void XmlParser::updateFeedSchedule(FeedSchedule &fs) {
 		xml_node<>* piNode = root_node->first_node("Feed");
 
 		int size = atoi(piNode->first_attribute("schedules")->value());
-		std::string tmp = piNode->first_attribute("auto")->value();
-		bool autoFeed = false;
-		bool manual = false;
-		if (tmp == "true")
-			autoFeed = true;
-		tmp = piNode->first_attribute("manual")->value();
-		if (tmp == "true")
-			manual = true;
+		
+		std::string a = piNode->first_attribute("auto")->value();
+		std::string m = piNode->first_attribute("manual")->value();
+		bool autoRegulate = (a == "true") ? true : false;
+		bool manual = (m == "true") ? true : false;
 
 		//FeedSchedule fs;
-		fs.setAutoFeed(autoFeed);
+		fs.setAutoRegulate(autoRegulate);
+		fs.setManual(manual);
 		
-
 		piNode = piNode->first_node();
-		for (int i = 0; piNode!=nullptr; i++, piNode = piNode->next_sibling()) {
+		
+		for (int i = 0; piNode!=nullptr; i++, piNode=piNode->next_sibling()) {
 			int hr = atoi(piNode->first_attribute("hr")->value());
 			int min = atoi(piNode->first_attribute("min")->value());
 
 			struct std::tm time;
 			time.tm_hour = hr;
 			time.tm_min = min;
-
-			xml_attribute<>* atts = piNode->first_attribute("Mon");
-			for (int n = 0; n < 7; n++, atts = atts->next_attribute()) {
-				std::string temp = atts->value();
-				std::string dundun = atts->name();
-				if ((temp == "true")) {
-					if (n == 6)
-						time.tm_wday = 0;
-					else
-						time.tm_wday = n+1;
-					fs.addFeedSchedule(time);
-				}
-				//std::string val = atts->value();
+			
+			std::string test = piNode->first_attribute("Sun")->value();
+			if(test=="true"){
+				time.tm_wday = 0;
+				fs.addFeedTime(time);
+			}
+			test = piNode->first_attribute("Mon")->value();
+			if(test=="true"){
+				time.tm_wday = 1;
+				fs.addFeedTime(time);
+			}
+			test = piNode->first_attribute("Tue")->value();
+			if(test=="true"){
+				time.tm_wday = 2;
+				fs.addFeedTime(time);
+			}
+			test = piNode->first_attribute("Wed")->value();
+			if(test=="true"){
+				time.tm_wday = 3;
+				fs.addFeedTime(time);
+			}
+			test = piNode->first_attribute("Thu")->value();
+			if(test=="true"){
+				time.tm_wday = 4;
+				fs.addFeedTime(time);
+			}
+			test = piNode->first_attribute("Fri")->value();
+			if(test=="true"){
+				time.tm_wday = 5;
+				fs.addFeedTime(time);
+			}
+			test = piNode->first_attribute("Sat")->value();
+			if(test=="true"){
+				time.tm_wday = 6;
+				fs.addFeedTime(time);
 			}
 		}
 	}
@@ -120,25 +141,22 @@ void XmlParser::updateFeedSchedule(FeedSchedule &fs) {
 
 void XmlParser::updateTemperatureRange(TempData &td){
 	if (getSettingsUpdated("temperature")) {
-		td.setMin(getSettingsMinTemp());
-		td.setMax(getSettingsMaxTemp());
-		td.setAutoRegulate(getSettingsTempAuto());
+		td.setTempData(getSettingsMinTemp(),
+			getSettingsMaxTemp(), getSettingsTempAuto());
 	}
 }
 
 void XmlParser::updateConductivityRange(Conductivity &con) {
 	if (getSettingsUpdated("conductivity")) {
-		con.setMin(getSettingsCMin());
-		con.setMax(getSettingsCMax());
-		con.setAutoRegulate(getSettingsCAuto());
+		con.setConductivityData(getSettingsCMin(),
+			getSettingsCMax(), getSettingsCAuto());
 	}
 }
 
 void XmlParser::updatePHRange(PH &ph) {
 	if (getSettingsUpdated("pH")) {
-		ph.setMin(getSettingsPHMin());
-		ph.setMax(getSettingsPHMax());
-		ph.setAutoRegulate(getSettingsPHAuto());
+		ph.setPH(getSettingsPHMin(),
+		getSettingsPHMax(), getSettingsPHAuto());
 	}
 }
 
@@ -172,7 +190,6 @@ std::string XmlParser::parser(const char* tag, const char* attribute) {
 		return piNode->first_attribute(attribute)->value();
 	
 	// return attribute from <details.. /> tag
-	std::string trytry = piNode->first_node()->first_attribute(attribute)->value();
 	return piNode->first_node()->first_attribute(attribute)->value();
 }
 
@@ -308,7 +325,8 @@ float XmlParser::getSettingsPHMax() {
 }
 
 float XmlParser::getSettingsPHAuto() {
-	return (parser("PH", "auto") == "true") ? true : false;
+	std::string pH = parser("PH", "auto");
+	return (pH == "true");
 }
 
 float XmlParser::getSettingsCMin() {

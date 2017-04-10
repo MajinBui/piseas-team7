@@ -12,6 +12,5 @@ public:
 	struct tm getTime();
 	bool getState();
 	void setAction(tm, bool);
-	bool operator==(LightAction);
 };
 #endif

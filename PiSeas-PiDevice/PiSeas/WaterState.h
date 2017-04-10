@@ -1,9 +1,11 @@
 #ifndef _WATERSTATE_
 #define _WATERSTATE_
 #include <ctime>
+#include "Log.h"
 
 class WaterState {
 	struct tm drainTime;
+	struct tm fillTime;
 	bool autoRegulate;
 	bool manualDrain;
 	bool manualFill;
@@ -20,9 +22,7 @@ public:
 	void setManualFill(bool);
 	static bool getWaterSensorReading();
 	static void toggleInPump(bool);
-	static bool getInPumpStatus();
 	static void toggleOutPump(bool);
-	static bool getOutPumpStatus();
-	static void regulate(WaterState);
+	static void regulate(WaterState, Log&, Log&);
 };
 #endif
