@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><Piseas>
+  <Update>
+      <details conductivity="true" feed="true" light="true" pH="true" pump="true" temperature="true"/>
+  </Update>
+  <Date date="2017-04-09T21:31:49-0400"/>
+  <Tank>
+    <details description="Spongebob square pants" id="x" name="Bikini Bottom" password="pw" size="0.0" type="false"/>
+  </Tank>
+  <Feed auto="false" manual="false" schedules="0"/>
+  <Light auto="false" manual="false" schedules="0"/>
+  <Temperature>
+    <details auto="false" max="34.0" min="20.0"/>
+  </Temperature>
+  <Pump>
+    <details auto="true" manualDrain="false" manualFill="false"/>
+  </Pump>
+  <PH>
+    <details auto="true" pHmax="4.0" pHmin="0.0"/>
+  </PH>
+  <Conductivity>
+    <details auto="true" cMax="100" cMin="0"/>
+  </Conductivity>
+</Piseas>
