@@ -54,7 +54,9 @@ public class TankManagementActivity extends AppCompatActivity implements Adapter
         descEdit = (EditText) findViewById(R.id.descEditor);
         title = (TextView) findViewById(R.id.title);
         if(index>=0)
-            title.setText("Feeding Settings : " + TankListActivity.tankList.get(index).getName());
+            title.setText("Tank Details : " + TankListActivity.tankList.get(index).getName());
+        else
+            title.setText("Tank Details");
 
         Button updateButton = (Button) findViewById(R.id.updateButton);
         updateButton.setOnClickListener (new View.OnClickListener() {
