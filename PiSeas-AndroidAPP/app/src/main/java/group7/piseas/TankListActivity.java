@@ -65,13 +65,13 @@ public class TankListActivity extends AppCompatActivity {
             }
         });
 
-        load();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         adapter.notifyDataSetChanged();
+        load();
     }
 
     public static void update(){
@@ -153,6 +153,7 @@ public class TankListActivity extends AppCompatActivity {
         int type = 0;
         int tankSize = 0;
 
+        tankList.clear();
         for (int i=0;i<size; i++){
             String tankCode = sharedPref.getString("code"+i, "0");
             Log.i("TANKLIST", "LOAD Tank Code" + tankCode);

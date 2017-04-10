@@ -19,6 +19,7 @@ public class TankMainPageActivity extends AppCompatActivity {
     TextView temperatureTextView;
     TextView pHTextView;
     TextView conductivityTextView;
+    TextView tv;
     Tank tank;
     private long UPDATE_VALUE_DELAY = 10000;
     Handler handler = new Handler();
@@ -36,7 +37,7 @@ public class TankMainPageActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tank_main_page);
         index = getIntent().getIntExtra("id", -1);
 
-        TextView tv = (TextView) findViewById(R.id.title);
+         tv = (TextView) findViewById(R.id.title);
 
         try {
             tv.setText("Tank: " + TankListActivity.tankList.get(index).getName());
@@ -121,6 +122,7 @@ public class TankMainPageActivity extends AppCompatActivity {
                 "\u00b0C");
             pHTextView.setText(String.valueOf(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSensorPH()));
             conductivityTextView.setText(String.valueOf(TankListActivity.tankList.get(index).getPiSeasXmlHandler().getSensorConductivity()));
+            tv.setText("Tank: " + TankListActivity.tankList.get(index).getName());
         }
         else
         Toast.makeText(getBaseContext(),
