@@ -30,6 +30,7 @@ import group7.piseas.services.PiseasService;
 public class TankListActivity extends AppCompatActivity {
 
     public static List<Tank> tankList;
+    private String Version = "1.0.2";
     ListView listView;
     static TankAdapter adapter;
     ImageButton addButton;
@@ -70,8 +71,8 @@ public class TankListActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        adapter.notifyDataSetChanged();
         load();
+        adapter.notifyDataSetChanged();
     }
 
     public static void update(){
@@ -144,6 +145,13 @@ public class TankListActivity extends AppCompatActivity {
             editor.clear();
             editor.commit();
         }
+        if (!sharedPref.getString("version", "").equals(Version)) {
+            SharedPreferences prefs = getSharedPreferences("piseas", MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.clear();
+            editor.putString("version", Version);
+            editor.commit();
+        }
         int size = sharedPref.getInt("listSize", 0);
         Log.i("TANKLIST", "LOAD size " + size);
 
@@ -152,6 +160,18 @@ public class TankListActivity extends AppCompatActivity {
         String desc = "";
         int type = 0;
         int tankSize = 0;
+
+        if (tankList.size() > 0) {
+            SharedPreferences.Editor editor = getSharedPreferences("piseas", Context.MODE_PRIVATE).edit();
+            //editor.clear();
+            editor.putInt("listSize", tankList.size());
+            Log.i("TANKLIST", "size: " + tankList.size());
+            for (int i = 0; i<tankList.size();i++){
+                editor.putString("code"+i, tankList.get(i).getId());
+                Log.i("TANKLIST", "code: " + "code"+i + " - " + tankList.get(i).getId());
+            }
+            editor.commit();
+        }
 
         tankList.clear();
         for (int i=0;i<size; i++){
