@@ -2,6 +2,7 @@
 package group7.piseas;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -64,6 +65,10 @@ public class AddTankActivity extends AppCompatActivity {
                         strings[1],
                         name, fishType, tankSize, desc);
                 TankListActivity.tankList.add(tank);
+                SharedPreferences prefs = getSharedPreferences("piseas", MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putInt("listSize", TankListActivity.tankList.size());
+                editor.commit();
                 Log.i("AddTank", "NEW TANK ADDED" + TankListActivity.tankList.size());
                 tank.sendTankDetailsToServer();
             }
