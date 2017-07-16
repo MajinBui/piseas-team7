@@ -22,4 +22,4 @@ The Piseas device was built in C++ to natively use the GPIO pins along with the 
 ## Prototype designs
 ![Application view](https://github.com/MajinBui/piseas-Team07/tree/master/images/App-view.png "App View")   
 ![Hardware design](https://github.com/MajinBui/piseas-Team07/tree/master/hardware-images/Overview.jpg "Prototype design")   
-![Hardware diagram](https://github.com/MajinBui/piseas-Team07/tree/master/hardware-images/Pi-Seas Hardware Diagram.JPG "Prototype design")   
+![Hardware diagram](https://github.com/MajinBui/piseas-Team07/tree/master/hardware-images/Pi-Seas\ Hardware Diagram.JPG "Prototype design")   
