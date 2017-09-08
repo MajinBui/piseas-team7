@@ -20,6 +20,12 @@ The server was also wrapped with the Jave jni interface to allow a C++ version s
 The Piseas device was built in C++ to natively use the GPIO pins along with the raspberry pi shield.  The Pidevice would tick every 20-60 seconds to retrieve new xml data, and then act on any tasks that may need to be done.  The PiSeas device ensures all the user's settings are used and monitored.    
 
 ## Prototype designs
-![Application view](https://github.com/MajinBui/piseas-Team07/tree/master/images/App-view.png "App View")   
-![Hardware design](https://github.com/MajinBui/piseas-Team07/tree/master/hardware-images/Overview.jpg "Prototype design")   
-![Hardware diagram](https://github.com/MajinBui/piseas-Team07/tree/master/hardware-images/hardware-dg.JPG "Prototype design")   
+### Application view
+<img src="./images/App-view.png" width=300>
+
+### Hardware design
+<img src="./hardware-images/Overview.jpg" width=300>
+
+### Hardware diagram
+<img src="./hardware-images/hardware-dg.JPG" width=300>
+  
